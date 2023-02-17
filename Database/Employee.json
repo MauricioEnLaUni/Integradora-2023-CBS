@@ -1,0 +1,21 @@
+[{
+  "id": "asdiansd",
+  "name": "Full name",
+  "address": { },
+  "roles": [{
+    "id": "asdpasd",
+    "area": "Engineering",
+    "salary": {
+      "net": 15000.00,
+      "deductions": { }
+    },
+    "startDate": "Date",
+    "endDate": "Date",
+    "removed": false
+  }],
+  "hoursThisCycle": [],
+  "gender": "C",
+  "email": [],
+  "phone": [],
+  "dob": "Date"
+}]

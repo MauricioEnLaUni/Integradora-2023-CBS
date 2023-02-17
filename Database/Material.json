@@ -1,0 +1,32 @@
+[{
+  "_id": "165984sdas",
+  "name": "Something",
+  "description": "",
+  "code": "ASD187",
+  "children": [{
+    "code": "ASD186",
+    "model": "Is the name",
+    "acquired": "DATE",
+    "quantity": 999,
+    "state": 0,
+    "provider": {
+      "id": "tojoin",
+      "marca": "Brand",
+      "provider_name": "the name"
+    },
+    "location": {
+      "number": 111,
+      "street": "Test",
+      "colony": "TesT",
+      "postal_code": 11111,
+      "city": "Aguascalientes",
+      "state": "Aguascalientes",
+      "country": "Not México",
+      "latitude": 1.1111,
+      "longitude": 2.2222
+    },
+    "task": ["taskid"],
+    "price_acquired": 999,
+    "current_price": 990
+  }]
+}]
