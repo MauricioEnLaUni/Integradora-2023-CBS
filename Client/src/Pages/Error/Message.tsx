@@ -5,7 +5,7 @@ interface MSGProps {
 }
 
 const messages = {
-  404: () => <div></div>
+  404: () => <div>Page not Found</div>
 }
 
 const Missing: React.FC<MSGProps> = (props): JSX.Element => {
