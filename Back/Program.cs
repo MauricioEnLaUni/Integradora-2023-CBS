@@ -1,3 +1,7 @@
+using Fictichos.Constructora.Utilities;
+
+DotEnvManager env = new();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
