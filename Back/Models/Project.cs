@@ -16,16 +16,16 @@ namespace Fictichos.Constructora.Models
 
         public Entity(string id, string name, DateTime created)
         {
-            this.Id = id;
-            this.Name = name;
-            this.CreatedAt = created;
+            Id = id;
+            Name = name;
+            CreatedAt = created;
         }
 
         public Entity(string name)
         {
-            this.Name = name;
-            this.Id = "randomstring";
-            this.CreatedAt = DateTime.Now;
+            Name = name;
+            Id = "randomstring";
+            CreatedAt = DateTime.Now;
         }
     }
 }
