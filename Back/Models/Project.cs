@@ -4,28 +4,58 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Fictichos.Constructora.Models
 {
     [BsonIgnoreExtraElements]
-    public record Entity
+    public class Project: Entity
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; init; }
-        [BsonElement("name")]
-        private string Name { get; init; }
-        [BsonElement("createdAt")]
-        private DateTime CreatedAt { get; init; }
-
-        public Entity(string id, string name, DateTime created)
+        [BsonElement("client")]
+        private Person Client { get; set; }
+        [BsonElement("admin")]
+        private Person Admin { get; set; }
+        [BsonElement("tasks")]
+        private IEnumerable<ProjectTask> Tasks { get; set; }
+        [BsonElement("deadline")]
+        private DateTime Deadline { get; set; }
+        [BsonElement("payment")]
+        private Account Payment { get; set; }
+        
+        public Project(string name, Person client) : base(name)
         {
-            Id = id;
-            Name = name;
-            CreatedAt = created;
+            
         }
+    }
 
-        public Entity(string name)
+    [BsonIgnoreExtraElements]
+    public class Person: Entity
+    {
+        public Person(string name) : base(name)
         {
-            Name = name;
-            Id = "randomstring";
-            CreatedAt = DateTime.Now;
+
+        }
+    }
+
+    [BsonIgnoreExtraElements]
+    public class ProjectTask: Entity
+    {
+        public ProjectTask(string name) : base(name)
+        {
+
+        }
+    }
+
+    [BsonIgnoreExtraElements]
+    public class Account: Entity
+    {
+        public Account(string name) : base(name)
+        {
+
+        }
+    }
+
+    [BsonIgnoreExtraElements]
+    public class User: Person
+    {
+        public User(string name) : base(name)
+        {
+
         }
     }
 }
