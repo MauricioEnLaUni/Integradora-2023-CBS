@@ -1,21 +1,59 @@
+using Fictichos.Constructora.Utils.Generics;
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 namespace Fictichos.Constructora.Database
 {
-    public class Connector
-    {
-        private MongoClientSettings settings { get; init; }
-        private MongoClient client { get; init; }
+    public class Connector : ControllerBase
+  {
+        private MongoClientSettings Settings { get; init; }
+        private MongoClient Client { get; init; }
 
-        public Connector(string ConnectionString)
+        public Connector()
         {
-            this.settings = MongoClientSettings.FromConnectionString(
+            var ConnectionString = Environment.GetEnvironmentVariable("MONGO__SECRET");
+            if (ConnectionString == null) throw new Exception("Invalid Connection String.");
+
+            Settings = MongoClientSettings.FromConnectionString(
                 Environment.GetEnvironmentVariable(ConnectionString)
             );
-            this.settings.LinqProvider = LinqProvider.V3;
-            this.client = new MongoClient(settings);
+            Settings.LinqProvider = LinqProvider.V3;
+            Client = new MongoClient(Settings);
+        }
+
+        public ActionResult<List<ILinqSearchable>> Query(
+            string db,
+            string col,
+            string field,
+            IPrimitives value
+        ) {
+            IMongoCollection<ILinqSearchable> searchIn = Client.GetDatabase(db).GetCollection<ILinqSearchable>(col);
+            IMongoQueryable<ILinqSearchable> results =
+                from member in searchIn.AsQueryable()
+                where member.GetType().GetProperty(field)!.GetValue(member) == value
+                select member;
+            if (results is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(results);
+        }
+        public IMongoQueryable<ILinqSearchable> Query(
+            string db,
+            string col,
+            string field,
+            string value
+        ) {
+            IMongoCollection<ILinqSearchable> searchIn = Client.GetDatabase(db).GetCollection<ILinqSearchable>(col);
+            IMongoQueryable<ILinqSearchable> results =
+                from member in searchIn.AsQueryable()
+                where member.GetType().GetProperty(field)!.GetValue(member)!.ToString() == value
+                select member;
+
+            return results;
         }
     }
 }
