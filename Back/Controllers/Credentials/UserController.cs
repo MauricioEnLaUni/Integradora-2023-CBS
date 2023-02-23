@@ -12,21 +12,11 @@ namespace Fictichos.Credentials.Controller
     {
         private readonly List<User> repo = new List<User>();
 
-        private IMongoQueryable<ILinqSearchable> GetList(string usr)
+        [HttpGet]
+        public ActionResult<IMongoQueryable<ILinqSearchable>> GetList(string usr)
         {
             Connector conn = new Connector();
-            return conn.Query("cbs", "users", "Username", usr);
-        }
-        
-        [HttpGet("{usr}/{pwd}")]
-        public ActionResult<bool> ValidateUser(string usr, string pwd)
-        {
-            IMongoQueryable<ILinqSearchable> chosen = GetList(usr);
-            var j = chosen.ToJson();
-            var model = j.ToList();
-            var executionModel = ((IMongoQueryable<User>) model).GetExecutionModel();
-            var queryString = executionModel.ToString();
-            return true;
+            return Ok(conn.Query("cbs", "users", "Username", usr));
         }
     }
 }

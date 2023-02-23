@@ -7,17 +7,24 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Fictichos.Credentials
 {
+  [BsonIgnoreExtraElements]
     public class User : ILinqSearchable
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         private string Id { get; }
-        public Dictionary<string, string> Credentials { get; private set; }
+        [BsonElement("credentials")]
+        public Dictionary<string, string>? Credentials { get; private set; }
+        [BsonElement("avatar")]
         private Image? Avatar { get; set; }
-        private DateTime Created { get; }= DateTime.Now;
+        [BsonElement("created")]
+        private DateTime Created { get; } = DateTime.Now;
+        [BsonElement("active")]
         private bool Active { get; set; }
+        [BsonElement("email")]
         private List<string> Email { get; set; } = new List<string>();
         private List<string> MAC { get; set; } = new List<string>();
+        [BsonElement("publicAuthKey")]
         private string PublicAuthKey { get; set; }
 
         public string CreatedId()
