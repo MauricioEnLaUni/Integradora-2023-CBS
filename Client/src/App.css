@@ -1,12 +1,11 @@
 * {
-  /* Proposed Palette */
-  --color-seasalt: hsl(210, 17, 98);
-  --color-anti-flash-white: hsl(210, 16, 93);
-  --color-platinum: hsl(210, 14, 89);
-  --color-french-gray: hsl(210, 14, 83);
-  --color-french-grayer: hsl(210, 11, 71);
-  --color-slate-gray: hsl(208, 7, 46);
-  --color-outer-space: hsl(210, 9, 31);
-  --color-onyx: hsl(210, 10, 23);
-  --color-eerie-black: hsl(210, 11, 15);
+  --color-seasalt: hsl(210, 17%, 98%);
+  --color-anti-flash-white: hsl(210, 16%, 93%);
+  --color-platinum: hsl(210, 14%, 89%);
+  --color-french-gray: hsl(210, 14%, 83%);
+  --color-french-grayer: hsl(210, 11%, 71%);
+  --color-slate-gray: hsl(208, 7%, 46%);
+  --color-outer-space: hsl(210, 9%, 31%);
+  --color-onyx: hsl(210, 10%, 23%);
+  --color-eerie-black: hsl(210, 11%, 15%);
 }

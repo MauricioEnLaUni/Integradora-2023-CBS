@@ -10,27 +10,36 @@ namespace Fictichos.Constructora.Models
         [BsonRepresentation(BsonType.ObjectId)]
         private string Id { get; init; }
         [BsonElement("name")]
-        private string Name { get; set; }
+        protected string Name { get; set; }
         [BsonElement("createdAt")]
-        private DateTime CreatedAt { get; set; }
+        protected DateTime CreatedAt { get; init; }
+        [BsonElement("deadline")]
+        protected DateTime? Closed { get; set; }
 
-        public Entity(string id, string name, DateTime created)
+        public Entity(string name)
         {
-            Id = id;
+            Id = CreateId();
+            Name = name;
+            CreatedAt = DateTime.Now;
+        }
+
+        public Entity(string name, DateTime created)
+        {
+            Id = CreateId();
             Name = name;
             CreatedAt = created;
         }
 
-        public Entity(string name)
+        public Entity(string name, DateTime created, DateTime closed)
         {
+            Id = CreateId();
             Name = name;
-            Id = "randomstring";
-            CreatedAt = DateTime.Now;
+            CreatedAt = created;
+            Closed = closed;
         }
 
-        public void Insert()
-        {
-            
+        private static string CreateId() {
+            return "0";
         }
     }
 }

@@ -1,8 +1,20 @@
 import React from 'react';
-import { style, styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { Stack, Button } from '@mui/material';
 
 const Templater: React.FC = () => {
+  const colors = [
+    "hsl(210, 17%, 98%)",
+    "hsl(210, 16%, 93%)",
+    "hsl(210, 14%, 89%)",
+    "hsl(210, 14%, 83%)",
+    "hsl(210, 11%, 71%)",
+    "hsl(208, 7%, 46%)",
+    "hsl(210, 9%, 31%)",
+    "hsl(210, 10%, 23%)",
+    "hsl(210, 11%, 15%)"
+  ]
+
   return (
     <>
       <div>
@@ -21,6 +33,15 @@ const Templater: React.FC = () => {
         <Button disabled>Disabled</Button>
         <Button href="#text-buttons">Link</Button>
         <FictButton >Testing</FictButton>
+        <FictPallete color={colors[0]}></FictPallete>
+        <FictPallete color={colors[1]}></FictPallete>
+        <FictPallete color={colors[2]}></FictPallete>
+        <FictPallete color={colors[3]}></FictPallete>
+        <FictPallete color={colors[4]}></FictPallete>
+        <FictPallete color={colors[5]}></FictPallete>
+        <FictPallete color={colors[6]}></FictPallete>
+        <FictPallete color={colors[7]}></FictPallete>
+        <FictPallete color={colors[8]}></FictPallete>
     </Stack>
     </>
   )
@@ -34,5 +55,13 @@ const FictButton = styled(Button) ({
   fontSize: '2.25em',
   margin: 'auto',
   padding: '0 .25em',
-  border: '.05em solid'
-})
+  border: '.05em solid',
+  background: 'hsl(210, 11%, 15%)',
+  font: "var(--font-ui)",
+});
+
+let FictPallete = styled('div')`
+  background-color: ${(props: any) => props.color}
+  height: 12vh;
+  width: 12vh;
+`;
