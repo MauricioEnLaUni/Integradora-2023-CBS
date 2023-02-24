@@ -12,7 +12,7 @@ namespace Fictichos.Constructora.Models
         [BsonElement("area")]
         private string Area { get; set; }
         [BsonElement("responsibilities")]
-        private List<string> Responsibilities { get; set; } = new List<string>();
+        public List<string> Responsibilities { get; private set; } = new List<string>();
 
         public Job(string name, string role, string area) : base(name)
         {

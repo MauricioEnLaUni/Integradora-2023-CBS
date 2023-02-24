@@ -6,16 +6,15 @@ namespace Fictichos.Constructora.Models
     public class Person : Entity
     {
         [BsonElement("lastName")]
-        private string LastName { get; set; }
+        public string LastName { get; private set; }
         [BsonElement("contact")]
-        private Contact Contacts { get; set; }
+        private Contact Contacts { get; set; } = new Contact();
         [BsonElement("job")]
-        private Job? Charges { get; set; }
+        public List<Job> Charges { get; private set; } = new List<Job>();
 
         public Person(string name, string last) : base(name)
         {
             LastName = last;
-            Contacts = new Contact();
         }
     }
 }
