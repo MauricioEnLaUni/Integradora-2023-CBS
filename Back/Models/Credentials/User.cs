@@ -1,19 +1,17 @@
-using System.Net.NetworkInformation;
-using Fictichos.Constructora.Utils.Generics;
 using Isopoh.Cryptography.Argon2;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Fictichos.Credentials
+namespace Fictichos.Constructora.Models
 {
   [BsonIgnoreExtraElements]
     public class User
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        private string Id { get; }
+        private ObjectId Id { get; }
         [BsonElement("username")]
-        private string Username { get; set; }
+        public string Username { get; private set; }
         [BsonElement("password")]
         private string Password { get; set; }
         [BsonElement("avatar")]
@@ -24,23 +22,20 @@ namespace Fictichos.Credentials
         private bool Active { get; set; }
         [BsonElement("email")]
         private List<string> Email { get; set; } = new List<string>();
-        private List<string> MAC { get; set; } = new List<string>();
+        // private List<string> MAC { get; set; } = new List<string>();
         [BsonElement("publicAuthKey")]
         private string PublicAuthKey { get; set; }
 
-        public string CreatedId()
-        {
-            return "0";
-        }
-
         public User(string usr, string pwd, string email)
         {
-            Id = CreatedId();
+            Id = ObjectId.GenerateNewId();
             Username = usr;
             Password = pwd;
-            MAC.Add(MACCatcher.GetMacAddress());
+            // MAC.Add(MACCatcher.GetMacAddress());
             Email.Add(email);
-            PublicAuthKey = Argon2.Hash((new Random().NextDouble() * long.MaxValue).ToString());
+            PublicAuthKey =
+                Argon2.Hash((new Random().NextDouble() * long.MaxValue)
+                    .ToString());
         }
 
         public void UpdatePassword(string pwd)
@@ -48,6 +43,13 @@ namespace Fictichos.Credentials
             Password = pwd;
         }
 
+        public bool ValidatePassword(string pwd)
+        {
+            if (Argon2.Verify(Password, pwd)) return true;
+            return false;
+        }
+
+/**
         /// <summary>
         /// Finds the MAC address of the NIC with maximum speed.
         /// </summary>
@@ -74,7 +76,7 @@ namespace Fictichos.Credentials
 
                 return macAddress;
             }
-
         }
+            */
     }
 }

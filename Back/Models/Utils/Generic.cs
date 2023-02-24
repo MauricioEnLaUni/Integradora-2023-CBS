@@ -6,5 +6,4 @@ namespace Fictichos.Constructora.Utils.Generics
     }
 
     public interface ILinqSearchable { }
-    public interface IPrimitives { }
 }
