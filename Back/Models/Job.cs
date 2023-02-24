@@ -27,8 +27,8 @@ namespace Fictichos.Constructora.Models
             private DateTime Created { get; set; } = DateTime.Now;
             private DateTime? Closed { get; set; }
             [BsonElement("reductions")]
-            private List<Dictionary<string, double>> Reductions { get; set; }
-                = new List<Dictionary<string, double>>();
+            private Dictionary<string, double> Reductions { get; set; }
+                = new Dictionary<string, double>();
             [BsonElement("rate")]
             private double Rate { get; set; }
             [BsonElement("hoursWeek")]

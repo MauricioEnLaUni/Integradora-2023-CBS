@@ -19,6 +19,10 @@ namespace Fictichos.Constructora.Models
         private string? State { get; set; }
         [BsonElement("country")]
         private string? Country { get; set; }
+        [BsonElement("latitude")]
+        private string? Latitude { get; set; }
+        [BsonElement("longitude")]
+        private string? Longitude { get; set; }
 
         public Address(string[] args)
         {
@@ -29,6 +33,8 @@ namespace Fictichos.Constructora.Models
             City = args[4];
             State = args[5];
             Country = args[6];
+            Latitude = args[7];
+            Longitude = args[8];
         }
     }
 }
