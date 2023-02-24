@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Net.NetworkInformation;
 using Fictichos.Constructora.Utils.Generics;
 using Isopoh.Cryptography.Argon2;
@@ -8,15 +7,17 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Fictichos.Credentials
 {
   [BsonIgnoreExtraElements]
-    public class User : ILinqSearchable
+    public class User
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         private string Id { get; }
-        [BsonElement("credentials")]
-        public Dictionary<string, string>? Credentials { get; private set; }
+        [BsonElement("username")]
+        private string Username { get; set; }
+        [BsonElement("password")]
+        private string Password { get; set; }
         [BsonElement("avatar")]
-        private Image? Avatar { get; set; }
+        private byte[]? Avatar { get; set; }
         [BsonElement("created")]
         private DateTime Created { get; } = DateTime.Now;
         [BsonElement("active")]
@@ -35,18 +36,16 @@ namespace Fictichos.Credentials
         public User(string usr, string pwd, string email)
         {
             Id = CreatedId();
-            Credentials = new Dictionary<string, string>()
-            {
-                { usr, pwd }
-            };
+            Username = usr;
+            Password = pwd;
             MAC.Add(MACCatcher.GetMacAddress());
             Email.Add(email);
             PublicAuthKey = Argon2.Hash((new Random().NextDouble() * long.MaxValue).ToString());
         }
 
-        public void UpdatePassword(string usr, string pwd)
+        public void UpdatePassword(string pwd)
         {
-            Credentials[usr] = pwd;
+            Password = pwd;
         }
 
         /// <summary>

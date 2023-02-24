@@ -13,12 +13,10 @@ namespace Fictichos.Constructora.Database
 
         public Connector()
         {
-            var ConnectionString = Environment.GetEnvironmentVariable("MONGO__SECRET");
-            if (ConnectionString == null) throw new Exception("Invalid Connection String.");
+            var ConnectionString = Environment.GetEnvironmentVariable("MONGODB__SECRET");
+            if (ConnectionString is null) throw new Exception("Invalid Connection String.");
 
-            Settings = MongoClientSettings.FromConnectionString(
-                Environment.GetEnvironmentVariable(ConnectionString)
-            );
+            Settings = MongoClientSettings.FromConnectionString(ConnectionString);
             Settings.LinqProvider = LinqProvider.V3;
             Client = new MongoClient(Settings);
         }
@@ -50,7 +48,7 @@ namespace Fictichos.Constructora.Database
             IMongoCollection<ILinqSearchable> searchIn = Client.GetDatabase(db).GetCollection<ILinqSearchable>(col);
             IMongoQueryable<ILinqSearchable> results =
                 from member in searchIn.AsQueryable()
-                where member.GetType().GetProperty(field)!.GetValue(member)!.ToString() == value
+                where member.GetType().GetProperty(field).GetValue(member).ToString() == value
                 select member;
 
             return results;
