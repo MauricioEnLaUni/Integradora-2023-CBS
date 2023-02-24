@@ -48,13 +48,28 @@ namespace Fictichos.Credentials.Controller
             return results as User;
         }
 
-        [HttpPost("credentials/{usr}")]
+        [HttpGet("{usr}")]
         public ActionResult<bool> ValidateUser(string usr, string pwd)
         {
             if (!GetAll().Contains(usr)) return NotFound();
             User? user = GetCredentials(usr, pwd);
             if (user is null) return StatusCode(500);
             return Ok(user);
+        }
+
+        [HttpPost("new/")]
+        public ActionResult<bool> CreateUser()
+        {
+            User testUser = new(
+                "Moe",
+                "$argon2i$v=19$m=32,t=2,p=2$MWUwYm5RVElKUTQzZDRHMg$wxKe3XwvdnHz8pxy7wL9GA",
+                "210804@utags.edu.mx"
+            );
+            Connector conn = new();
+            IMongoCollection<User> userCollection =
+              conn.Client.GetDatabase("cbs").GetCollection<User>("users");
+            userCollection.InsertOne(testUser);
+            return Ok("Usuario añadido a la base de datos");
         }
     }
 }
