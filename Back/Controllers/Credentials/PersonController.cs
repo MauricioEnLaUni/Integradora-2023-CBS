@@ -98,6 +98,22 @@ namespace Fictichos.Constructora.Controller
             conn.Collection.UpdateOne(filter, update);
             return Ok($"Document with Id:{personId}\thas been updated");
         }
+
+        [HttpGet("address/{personId}")]
+        public void AddAddress(string personId)
+        {
+            ObjectId id = ObjectId.Parse(personId);
+            PersonConnector conn = new();
+            // Need to figure out how to post, fix later.
+            List<Address> newAddress = new List<Address>();
+            string[] args = {"Nieto", "Sin Número", "Colonia", "11111", "Aguascalientes", "Aguascalientes", "México"};
+            newAddress.Add(new Address(args));
+            // Remove above block when possible.
+
+            var filter = Builders<Person>.Filter.Eq("Id", personId);
+            var update = Builders<Person>.Update.Set("Charges", newAddress);
+            conn.Collection.UpdateOne(filter, update);
+        }
         
         private class PersonConnector : Connector
         {
