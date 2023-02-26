@@ -1,11 +1,12 @@
 using MongoDB.Bson;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Fictichos.Constructora.Models
 {
     public interface IActionable<T, U, V>
     {
-        public T Insert(U newData);
-        public T Update(ObjectId id, U newData);
-        public T Delete(ObjectId id);
+        public ActionResult<T> Insert(U newData);
+        public ActionResult<T> Update(ObjectId id, V newData);
+        public ActionResult<T> Delete(ObjectId id);
     }
 }

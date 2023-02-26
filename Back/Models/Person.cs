@@ -9,12 +9,13 @@ namespace Fictichos.Constructora.Models
         public string LastName { get; private set; }
         [BsonElement("contact")]
         private Contact Contacts { get; set; } = new Contact();
-        [BsonElement("job")]
-        public List<Job> Charges { get; private set; } = new List<Job>();
+        [BsonElement("isEmployed")]
+        public Employee? Employed { get; private set; } 
 
-        public Person(string name, string last) : base(name)
+        public Person(string name, string last, Employee? job) : base(name)
         {
             LastName = last;
+            if (job != null) Employed = job;
         }
     }
 }

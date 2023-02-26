@@ -16,22 +16,18 @@ namespace Fictichos.Constructora.Controller
         [HttpPost("new")]
         public void CreateUser()
         {
-            Person testPerson = new("Mauricio", "López Cházaro");
-            Connector conn = new();
-            IMongoCollection<Person> peopleCollection = 
-                conn.Client.GetDatabase("cbs").GetCollection<Person>("people");
+            Person testPerson = new("Mauricio", "López Cházaro", null);
+            Connector<Person> conn = new("cbs", "people");
             
-            peopleCollection.InsertOne(testPerson);
+            conn.Collection.InsertOne(testPerson);
         }
         [HttpGet("{person}")]
         public ActionResult<Person> GetPerson(string first)
         {
-            Connector conn = new();
-            IMongoCollection<Person> peopleCollection = 
-                conn.Client.GetDatabase("cbs").GetCollection<Person>("people");
+            Connector<Person> conn = new("cbs", "people");
             
             IMongoQueryable<Person> list =
-                from peeps in peopleCollection.AsQueryable()
+                from peeps in conn.Collection.AsQueryable()
                 where peeps.Name == first
                 select peeps;
             if (list is null) return NotFound();
@@ -42,12 +38,10 @@ namespace Fictichos.Constructora.Controller
         [HttpGet("{name}/{last}")]
         public ActionResult<Person> GetByNameLastName(string first, string last)
         {
-            Connector conn = new();
-            IMongoCollection<Person> peopleCollection = 
-                conn.Client.GetDatabase("cbs").GetCollection<Person>("people");
+            Connector<Person> conn = new("cbs", "people");            
             
             IMongoQueryable<Person> list =
-                from peeps in peopleCollection.AsQueryable()
+                from peeps in conn.Collection.AsQueryable()
                 where peeps.Name == first || peeps.LastName == last
                 select peeps;
             if (list is null) return NotFound();
@@ -58,10 +52,10 @@ namespace Fictichos.Constructora.Controller
         [HttpGet("jobs")]
         public Dictionary<string,int> GetAllPositions()
         {
-            PersonConnector conn = new();
+            Connector<Person> conn = new("cbs", "people");
             List<Job> list = (List<Job>)
                         (from peeps in conn.Collection.AsQueryable()
-                        select peeps.Charges);
+                        select peeps.Employed);
             Dictionary<string, int> charges = (Dictionary<string, int>)list.GroupBy(jobs => jobs.Name)
                 .Select(group => new {
                     Metric = group.First(),
@@ -74,18 +68,18 @@ namespace Fictichos.Constructora.Controller
         [HttpGet("jobs/{id}")]
         public List<Job> GetJobsById(string personId)
         {
-            PersonConnector conn = new();
+            Connector<Person> conn = new("cbs", "people");
             List<Job> job =(List<Job>)
                 (from peeps in conn.Collection.AsQueryable()
                 where peeps.Id == ObjectId.Parse(personId)
-                select peeps.Charges);
+                select peeps.Employed);
             return job;
         }
 
         [HttpPut("jobs/update")]
         public ActionResult UpdateJob()
         {
-            PersonConnector conn = new();
+            Connector<Person> conn = new("cbs", "people");
             // Need to figure out how to post, fix later.
             ObjectId personId = ObjectId.Parse("63f828a0cc4ca163fba421dc");
             List<Job> newJob = new List<Job>();
@@ -103,7 +97,7 @@ namespace Fictichos.Constructora.Controller
         public void AddAddress(string personId)
         {
             ObjectId id = ObjectId.Parse(personId);
-            PersonConnector conn = new();
+            Connector<Person> conn = new("cbs", "people");
             // Need to figure out how to post, fix later.
             List<Address> newAddress = new List<Address>();
             string[] args = {"Nieto", "Sin Número", "Colonia", "11111", "Aguascalientes", "Aguascalientes", "México"};
@@ -113,15 +107,6 @@ namespace Fictichos.Constructora.Controller
             var filter = Builders<Person>.Filter.Eq("Id", personId);
             var update = Builders<Person>.Update.Set("Charges", newAddress);
             conn.Collection.UpdateOne(filter, update);
-        }
-        
-        private class PersonConnector : Connector
-        {
-            public IMongoCollection<Person> Collection { get; init; }
-            public PersonConnector() : base()
-            {
-                Collection = Client.GetDatabase("cbs").GetCollection<Person>("people");
-            }
         }
     }
 }

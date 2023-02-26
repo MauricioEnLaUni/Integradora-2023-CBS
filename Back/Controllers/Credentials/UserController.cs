@@ -3,12 +3,14 @@ using Fictichos.Constructora.Models;
 using Fictichos.Constructora.Database;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using Fictichos.Constructora.DTOs;
+using MongoDB.Bson;
 
 namespace Fictichos.Credentials.Controller
 {
     [ApiController]
     [Route("user")]
-    public class UserController : ControllerBase
+    public class UserController : ControllerBase, IActionable<UserDTO, NewUserDTO, UpdatedUserDTO>
     {
         private List<User> _repo = new List<User>();
 
@@ -18,7 +20,7 @@ namespace Fictichos.Credentials.Controller
         /// <returns>List of all usernames.</returns>
         private List<string> GetAll()
         {
-            Connector conn = new();
+            Connector<User> conn = new("cbs", "people");
             IMongoCollection<string> userCollection =
                 conn.Client.GetDatabase("cbs").GetCollection<string>("users");
             IMongoQueryable<string> results =
@@ -37,16 +39,21 @@ namespace Fictichos.Credentials.Controller
         private User? GetCredentials(string usr, string pwd)
         {
           // Optimize here
-            Connector conn = new();
+            Connector<User> conn = new("cbs", "people");
             IMongoCollection<User> userCollection =
               conn.Client.GetDatabase("cbs").GetCollection<User>("users");
             IMongoQueryable<User> results =
                 from user in userCollection.AsQueryable()
-                where user.Username == usr &&
+                where user.Name == usr &&
                 user.ValidatePassword(pwd)
                 select user;
             return results as User;
         }
+
+        /// <summary>
+        /// Creates a new User.
+        /// </summary>
+        /// <returns>The Created User</returns>
 
         [HttpGet("{usr}")]
         public ActionResult<bool> ValidateUser(string usr, string pwd)
@@ -57,19 +64,30 @@ namespace Fictichos.Credentials.Controller
             return Ok(user);
         }
 
-        [HttpPost("new/")]
-        public ActionResult<bool> CreateUser()
+        [HttpPost]
+        public ActionResult<UserDTO> Insert(NewUserDTO newUser)
         {
-            User testUser = new(
-                "Moe",
-                "$argon2i$v=19$m=32,t=2,p=2$MWUwYm5RVElKUTQzZDRHMg$wxKe3XwvdnHz8pxy7wL9GA",
-                "210804@utags.edu.mx"
-            );
-            Connector conn = new();
-            IMongoCollection<User> userCollection =
-              conn.Client.GetDatabase("cbs").GetCollection<User>("users");
-            userCollection.InsertOne(testUser);
-            return Ok("Usuario añadido a la base de datos");
+            User userToAdd = new(newUser);
+
+            Connector<User> conn = new("cbs", "people");
+            try
+            {
+                conn.Collection.InsertOne(userToAdd);
+                return CreatedAtAction(nameof(GetAll), new { id = userToAdd.Id }, userToAdd.AsDTO());
+            } catch(Exception)
+            {
+                Console.WriteLine("An error has occurred while processing your request!");
+                return StatusCode(500);
+            }
+        }
+
+        public ActionResult<UserDTO> Update(ObjectId id, UpdatedUserDTO newData)
+        {
+            return new UserDTO();
+        }
+        public ActionResult<UserDTO> Delete(ObjectId id)
+        {
+            return new UserDTO();
         }
     }
 }
