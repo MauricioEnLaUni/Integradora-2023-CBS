@@ -7,6 +7,6 @@ namespace Fictichos.Constructora.Models
     {
         public ActionResult<T> Insert(U newData);
         public ActionResult<T> Update(V newData);
-        public ActionResult<T> Delete(ObjectId id);
+        public ActionResult<T> Delete(string Username);
     }
 }

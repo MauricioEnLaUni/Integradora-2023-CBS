@@ -8,6 +8,7 @@ namespace Fictichos.Constructora.DTOs
         [RegularExpression(@"^[a-zA-Z][a-zA-Z0-9-_]{4,27}$")]
         public string Username { get; init; }
         [Required]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,64}$")]
         public string Password { get; init; }
         [Required]
         [RegularExpression("^[\\w-\\.]+@cbs.com$")]
