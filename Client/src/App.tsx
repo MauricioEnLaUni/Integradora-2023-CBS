@@ -3,6 +3,8 @@ import { ThemeProvider } from 'styled-components';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './Components/Layout';
 
+import './App.css';
+
 import { GlobalStyles } from './Theme/Global';
 import { lightTheme, darkTheme } from './Theme/Global';
 
