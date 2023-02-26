@@ -43,14 +43,24 @@ namespace Fictichos.Constructora.Models
             return Argon2.Verify(Password, pwd);
         }
 
-        public UserDTO AsDTO()
+        public UserLoginDTO AsLoginDTO()
         {
-            return new UserDTO
+            return new UserLoginDTO
             {
                 Username = this.Name,
                 Password = this.Password,
-                Active = this.Active,
-                Email = this.Email
+                Active = this.Active
+            };
+        }
+
+        public UserInfoDTO AsInfoDTO()
+        {
+            return new UserInfoDTO
+            {
+                Username = this.Name,
+                Email = this.Email,
+                Avatar = this.Avatar,
+                Created = this.Created
             };
         }
 

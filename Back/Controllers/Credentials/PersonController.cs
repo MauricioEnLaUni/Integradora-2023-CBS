@@ -17,14 +17,14 @@ namespace Fictichos.Constructora.Controller
         public void CreateUser()
         {
             Person testPerson = new("Mauricio", "López Cházaro", null);
-            Connector<Person> conn = new("cbs", "people");
+            Connector<Person> conn = new(0, "people");
             
             conn.Collection.InsertOne(testPerson);
         }
         [HttpGet("{person}")]
         public ActionResult<Person> GetPerson(string first)
         {
-            Connector<Person> conn = new("cbs", "people");
+            Connector<Person> conn = new(0, "people");
             
             IMongoQueryable<Person> list =
                 from peeps in conn.Collection.AsQueryable()
@@ -38,7 +38,7 @@ namespace Fictichos.Constructora.Controller
         [HttpGet("{name}/{last}")]
         public ActionResult<Person> GetByNameLastName(string first, string last)
         {
-            Connector<Person> conn = new("cbs", "people");            
+            Connector<Person> conn = new(0, "people");            
             
             IMongoQueryable<Person> list =
                 from peeps in conn.Collection.AsQueryable()
@@ -52,7 +52,7 @@ namespace Fictichos.Constructora.Controller
         [HttpGet("jobs")]
         public Dictionary<string,int> GetAllPositions()
         {
-            Connector<Person> conn = new("cbs", "people");
+            Connector<Person> conn = new(0, "people");
             List<Job> list = (List<Job>)
                         (from peeps in conn.Collection.AsQueryable()
                         select peeps.Employed);
@@ -68,7 +68,7 @@ namespace Fictichos.Constructora.Controller
         [HttpGet("jobs/{id}")]
         public List<Job> GetJobsById(string personId)
         {
-            Connector<Person> conn = new("cbs", "people");
+            Connector<Person> conn = new(0, "people");
             List<Job> job =(List<Job>)
                 (from peeps in conn.Collection.AsQueryable()
                 where peeps.Id == ObjectId.Parse(personId)
@@ -79,7 +79,7 @@ namespace Fictichos.Constructora.Controller
         [HttpPut("jobs/update")]
         public ActionResult UpdateJob()
         {
-            Connector<Person> conn = new("cbs", "people");
+            Connector<Person> conn = new(0, "people");
             // Need to figure out how to post, fix later.
             ObjectId personId = ObjectId.Parse("63f828a0cc4ca163fba421dc");
             List<Job> newJob = new List<Job>();
@@ -97,7 +97,7 @@ namespace Fictichos.Constructora.Controller
         public void AddAddress(string personId)
         {
             ObjectId id = ObjectId.Parse(personId);
-            Connector<Person> conn = new("cbs", "people");
+            Connector<Person> conn = new(0, "people");
             // Need to figure out how to post, fix later.
             List<Address> newAddress = new List<Address>();
             string[] args = {"Nieto", "Sin Número", "Colonia", "11111", "Aguascalientes", "Aguascalientes", "México"};

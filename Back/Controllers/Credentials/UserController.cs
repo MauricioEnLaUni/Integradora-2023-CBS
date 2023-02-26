@@ -10,70 +10,56 @@ namespace Fictichos.Credentials.Controller
 {
     [ApiController]
     [Route("user")]
-    public class UserController : ControllerBase, IActionable<UserDTO, NewUserDTO, UpdatedUserDTO>
+    public class UserController : ControllerBase, IActionable<UserInfoDTO, NewUserDTO, UpdatedUserDTO>
     {
         private List<User> _repo = new List<User>();
+        private Connector<User> Connection = new(0, "people");
 
         /// <summary>
         /// Populates controller list from Database.
         /// </summary>
         /// <returns>List of all usernames.</returns>
-        private List<string> GetAll()
+        private List<User> GetAll()
         {
-            Connector<User> conn = new("cbs", "people");
-            IMongoCollection<string> userCollection =
-                conn.Client.GetDatabase("cbs").GetCollection<string>("users");
-            IMongoQueryable<string> results =
-                from user in userCollection.AsQueryable()
-                select user;
-            List<string> res = (List<string>)results;
-            return res;
+            List<User> results = (List<User>)
+                (from user in Connection.Collection.AsQueryable()
+                select user);
+            return results;
         }
 
-        private bool FindUser(List<string> users, string username)
+        private User? FindUser(List<User> users, UserLoginDTO usr)
         {
-            bool contained = users.Contains(username);
+            User? contained = (User)
+                (from u in users.AsQueryable()
+                where u.Name == usr.Username &&
+                u.ValidatePassword(usr.Password)
+                select u);
             return contained;
         }
 
-        private User? GetCredentials(string usr, string pwd)
+        [HttpPost("login")]
+        public ActionResult<User> ValidateUser(UserLoginDTO usr)
         {
-          // Optimize here
-            Connector<User> conn = new("cbs", "people");
-            IMongoCollection<User> userCollection =
-              conn.Client.GetDatabase("cbs").GetCollection<User>("users");
-            IMongoQueryable<User> results =
-                from user in userCollection.AsQueryable()
-                where user.Name == usr &&
-                user.ValidatePassword(pwd)
-                select user;
-            return results as User;
-        }
+            List<User> users = GetAll();
+            if(!users.Any()) return StatusCode(500);
 
-        /// <summary>
-        /// Creates a new User.
-        /// </summary>
-        /// <returns>The Created User</returns>
+            User? UserCredentials = FindUser(users, usr);
+            if(UserCredentials is null) return StatusCode(403);
 
-        [HttpGet("{usr}")]
-        public ActionResult<bool> ValidateUser(string usr, string pwd)
-        {
-            if (!GetAll().Contains(usr)) return NotFound();
-            User? user = GetCredentials(usr, pwd);
-            if (user is null) return StatusCode(500);
+            UserInfoDTO user = UserCredentials.AsInfoDTO();
             return Ok(user);
         }
 
         [HttpPost]
-        public ActionResult<UserDTO> Insert(NewUserDTO newUser)
+        public ActionResult<UserInfoDTO> Insert(NewUserDTO newUser)
         {
             User userToAdd = new(newUser);
 
-            Connector<User> conn = new("cbs", "people");
+            Connector<User> conn = new(0, "people");
             try
             {
                 conn.Collection.InsertOne(userToAdd);
-                return CreatedAtAction(nameof(GetAll), new { id = userToAdd.Id }, userToAdd.AsDTO());
+                return CreatedAtAction(nameof(ValidateUser), userToAdd.AsLoginDTO(), userToAdd.AsInfoDTO());
             } catch(Exception)
             {
                 Console.WriteLine("An error has occurred while processing your request!");
@@ -81,13 +67,16 @@ namespace Fictichos.Credentials.Controller
             }
         }
 
-        public ActionResult<UserDTO> Update(ObjectId id, UpdatedUserDTO newData)
+        [HttpPut]
+        public ActionResult<UserInfoDTO> Update(UpdatedUserDTO newData)
         {
-            return new UserDTO();
+            return new UserInfoDTO();
         }
-        public ActionResult<UserDTO> Delete(ObjectId id)
+
+        [HttpDelete]
+        public ActionResult<UserInfoDTO> Delete(ObjectId id)
         {
-            return new UserDTO();
+            return new UserInfoDTO();
         }
     }
 }

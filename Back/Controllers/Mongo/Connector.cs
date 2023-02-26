@@ -21,7 +21,7 @@ namespace Fictichos.Constructora.Database
             { "material", "MONGODB__DATABASE__COLLECTION__MATERIALS" }
         };
 
-        public Connector(string db, string cn)
+        public Connector(int db, string cn)
         {
             string[] Credentials = CreateCredentials(db, cn);
             Settings = MongoClientSettings.FromConnectionString(Credentials[0]);
@@ -32,12 +32,12 @@ namespace Fictichos.Constructora.Database
                             .GetCollection<T>(Credentials[2]);
         }
 
-        private string[] CreateCredentials(string db, string cn)
+        private string[] CreateCredentials(int db, string cn)
         {
             var ConnectionString =
                 Environment.GetEnvironmentVariable("MONGODB__SECRET");
             var Database =
-                Environment.GetEnvironmentVariable(Collections[db]);
+                Environment.GetEnvironmentVariable(Databases[db]);
             var Collection = 
                 Environment.GetEnvironmentVariable(Collections[cn]);
             if (ConnectionString is null ||
