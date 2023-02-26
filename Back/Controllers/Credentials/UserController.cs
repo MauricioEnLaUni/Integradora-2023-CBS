@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using Fictichos.Constructora.Models;
-using Fictichos.Constructora.Database;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using Microsoft.AspNetCore.Mvc;
+
 using Fictichos.Constructora.DTOs;
-using MongoDB.Bson;
+using Fictichos.Constructora.Models;
+using Fictichos.Constructora.Database;
 using Isopoh.Cryptography.Argon2;
 
 namespace Fictichos.Credentials.Controller

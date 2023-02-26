@@ -1,6 +1,6 @@
-using Isopoh.Cryptography.Argon2;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Isopoh.Cryptography.Argon2;
 using Fictichos.Constructora.DTOs;
 
 namespace Fictichos.Constructora.Models
