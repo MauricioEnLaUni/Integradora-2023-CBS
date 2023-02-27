@@ -18,14 +18,17 @@ Estas tecnologias se han considerado usar para
 **Por redactar**
 
 ### Creditos
-Avelar Nuñes Hector Eduardo. [GitHub]()
-Contreras Chávez César Alejandro. [GitHub](https://github.com/cesarFile)
-López Chazaro Mauricio. [GitHub](https://github.com/MauricioEnLaUni)
-Martinez Rosales Enrique. [GitHub](https://github.com/EnriqueMTzEkO)
-Mendoza Najera Victor Manuel. [GitHub](https://github.com/VictorMendoza509)
+
+| Nombre | Github |
+| --- | --- |
+| Avelar Nuñes Hector Eduardo. | [GitHub]() |
+| Contreras Chávez César Alejandro. | [GitHub](https://github.com/cesarFile) |
+| López Chazaro Mauricio. | [GitHub](https://github.com/MauricioEnLaUni) |
+| Martinez Rosales Enrique. | [GitHub](https://github.com/EnriqueMTzEkO) |
+| Mendoza Najera Victor Manuel. | [GitHub](https://github.com/VictorMendoza509) |
 
 ### Licencia
-Licenciamiento indefinido
+Licencia Proprietaria, incluida en el archivo LIC.
 
 ### Pruebas
 **Por redactar**
