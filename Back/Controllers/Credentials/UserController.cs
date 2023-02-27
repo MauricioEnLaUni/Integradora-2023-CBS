@@ -14,7 +14,7 @@ namespace Fictichos.Credentials.Controller
     public class UserController : ControllerBase, IActionable<UserInfoDTO, NewUserDTO, UpdatedUserDTO>
     {
         private List<User> _repo = new List<User>();
-        private Connector<User> Connection = new(0, "people");
+        private Connector<User> Connection = new(0, "user");
 
         /// <summary>
         /// Populates controller list from Database.
