@@ -12,9 +12,9 @@ namespace Fictichos.Constructora.Models
         [BsonElement("name")]
         public string Name { get; protected set; }
         [BsonElement("createdAt")]
-        private DateTime CreatedAt { get; init; }
+        public DateTime CreatedAt { get; init; }
         [BsonElement("deadline")]
-        protected DateTime? Closed { get; set; }
+        public DateTime? Closed { get; set; }
 
         public Entity(string name)
         {
@@ -23,19 +23,11 @@ namespace Fictichos.Constructora.Models
             CreatedAt = DateTime.Now;
         }
 
-        public Entity(string name, DateTime created)
+        public Entity(string name, DateTime? closes)
         {
             Id = ObjectId.GenerateNewId();
             Name = name;
-            CreatedAt = created;
-        }
-
-        public Entity(string name, DateTime created, DateTime closed)
-        {
-            Id = ObjectId.GenerateNewId();
-            Name = name;
-            CreatedAt = created;
-            Closed = closed;
+            if (closes is not null) Closed = closes;
         }
     }
 }
