@@ -9,7 +9,7 @@ El proposito del proyecto es la entrega de un producto que ayude con la gestion 
 - TypeScript
 - JavaScript 
 
-
+Estas tecnologias se han considerado usar para 
 
 ### Instalacion y Ejecucion
 **indefinido**
