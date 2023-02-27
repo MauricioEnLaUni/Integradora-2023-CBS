@@ -101,7 +101,44 @@ namespace Fictichos.Constructora.Controller
         }
 
         #region Contact Controller
-        
+        private List<Contact> SelectAllContacts()
+        {
+            List<Person> personList = SelectAll();
+            return personList.Select(p => p.Contacts).ToList();
+        }
+
+        [HttpGet("contact")]
+        public ActionResult<List<ContactInfoDTO>> GetAllContacts()
+        {
+            List<Contact> contacts = SelectAllContacts();
+            List<ContactInfoDTO> results = contacts.Select(p => p.AsDTO()).ToList();
+            return Ok(results);
+        }
+
+        [HttpGet("contact/{id}")]
+        public ActionResult<Contact> GetContact(string id)
+        {
+            Person? person = SelectById(id);
+            if (person is null) return NotFound();
+
+            return Ok(person.Contacts.AsDTO());
+        }
+
+        [HttpPut("contact/{id}")]
+        public ActionResult<Contact> UpdateContact(NewContactDTO newData)
+        {
+            Person? owner = SelectById(newData.Id);
+            if (owner is null) return NotFound();
+
+            Contact updated = new Contact();
+
+            var filter = Builders<Person>.Filter.Eq("Id", owner);
+            var update = Builders<Person>.Update.Set(p => p.Contacts, updated);
+            _conn.Collection.UpdateOne(filter, update);
+
+            return NoContent();
+        }
+
         #endregion
     }
 }

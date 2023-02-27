@@ -27,7 +27,7 @@ namespace Fictichos.Constructora.Controller
         public ActionResult<List<ProjectInfoDTO>> GetAll()
         {
             List<Project> list = SelectAll();
-            List<ProjectInfoDTO> results = list.Select(p => p.AsInfoDTO()).ToList();
+            List<ProjectInfoDTO> results = list.Select(p => p.AsDTO()).ToList();
             return Ok(results);
         }
 
@@ -48,7 +48,7 @@ namespace Fictichos.Constructora.Controller
             Project? project = SelectById(id);
             if (project is null) return NotFound();
 
-            return Ok(project.AsInfoDTO());
+            return Ok(project.AsDTO());
         }
 
         [HttpPost]
@@ -59,7 +59,7 @@ namespace Fictichos.Constructora.Controller
             try
             {
                 _conn.Collection.InsertOne(project);
-                return CreatedAtAction(nameof(GetById), new { id = project.Id.ToString() }, project.AsInfoDTO());
+                return CreatedAtAction(nameof(GetById), new { id = project.Id.ToString() }, project.AsDTO());
             } catch(Exception)
             {
                 Console.WriteLine("An error has occurred while processing your request!");

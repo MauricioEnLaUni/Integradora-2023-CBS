@@ -19,7 +19,7 @@ namespace Fictichos.Constructora.Models
 
         public Project(NewProjectDTO newProject) : base(newProject.Name) { }
 
-        public ProjectInfoDTO AsInfoDTO()
+        public ProjectInfoDTO AsDTO()
         {
             return new ProjectInfoDTO
             {

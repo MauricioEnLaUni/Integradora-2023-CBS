@@ -1,28 +1,30 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+using Fictichos.Constructora.DTOs;
+
 namespace Fictichos.Constructora.Models
 {
     public class Address
     {
         [BsonElement("street")]
-        private string? Street { get; set; }
+        public string? Street { get; set; }
         [BsonElement("number")]
-        private string? Number { get; set; }
+        public string? Number { get; set; }
         [BsonElement("colony")]
-        private string? Colony { get; set; }
+        public string? Colony { get; set; }
         [BsonElement("postalCode")]
-        private string? PostalCode { get; set; }
+        public string? PostalCode { get; set; }
         [BsonElement("city")]
-        private string? City { get; set; }
+        public string? City { get; set; }
         [BsonElement("state")]
-        private string? State { get; set; }
+        public string? State { get; set; }
         [BsonElement("country")]
-        private string? Country { get; set; }
+        public string? Country { get; set; }
         [BsonElement("latitude")]
-        private string? Latitude { get; set; }
+        public string? Latitude { get; set; }
         [BsonElement("longitude")]
-        private string? Longitude { get; set; }
+        public string? Longitude { get; set; }
 
         public Address(string[] args)
         {
@@ -35,6 +37,31 @@ namespace Fictichos.Constructora.Models
             Country = args[6];
             Latitude = args[7];
             Longitude = args[8];
+        }
+
+        public Address(AddressInfoDTO data)
+        {
+            Street = data.Street;
+            Number = data.Number;
+            Colony = data.Colony;
+            PostalCode = data.PostalCode;
+            City = data.City;
+            State = data.State;
+            Country = data.Country;
+        }
+
+        public AddressInfoDTO AsDTO()
+        {
+            return new AddressInfoDTO
+            {
+                Street = this.Street,
+                Number = this.Number,
+                Colony = this.Colony,
+                PostalCode = this.PostalCode,
+                City = this.City,
+                State = this.State,
+                Country = this.Country
+            };
         }
     }
 }
