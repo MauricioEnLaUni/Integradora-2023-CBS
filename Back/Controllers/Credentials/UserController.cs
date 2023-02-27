@@ -22,10 +22,9 @@ namespace Fictichos.Credentials.Controller
         /// <returns>List of all usernames.</returns>
         private IMongoQueryable<User> GetAll()
         {
-            IMongoQueryable<User> results = 
+            return 
                 from user in Connection.Collection.AsQueryable()
                 select user;
-            return results;
         }
 
         /// <summary>
@@ -35,12 +34,10 @@ namespace Fictichos.Credentials.Controller
         private User? FindUser(string usr)
         {
             IMongoQueryable<User> list = GetAll();
-            User? contained =
+            return 
                 (from u in list
                 where u.Name == usr
                 select u).SingleOrDefault<User>();
-
-            return contained;
         }
 
         [HttpPost("login")]
@@ -98,8 +95,8 @@ namespace Fictichos.Credentials.Controller
         [HttpDelete]
         public ActionResult<UserInfoDTO> Delete(string usr)
         {
-            User? userToUpdate = FindUser(usr);
-            if(userToUpdate is null) return NotFound();
+            User? userToDelete = FindUser(usr);
+            if(userToDelete is null) return NotFound();
 
             var deleteFilter = Builders<User>.Filter.Eq("name", usr);
             Connection.Collection.DeleteOne(deleteFilter);
