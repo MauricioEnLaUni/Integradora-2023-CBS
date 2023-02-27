@@ -1,18 +1,20 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+using Fictichos.Constructora.DTOs;
+
 namespace Fictichos.Constructora.Models
 {
     public class Job : Entity
     {
         [BsonElement("salaryHistory")]
-        private List<Salary> SalaryHistory { get; set; } = new List<Salary>();
+        public List<Salary> SalaryHistory { get; set; } = new List<Salary>();
         [BsonElement("role")]
-        private string Role { get; set; }
+        public string Role { get; set; }
         [BsonElement("area")]
-        private string Area { get; set; }
+        public string Area { get; set; }
         [BsonElement("responsibilities")]
-        public List<string> Responsibilities { get; private set; } = new List<string>();
+        public List<string> Responsibilities { get;  set; } = new List<string>();
 
         public Job(string name, string role, string area) : base(name)
         {
@@ -20,35 +22,57 @@ namespace Fictichos.Constructora.Models
             Area = area;
         }
 
-
-        private class Salary
+        public Job(NewJobDTO data) : base(data.Name)
         {
-            private string Id { get; set; } = "";
-            private DateTime Created { get; set; } = DateTime.Now;
-            private DateTime? Closed { get; set; }
+            Role = data.Role;
+            Area = data.Area;
+            Responsibilities = data.Responsibilities;
+        }
+
+        public JobInfoDTO AsDTO()
+        {
+            return new JobInfoDTO()
+            {
+                Name = this.Name,
+                SalaryHistory = this.SalaryHistory.Select(s => s.AsDTO()).ToList(),
+                Role = this.Role,
+                Area = this.Area,
+                Responsibilities = this.Responsibilities,
+            };
+        }
+
+
+        public class Salary
+        {
+            public string Id { get; set; } = "";
+            public DateTime Created { get; set; } = DateTime.Now;
             [BsonElement("reductions")]
-            private Dictionary<string, double> Reductions { get; set; }
+            public Dictionary<string, double> Reductions { get; set; }
                 = new Dictionary<string, double>();
             [BsonElement("rate")]
-            private double Rate { get; set; }
+            public double Rate { get; set; }
             [BsonElement("hoursWeek")]
-            private int? HoursWeek { get; set; }
+            public int? HoursWeek { get; set; }
 
             public Salary(double hourly)
             {
                 Rate = hourly;
             }
-
-            public Salary(double hourly, DateTime closes)
+            public Salary(double hourly, int hoursWeek)
             {
                 Rate = hourly;
-                Closed = closes;
-            }
-            public Salary(double hourly, DateTime closes, int hoursWeek)
-            {
-                Rate = hourly;
-                Closed = closes;
                 HoursWeek = hoursWeek;
+            }
+
+            public SalaryInfoDTO AsDTO()
+            {
+                return new SalaryInfoDTO()
+                {
+                    Created = this.Created,
+                    Reductions = this.Reductions,
+                    Rate = this.Rate,
+                    HoursWeek = this.HoursWeek
+                };
             }
         }
     }

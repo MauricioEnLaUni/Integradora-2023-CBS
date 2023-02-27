@@ -53,5 +53,14 @@ namespace Fictichos.Constructora.Database
                 Collection
             };
         }
+
+        public void SetCollection(int db, string cn)
+        {
+            string[] Credentials = CreateCredentials(db, cn);
+            Collection =
+                    this.Client.GetDatabase(Credentials[1])
+                            .GetCollection<T>(Credentials[2]);
+
+        }
     }
 }
