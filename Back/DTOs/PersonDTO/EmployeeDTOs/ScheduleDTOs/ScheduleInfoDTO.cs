@@ -6,6 +6,6 @@ namespace Fictichos.Constructora.DTOs
     {
         public string Name { get; set; }
         public List<TimeSpan> Hours { get; set; }
-        public Address? Location { get; set; }
+        public AddressInfoDTO? Location { get; set; }
     }
 }

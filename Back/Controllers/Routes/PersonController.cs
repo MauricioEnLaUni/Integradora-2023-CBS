@@ -140,5 +140,27 @@ namespace Fictichos.Constructora.Controller
         }
 
         #endregion
+
+        #region Employee
+        [HttpGet("employee/{id}")]
+        public ActionResult<EmployeeInfoDTO> GetEmployment(string id)
+        {
+            Person? person = SelectById(id);
+            if (person is null) return NotFound();
+            if (person.Employed is null) return NotFound();
+
+            return Ok(person.Employed.AsDTO());
+        }
+        [HttpDelete("employee/{id}")]
+        public ActionResult<EmployeeInfoDTO> DeleteEmployment(string id)
+        {
+            Person? person = SelectById(id);
+            if (person is null) return NotFound();
+            if (person.Employed is null) return NotFound();
+
+            return Ok(person.Employed.AsDTO());
+        }
+
+        # endregion
     }
 }

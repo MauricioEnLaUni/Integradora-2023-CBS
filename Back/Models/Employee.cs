@@ -1,6 +1,8 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+using Fictichos.Constructora.DTOs;
+
 namespace Fictichos.Constructora.Models
 {
     public class Employee : Entity
@@ -8,7 +10,7 @@ namespace Fictichos.Constructora.Models
         [BsonElement("active")]
         private bool Active { get; set; }
         [BsonElement("dob")]
-        private DateTime DOB { get; set; }
+        private DateOnly DOB { get; set; }
         [BsonElement("curp")]
         private string CURP { get; set; }
         [BsonElement("charges")]
@@ -16,11 +18,31 @@ namespace Fictichos.Constructora.Models
         [BsonElement("scheduleHistory")]
         private List<Schedule> ScheduleHistory { get; set; } = new List<Schedule>();
 
-        public Employee(string name, bool state, DateTime dob, string curp) : base(name)
+        public Employee(string name, bool state, DateOnly dob, string curp) : base(name)
         {
             Active = state;
             DOB = dob;
             CURP = curp;
+        }
+
+        public Employee(NewEmployeeDTO data) : base(data.Name)
+        {
+            DOB = data.DOB;
+            CURP = data.CURP;
+            Charges = new List<Job>();
+            Charges.Add(new Job(data.Charges));
+        }
+
+        public EmployeeInfoDTO AsDTO()
+        {
+            return new EmployeeInfoDTO()
+            {
+                Name = this.Name,
+                CreatedAt = this.CreatedAt,
+                DOB = this.DOB,
+                Charges = this.Charges.Select(c => c.AsDTO()).ToList(),
+                ScheduleHistory = this.ScheduleHistory.Select(s => s.AsDTO()).ToList()
+            };
         }
 
         private class Schedule : Entity
@@ -30,15 +52,28 @@ namespace Fictichos.Constructora.Models
             [BsonElement("location")]
             private Address? Location { get; set; }
 
-            public Schedule(string name) : base(name) { }
-            public Schedule(string name, DateTime closes) : base(name, closes) { }
-            public Schedule(string name, string[] address) : base(name)
+            public Schedule(string name, DateTime? created) : base(name, created) { }
+            public Schedule(string name, DateTime? created, string[] address) : base(name, created)
             {
                 Location = new Address(address);
             }
-            public Schedule(string name, string[] address, DateTime closes) : base(name, closes)
+
+            public Schedule(ScheduleInfoDTO data) : base(data.Name)
             {
-                Location = new Address(address);
+                if (data.Location is not null)
+                {
+                    Location = new Address(data.Location);
+                }
+            }
+
+            public ScheduleInfoDTO AsDTO()
+            {
+                return new ScheduleInfoDTO()
+                {
+                    Name = this.Name,
+                    Hours = this.Hours,
+                    Location = this.Location is not null ? this.Location.AsDTO() : null
+                };
             }
         }
 
