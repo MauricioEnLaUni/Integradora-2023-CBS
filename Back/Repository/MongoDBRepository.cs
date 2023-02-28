@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Reflection;
+
 using AutoMapper;
 
 using MongoDB.Bson;
@@ -9,9 +12,11 @@ using Fictichos.Constructora.Models;
 
 namespace Fictichos.Constructora.Repository
 {
-    public class MongoDBRepository<T, U, V> where T : ITBase
+    public class MongoDBRepository<T, U, V>
+        where T : ITBase, IUpdater<V>
+        where V : DTOBase
     {
-        private Connector<T> _conn = new Connector<T>(0, "people");
+        private Connector<T> _conn = new(0, "people");
         private readonly IMapper _mapper;
 
         public MongoDBRepository(IMapper mapper)
@@ -49,10 +54,26 @@ namespace Fictichos.Constructora.Repository
             return
                 (from x in _conn.Collection.AsQueryable()
                 where x.Id == _id
-                select x).SingleOrDefault<T>();
+                select x).SingleOrDefault();
         }
 
-        public void Update(V update) { }
+        public bool Update(V update)
+        {
+            var result = typeof(T).GetProperties()
+                .Select(x => new { property = x.Name, value = x.GetValue(update) })
+                .Where(x => x.value is not null)
+                .ToList();
+            if (!result.Any()) return false;
+            
+            Type type = result.GetType();
+            IList<PropertyInfo> props = new List<PropertyInfo>(type.GetProperties());
+            
+            var filter = Builders<T>.Filter.Eq("Id", new ObjectId(update.Id));
+            var newData = Builders<T>.Update
+                .Set(x => )
+            return true;
+        }
+
         public async Task<DeleteResult> Delete(string id)
         {
             var filter = Builders<T>.Filter.Eq("Id", new ObjectId(id));
