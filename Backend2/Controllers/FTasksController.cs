@@ -14,8 +14,6 @@ namespace Fitichos.Constructora.Controllers
     [Route("t")]
     public class FTasksController : ControllerBase
     {
-        private string databaseName = "cbs";
-        private readonly string collectionName = "projects";
         private readonly IMongoCollection<Project> prCol;
         public FTasksController(IMongoClient mongoClient)
         {

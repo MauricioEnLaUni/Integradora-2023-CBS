@@ -14,12 +14,12 @@ namespace Fitichos.Constructora.Controllers
     [Route("u")]
     public class UserController : ControllerBase
     {
+        private readonly string db = "cbs";
+        private readonly string col = "users";
         private readonly Repository<User, NewUserDto> _repo;
-        private readonly IMongoCollection<User> _col;
         public UserController(IMongoClient mongoClient)
         {
-            _col = mongoClient.GetDatabase("cbs").GetCollection<User>("users");
-            _repo = new(mongoClient);
+            _repo = new(mongoClient, db, col);
         }
 
         [HttpPost("new")]
@@ -34,7 +34,7 @@ namespace Fitichos.Constructora.Controllers
         public ActionResult<LoginSuccessDto> Login(LoginDto user)
         {
             User? exists =
-                (from u in _col.AsQueryable()
+                (from u in _repo._col.AsQueryable()
                 where u.Name == user.Name
                 select u).SingleOrDefault();
             if (exists is null) return NotFound();
@@ -49,7 +49,7 @@ namespace Fitichos.Constructora.Controllers
         {
             ObjectId _id = new(changes.Id);
             User? exists =
-                (from u in _col.AsQueryable()
+                (from u in _repo._col.AsQueryable()
                 where u.Id == _id
                 select u).SingleOrDefault();
             if (exists is null) return NotFound();

@@ -14,12 +14,34 @@ namespace Fitichos.Constructora.Controllers
     [Route("m")]
     public class MaterialController : ControllerBase
     {
+        private readonly string db = "cbs";
+        private readonly string col = "material";
         private readonly Repository<Material, NewMaterialDto> _repo;
-        private readonly IMongoCollection<Material> _col;
         public MaterialController(IMongoClient mongoClient)
         {
-            _col = mongoClient.GetDatabase("cbs").GetCollection<Material>("material");
-            _repo = new(mongoClient);
+            _repo = new(mongoClient, db, col);
+        }
+
+        [HttpGet]
+        public List<Material> GetAll()
+        {
+            return _repo.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<Material?> GetById(string id)
+        {
+            Material? result = _repo.GetById(id);
+            if (result is null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Material>> AddMaterial(NewMaterialDto data)
+        {
+            Material toInsert = new(data);
+            await _repo.CreateAsync(toInsert);
+            return Ok(toInsert);
         }
     }
 }

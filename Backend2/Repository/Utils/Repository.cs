@@ -7,14 +7,12 @@ namespace Fitichos.Constructora.Repository
     public class Repository<T, U> : IRepository<T, U>
     where T : Entity
     {
-        private string databaseName = "cbs";
-        private string collectionName = "projects";
         public IMongoCollection<T> _col;
 
-        public Repository(IMongoClient mongoClient)
+        public Repository(IMongoClient mongoClient, string database, string col)
         {
-            IMongoDatabase db = mongoClient.GetDatabase(databaseName);
-            _col = db.GetCollection<T>(collectionName);
+            IMongoDatabase db = mongoClient.GetDatabase(database);
+            _col = db.GetCollection<T>(col);
         }
 
         public async Task CreateAsync(T newItem)

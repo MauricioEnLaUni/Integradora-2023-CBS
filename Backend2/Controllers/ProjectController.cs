@@ -15,11 +15,11 @@ namespace Fitichos.Constructora.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly Repository<Project, NewProjectDto> _repo;
-        private string databaseName = "cbs";
-        private readonly string collectionName = "projects";
+        private readonly string db = "cbs";
+        private readonly string col = "projects";
         public ProjectController(IMongoClient mongoClient)
         {
-            _repo = new(mongoClient);
+            _repo = new(mongoClient, db, col);
         }
 
         [HttpGet]
