@@ -18,9 +18,12 @@ namespace Fictichos.Constructora.Model
 
         public Contact(NewContactDto data)
         {
-            Addresses = data.Addresses.Select(a => new Address(a)).ToList();
-            Phones = data.Phones;
-            Emails = data.Emails;
+            if (data.Addresses is not null)
+            {
+                Addresses.Add(new(data.Addresses));
+            }
+            if (data.Phones is not null) Phones.Add(data.Phones);
+            if (data.Emails is not null) Emails.Add(data.Emails);
         }
     }
 }

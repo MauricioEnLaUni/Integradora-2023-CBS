@@ -29,8 +29,8 @@ namespace Fitichos.Constructora.Repository
         public List<T> GetAll()
         {
             return 
-                (from e in _col.AsQueryable<T>()
-                select e).ToList<T>();
+                (from e in _col.AsQueryable()
+                select e).ToList();
         }
 
         public T? GetById(string id)

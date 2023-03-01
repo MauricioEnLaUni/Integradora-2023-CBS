@@ -11,7 +11,7 @@ namespace Fitichos.Constructora.Dto
         [Required]
         public int Quantity { get; set; } = 0;
         [Required]
-        public NewAddressDto Location { get; set; }
+        public NewAddressDto Location { get; set; } = new();
         public int? Status { get; set; } = 0;
         [Required]
         public double BoughtFor { get; set; } = 0;
