@@ -1,34 +1,27 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Fictichos.Constructora.Models
+using Fitichos.Constructora.Repository;
+
+namespace Fictichos.Constructora.Model
 {
     public class Account : Entity
     {
         [BsonElement("payments")]
         private List<Payment> Payments { get; set; } = new List<Payment>();
 
-        public Account(string concept, DateTime created) : base(concept, created) { }
-        public Account(string concept) : base(concept) { }
+        public Account(string concept, DateTime? closes) : base(concept, closes) { }
         
         public class Payment
         {
-            private string Id { get; init; }
+            private ObjectId Id { get; init; }
             private double Amount { get; set; }
             private DateTime Date { get; set; }
             private bool Complete { get; set; }
 
             private Payment(double qty, DateTime closed, bool? paid)
             {
-                Id = "0";
-                Amount = qty;
-                Date = closed;
-                Complete = paid ?? false;
-            }
-
-            private Payment(string id, double qty, DateTime closed, bool? paid)
-            {
-                Id = id;
+                Id = ObjectId.GenerateNewId();
                 Amount = qty;
                 Date = closed;
                 Complete = paid ?? false;

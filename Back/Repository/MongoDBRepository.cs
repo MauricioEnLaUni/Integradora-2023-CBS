@@ -65,12 +65,12 @@ namespace Fictichos.Constructora.Repository
                 .ToList();
             if (!result.Any()) return false;
             
+            
             Type type = result.GetType();
             IList<PropertyInfo> props = new List<PropertyInfo>(type.GetProperties());
             
             var filter = Builders<T>.Filter.Eq("Id", new ObjectId(update.Id));
-            var newData = Builders<T>.Update
-                .Set(x => )
+            
             return true;
         }
 
