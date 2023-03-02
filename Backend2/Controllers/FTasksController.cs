@@ -82,5 +82,35 @@ namespace Fitichos.Constructora.Controllers
                 where t.Parent == _id
                 select t).ToList());
         }
+
+        [HttpPost]
+        public async Task<ActionResult<FTasks>> CreateTask(NewFTaskDto data)
+        {
+            FTasks newTask = new(data);
+            await _repo.CreateAsync(newTask);
+            return Ok(newTask);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateTask(UpdateFTaskDto data)
+        {
+            if (data.Name is null && data.StartDate is null && data.Address is null
+                && data.Subtasks is null && data.EmployeesAssigned is null
+                    && data.Material is null && data.Closed is null) return BadRequest();
+
+            FTasks? item = _repo.GetById(data.Id);
+            if (item is null) return NotFound();
+
+            item.Update(data);
+            await _repo.UpdateAsync(item);
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteTask(string id)
+        {
+            await _repo.DeleteAsync(id);
+            return NoContent();
+        }
     }
 }

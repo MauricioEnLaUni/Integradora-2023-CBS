@@ -1,9 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-
 using Fitichos.Constructora.Repository;
 using Fitichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
@@ -43,6 +39,26 @@ namespace Fitichos.Constructora.Controllers
             Material toInsert = new(data);
             await _repo.CreateAsync(toInsert);
             return Ok(toInsert);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateMaterial(UpdatedMaterialDto data)
+        {
+            if (data.Quantity is null && data.Status is null
+                && data.BoughtFor is null) return BadRequest();
+
+            Material? update = _repo.GetById(data.Id);
+            if (update is null) return NotFound();
+
+            await _repo.UpdateAsync(update);
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteOne(string id)
+        {
+            await _repo.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

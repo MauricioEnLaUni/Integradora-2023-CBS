@@ -17,7 +17,6 @@ namespace Fitichos.Constructora.Dto
 
     public record UpdateFTaskDto
     {
-        public string Owner { get; set; } = string.Empty;
         public string Id { get; set; } = string.Empty;
         public string? Name { get; set; }
         public DateTime? StartDate { get; set; }
