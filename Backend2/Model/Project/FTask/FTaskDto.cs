@@ -1,3 +1,5 @@
+using MongoDB.Bson;
+
 using Fictichos.Constructora.Model;
 
 namespace Fitichos.Constructora.Dto
@@ -6,6 +8,7 @@ namespace Fitichos.Constructora.Dto
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public ObjectId? Parent { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime Closed { get; set; }
         public List<Employee> Assignees { get; set; } = new();
@@ -18,7 +21,7 @@ namespace Fitichos.Constructora.Dto
         public string Id { get; set; } = string.Empty;
         public string? Name { get; set; }
         public DateTime? StartDate { get; set; }
-        public List<FTasks>? Subtasks { get; set; }
+        public List<ObjectId>? Subtasks { get; set; }
         public List<Employee>? EmployeesAssigned { get; set; }
         public List<Material>? Material { get; set; }
         public Address? Address { get; set; }

@@ -7,6 +7,7 @@ using MongoDB.Driver.Linq;
 using Fitichos.Constructora.Repository;
 using Fitichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
+using Fictichos.Constructora.Utilities;
 
 namespace Fitichos.Constructora.Controllers
 {
@@ -17,7 +18,7 @@ namespace Fitichos.Constructora.Controllers
         private readonly string db = "cbs";
         private readonly string col = "material";
         private readonly Repository<Material, NewMaterialDto> _repo;
-        public MaterialController(IMongoClient mongoClient)
+        public MaterialController(MongoSettings mongoClient)
         {
             _repo = new(mongoClient, db, col);
         }

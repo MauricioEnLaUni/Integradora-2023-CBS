@@ -2,16 +2,18 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
+using Fictichos.Constructora.Utilities;
+
 namespace Fitichos.Constructora.Repository
 {
     public class Repository<T, U> : IRepository<T, U>
     where T : Entity
     {
-        public IMongoCollection<T> _col;
+        public IMongoCollection<T> _col { get; private set; }
 
-        public Repository(IMongoClient mongoClient, string database, string col)
+        public Repository(MongoSettings container, string database, string col)
         {
-            IMongoDatabase db = mongoClient.GetDatabase(database);
+            IMongoDatabase db = container.Client.GetDatabase(database);
             _col = db.GetCollection<T>(col);
         }
 

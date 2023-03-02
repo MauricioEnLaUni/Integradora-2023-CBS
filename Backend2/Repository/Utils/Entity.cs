@@ -1,10 +1,12 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+using Fictichos.Constructora.Utilities;
+
 namespace Fitichos.Constructora.Repository
 {
     [BsonIgnoreExtraElements]
-    public class Entity
+    public class Entity : IMongoMask
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

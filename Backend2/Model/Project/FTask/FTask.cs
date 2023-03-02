@@ -10,8 +10,10 @@ namespace Fictichos.Constructora.Model
     {
         [BsonElement("starts")]
         public DateTime StartDate { get; set; }
+        [BsonElement("parent")]
+        public ObjectId? Parent { get; set; }
         [BsonElement("subtasks")]
-        public List<FTasks> Subtasks { get; set; } = new();
+        public List<ObjectId> Subtasks { get; set; } = new();
         [BsonElement("employees")]
         public List<Employee> EmployeesAssigned { get; set; } = new();
         [BsonElement("material")]
@@ -23,6 +25,7 @@ namespace Fictichos.Constructora.Model
         {
             EmployeesAssigned = newTask.Assignees;
             if (newTask.Address is not null) Address = newTask.Address;
+            if (newTask.Parent is not null) Parent = newTask.Parent;
         }
 
         public void Update(UpdateFTaskDto data)
