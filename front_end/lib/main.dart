@@ -2,21 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart';
 
-void main() {
-  return runApp(
-    MaterialApp(
+void main() => runApp(const FictichosBuilderCRM());
+
+class FictichosBuilderCRM extends StatelessWidget {
+  const FictichosBuilderCRM({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
       title: Constants.appTitle,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Dashboard'),
-        ),
-        body: const Center(
-          child: Text(
-            'Hello World',
-            textDirection: TextDirection.ltr,
-          ),
-        ),
-      ),
-    ),
-  );
+      home: Scaffold(),
+    );
+  }
 }

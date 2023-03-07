@@ -1,11 +1,16 @@
 abstract class Constants {
   static const String appUrl = String.fromEnvironment(
-    'app_url',
+    'appUrl',
     defaultValue: '',
   );
 
   static const String appTitle = String.fromEnvironment(
-    'app_title',
+    'appTitle',
+    defaultValue: '',
+  );
+
+  static const String appTheme = String.fromEnvironment(
+    'appTheme',
     defaultValue: '',
   );
 }
