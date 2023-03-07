@@ -11,6 +11,7 @@ namespace Fictichos.Constructora.Model
         public int Quantity { get; set; }
         [BsonElement("owner")]
         public string Owner { get; set; }
+        // employee responsible
         [BsonElement("brand")]
         public string Brand { get; set; }
         [BsonElement("location")]
@@ -19,6 +20,7 @@ namespace Fictichos.Constructora.Model
         public int? Status { get; set; }
         [BsonElement("price")]
         public double BoughtFor { get; set; }
+        // depreciation
         [BsonElement("provider")]
         public string Provider { get; set; }
 

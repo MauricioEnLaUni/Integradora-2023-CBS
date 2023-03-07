@@ -87,4 +87,12 @@ namespace Fitichos.Constructora.Dto
             Brand = data.Brand;
         }
     }
+    
+    public record OwnerMaterialDto
+    {
+        public Dictionary<string, List<string>> Materials { get; set; } = new()
+        {
+            { "", new() }
+        };
+    }
 }

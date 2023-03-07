@@ -15,7 +15,10 @@ namespace Fitichos.Constructora.Model
         [BsonElement("active")]
         public bool Active { get; set; } = false;
         [BsonElement("email")]
-        public List<string> Email { get; set; } = new List<string>();
+        public List<string> Email { get; set; } = new();
+        // MAC?
+        // AUTH
+        // ROLES = EMPLEADO, ADMIN DE PROYECTO, ADMIN GENERAL
         
         public User(NewUserDto usr) : base(usr.Name, null)
         {

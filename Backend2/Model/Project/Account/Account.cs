@@ -9,7 +9,7 @@ namespace Fictichos.Constructora.Model
     public class Account : Entity
     {
         [BsonElement("payments")]
-        private List<Payment> Payments { get; set; } = new();
+        public List<Payment> Payments { get; set; } = new();
         [BsonElement("owner")]
         public string Owner { get; set; } = string.Empty;
         
@@ -17,6 +17,11 @@ namespace Fictichos.Constructora.Model
         public Account(NewAccountDto data) : base(data.Name, null)
         {
             Owner = data.Owner;
+        }
+
+        public void Update()
+        {
+            
         }
     }
 }

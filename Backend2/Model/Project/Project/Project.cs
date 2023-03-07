@@ -8,8 +8,9 @@ namespace Fictichos.Constructora.Model
 {
     public class Project : Entity
     {
+        // Jefe de proyecto 1 * 
         [BsonElement("account")]
-        public Account? PayHistory { get; set; } = new("None", null);
+        public Account? PayHistory { get; set; }
         [BsonElement("tasks")]
         public List<FTasks> Tasks { get; set; } = new List<FTasks>();
 
