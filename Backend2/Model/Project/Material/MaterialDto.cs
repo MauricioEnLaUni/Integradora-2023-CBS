@@ -25,6 +25,10 @@ namespace Fitichos.Constructora.Dto
         public string Provider { get; set; } = string.Empty;
         [Required]
         public string Owner { get; set; } = string.Empty;
+        [Required]
+        public string EmpResponsible { get; set; } = string.Empty;
+        [Required]
+        public double CurrentPrice { get; set; }
     }
 
     /// <summary>
@@ -45,6 +49,8 @@ namespace Fitichos.Constructora.Dto
         public string? Provider { get; set; }
         public string? Owner { get; set; }
         public string? Brand { get; set; }
+        public string? EmpResponsible { get; set; }
+        public double? CurrentPrice { get; set; }
     }
 
     /// <summary>
@@ -94,5 +100,22 @@ namespace Fitichos.Constructora.Dto
         {
             { "", new() }
         };
+    }
+
+    public record MaterialDto
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Owner { get; set; }
+        public string Brand { get; set; }
+        public int Quantity { get; set; }
+
+        public MaterialDto(Material data)
+        {
+            Id = data.Id.ToString();
+            Name = data.Name;
+            Owner = data.Owner;
+            Brand = data.Brand;
+        }
     }
 }
