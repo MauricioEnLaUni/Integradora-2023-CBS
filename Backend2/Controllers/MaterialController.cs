@@ -13,7 +13,7 @@ namespace Fitichos.Constructora.Controllers
     {
         private readonly string db = "cbs";
         private readonly string col = "material";
-        private readonly Repository<Material, NewMaterialDto> _repo;
+        private readonly Repository<Material> _repo;
         public MaterialController(MongoSettings mongoClient)
         {
             _repo = new(mongoClient, db, col);
@@ -58,6 +58,13 @@ namespace Fitichos.Constructora.Controllers
         public async Task<ActionResult> DeleteOne(string id)
         {
             await _repo.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [HttpDelete("bulk")]
+        public ActionResult DeleteBulk(List<string> ids)
+        {
+            ids.ForEach(async (e) => await _repo.DeleteAsync(e));
             return NoContent();
         }
     }

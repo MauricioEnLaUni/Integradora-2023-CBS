@@ -15,7 +15,7 @@ namespace Fitichos.Constructora.Controllers
     [Route("t")]
     public class FTasksController : ControllerBase
     {
-        private readonly Repository<FTasks, NewFTaskDto> _repo;
+        private readonly Repository<FTasks> _repo;
         private readonly string db = "cbs";
         private readonly string col = "tasks";
         private readonly IMongoCollection<FTasks> prCol;

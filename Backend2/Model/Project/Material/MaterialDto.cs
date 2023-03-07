@@ -42,6 +42,9 @@ namespace Fitichos.Constructora.Dto
         public int? Status { get; set; }
         public double? BoughtFor { get; set; }
         public DateTime? Closed { get; set; }
+        public string? Provider { get; set; }
+        public string? Owner { get; set; }
+        public string? Brand { get; set; }
     }
 
     /// <summary>

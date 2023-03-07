@@ -39,6 +39,9 @@ namespace Fictichos.Constructora.Model
             if (data.Status is not null) Status = data.Status;
             if (data.BoughtFor is not null) BoughtFor = (double)data.BoughtFor;
             if (data.Closed is not null) Closed = data.Closed;
+            if (data.Brand is not null) Brand = data.Brand;
+            if (data.Provider is not null) Provider = data.Provider;
+            if (data.Owner is not null) Owner = data.Owner;
         }
     }
 }

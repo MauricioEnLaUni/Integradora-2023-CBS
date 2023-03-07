@@ -1,6 +1,6 @@
 namespace Fitichos.Constructora.Repository
 {
-    public interface IRepository<T, U>
+    public interface IRepository<T>
     where T : Entity
     {
         List<T> GetAll();

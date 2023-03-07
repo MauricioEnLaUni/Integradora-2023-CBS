@@ -15,7 +15,7 @@ namespace Fitichos.Constructora.Controllers
     [Route("p")]
     public class ProjectController : ControllerBase
     {
-        private readonly Repository<Project, NewProjectDto> _repo;
+        private readonly Repository<Project> _repo;
         private readonly string db = "cbs";
         private readonly string col = "projects";
         public ProjectController(MongoSettings mongoClient)
@@ -27,6 +27,12 @@ namespace Fitichos.Constructora.Controllers
         public List<Project> GetAll()
         {
             return _repo.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public Project? GetById(string id)
+        {
+            return _repo.GetById(id);
         }
 
         [HttpPost("new")]
@@ -51,6 +57,20 @@ namespace Fitichos.Constructora.Controllers
 
             await _repo.UpdateAsync(exists);
             return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteAsync(string id)
+        {
+            await _repo.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [HttpDelete("bulk")]
+        public ActionResult DeleteBulk(List<string> ids)
+        {
+            ids.ForEach(async (e) => await _repo.DeleteAsync(e));
+            return NoContent();
         }
     }
 }

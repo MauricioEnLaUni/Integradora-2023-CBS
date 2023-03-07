@@ -6,7 +6,7 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fitichos.Constructora.Repository
 {
-    public class Repository<T, U> : IRepository<T, U>
+    public class Repository<T> : IRepository<T>
     where T : Entity
     {
         public IMongoCollection<T> _col { get; private set; }

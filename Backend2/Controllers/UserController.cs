@@ -17,7 +17,7 @@ namespace Fitichos.Constructora.Controllers
     {
         private readonly string db = "cbs";
         private readonly string col = "users";
-        private readonly Repository<User, NewUserDto> _repo;
+        private readonly Repository<User> _repo;
         public UserController(MongoSettings mongoClient)
         {
             _repo = new(mongoClient, db, col);
