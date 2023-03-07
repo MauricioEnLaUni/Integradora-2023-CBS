@@ -15,9 +15,7 @@ class NewEmployeeDto {
     this.dob,
     this.contacts,
     this.charges
-  ) {
-
-  }
+  );
 }
 
 class ContactDto {
