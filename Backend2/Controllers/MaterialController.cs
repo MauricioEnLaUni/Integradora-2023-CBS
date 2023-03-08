@@ -20,25 +20,41 @@ namespace Fitichos.Constructora.Controllers
         }
 
         [HttpGet]
-        public List<Material> GetAll()
+        public List<MaterialDto> GetAll()
         {
-            return _repo.GetAll();
+            List<Material> source = _repo.GetAll();
+            return (from m in source
+            select new MaterialDto(m)).ToList();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Material?> GetById(string id)
+        public ActionResult<MaterialDto?> GetById(string id)
         {
             Material? result = _repo.GetById(id);
-            if (result is null) return NotFound();
-            return Ok(result);
+            if(result is null) return NotFound();
+            MaterialDto? data = new(result);
+            return Ok(data);
+        }
+
+        [HttpGet("b/{id}")]
+        public ActionResult<List<MaterialDto>> GetByBrand()
+        {
+            return Ok();
         }
 
         [HttpPost]
-        public async Task<ActionResult<Material>> AddMaterial(NewMaterialDto data)
+        public async Task<ActionResult<MaterialDto>> AddMaterial(NewMaterialDto data)
         {
             Material toInsert = new(data);
             await _repo.CreateAsync(toInsert);
-            return Ok(toInsert);
+            return Ok(new MaterialDto(toInsert));
+        }
+
+        [HttpPost("i")]
+        public async Task<ActionResult<MaterialDto>> ImportMaterial(Material data)
+        {
+            await _repo.CreateAsync(data);
+            return Ok(new MaterialDto(data));
         }
 
         [HttpPut]

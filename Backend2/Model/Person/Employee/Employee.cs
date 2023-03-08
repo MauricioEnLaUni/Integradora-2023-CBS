@@ -16,6 +16,9 @@ namespace Fictichos.Constructora.Model
         private string RFC { get; set; } = string.Empty;
         [BsonElement("curp")]
         private string CURP { get; set; }
+        // visa pass w.e.
+        // INE
+        // Fotos de documentos => se vera
         [BsonElement("charges")]
         private List<Job> Charges { get; set; } = new List<Job>();
         [BsonElement("scheduleHistory")]

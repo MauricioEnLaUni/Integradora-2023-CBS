@@ -1,23 +1,27 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+using Fitichos.Constructora.Dto;
 using Fitichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Payment
+    public class Payment : Entity
     {
-        public ObjectId Id { get; init; }
+        [BsonElement("amount")]
         public double Amount { get; set; }
-        public DateTime Date { get; set; }
+        [BsonElement("complete")]
         public bool Complete { get; set; }
+        // in out
 
-        public Payment(double qty, DateTime closed, bool? paid)
+        public Payment(NewPaymentDto data) : base(data.Name, data.Due)
         {
-            Id = ObjectId.GenerateNewId();
-            Amount = qty;
-            Date = closed;
-            Complete = paid ?? false;
+            Amount = data.Amount;
+        }
+
+        public void Update(UpdatePaymentDto data)
+        {
+
         }
     }
 }

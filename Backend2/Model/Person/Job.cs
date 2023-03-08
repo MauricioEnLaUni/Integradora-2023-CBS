@@ -8,12 +8,17 @@ namespace Fictichos.Constructora.Model
 {
     public class Job : Entity
     {
+        // Clave interna
         [BsonElement("salaryHistory")]
         public List<Salary> SalaryHistory { get; set; } = new();
         [BsonElement("role")]
         public string Role { get; set; }
         [BsonElement("area")]
         public string Area { get; set; }
+        // Jefe inmediato
+        // herramientas, maquinaria, autos
+        // departamento
+        // expediente > sanciones - bonos - permisos - faltas
         [BsonElement("responsibilities")]
         public List<string> Responsibilities { get;  set; } = new();
 
@@ -33,6 +38,7 @@ namespace Fictichos.Constructora.Model
             public Dictionary<string, double> Reductions { get; set; } = new();
             [BsonElement("rate")]
             public double Rate { get; set; }
+            // weekly, biweekly, monthly
             [BsonElement("hoursWeek")]
             public int? HoursWeek { get; set; }
             

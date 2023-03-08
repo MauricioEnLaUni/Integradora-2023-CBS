@@ -11,6 +11,8 @@ namespace Fictichos.Constructora.Model
         public int Quantity { get; set; }
         [BsonElement("owner")]
         public string Owner { get; set; }
+        [BsonElement("empResponsible")]
+        public string EmpResponsible { get; set; }
         [BsonElement("brand")]
         public string Brand { get; set; }
         [BsonElement("location")]
@@ -19,6 +21,8 @@ namespace Fictichos.Constructora.Model
         public int? Status { get; set; }
         [BsonElement("price")]
         public double BoughtFor { get; set; }
+        [BsonElement("currentPrice")]
+        public double CurrentPrice { get; set; }
         [BsonElement("provider")]
         public string Provider { get; set; }
 
@@ -31,10 +35,22 @@ namespace Fictichos.Constructora.Model
             Brand = data.Brand;
             Provider = data.Provider;
             Owner = data.Owner;
+            EmpResponsible = data.EmpResponsible;
+            CurrentPrice = data.CurrentPrice;
         }
 
         public void Update(UpdatedMaterialDto data)
         {
+            Quantity = data.Quantity ?? Quantity;
+            Status = data.Status ?? Status;
+            BoughtFor = data.BoughtFor ?? BoughtFor;
+            Closed = data.Closed ?? Closed;
+            Brand = data.Brand ?? Brand;
+            Provider = data.Provider ?? Provider;
+            Owner = data.Owner ?? Owner;
+            EmpResponsible = data.EmpResponsible ?? EmpResponsible;
+            CurrentPrice = data.CurrentPrice ?? CurrentPrice;
+            /*
             if (data.Quantity is not null) Quantity = (int)data.Quantity;
             if (data.Status is not null) Status = data.Status;
             if (data.BoughtFor is not null) BoughtFor = (double)data.BoughtFor;
@@ -42,6 +58,7 @@ namespace Fictichos.Constructora.Model
             if (data.Brand is not null) Brand = data.Brand;
             if (data.Provider is not null) Provider = data.Provider;
             if (data.Owner is not null) Owner = data.Owner;
+            */
         }
     }
 }
