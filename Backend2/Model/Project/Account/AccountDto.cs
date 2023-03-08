@@ -42,6 +42,9 @@ namespace Fitichos.Constructora.Dto
 
     public record UpdatePaymentDto
     {
-        public string? 
+        public string Id { get; set; } = string.Empty;
+        public string? Name;
+        public DateTime? Due;
+        public double? Amount;
     }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './src/app.dart';
 
 import 'constants.dart';
 
@@ -9,9 +10,6 @@ class FictichosBuilderCRM extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: Constants.appTitle,
-      home: Scaffold(),
-    );
+    return const App();
   }
 }
