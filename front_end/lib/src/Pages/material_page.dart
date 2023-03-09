@@ -20,7 +20,6 @@ class FMaterialPage extends StatelessWidget {
             ),
           ],
         ),
-        body: 
       ),
     );
   }
