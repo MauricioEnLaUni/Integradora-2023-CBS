@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-using Fitichos.Constructora.Model;
+using Fictichos.Constructora.Model;
 
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
     public record LoginDto
     {

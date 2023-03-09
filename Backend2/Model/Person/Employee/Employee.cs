@@ -1,8 +1,8 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-using Fitichos.Constructora.Dto;
-using Fitichos.Constructora.Repository;
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {

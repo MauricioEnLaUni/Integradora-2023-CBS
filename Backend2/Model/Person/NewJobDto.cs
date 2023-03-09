@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
     public record NewJobDto
     {

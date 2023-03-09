@@ -1,30 +1,28 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-using Fitichos.Constructora.Repository;
-using Fitichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Model
 {
     public class Material : Entity
     {
         [BsonElement("qty")]
-        public int Quantity { get; set; }
+        public int Quantity { get; private set; }
         [BsonElement("owner")]
-        public string Owner { get; set; }
-        [BsonElement("empResponsible")]
-        public string EmpResponsible { get; set; }
-        [BsonElement("brand")]
-        public string Brand { get; set; }
+        public string Owner { get; private set; }
+        [BsonElement("handler")]
+        public string Handler { get; private set; }
         [BsonElement("location")]
-        public Address Location { get; set; }
+        public Address Location { get; private set; }
         [BsonElement("status")]
-        public int? Status { get; set; }
+        public int? Status { get; private set; }
         [BsonElement("price")]
-        public double BoughtFor { get; set; }
+        public double BoughtFor { get; private set; }
         [BsonElement("currentPrice")]
-        public double CurrentPrice { get; set; }
+        public double Depreciation { get; private set; }
         [BsonElement("provider")]
-        public string Provider { get; set; }
+        public string Provider { get; private set; }
 
         public Material(NewMaterialDto data) : base(data.Name, null)
         {
@@ -32,33 +30,68 @@ namespace Fictichos.Constructora.Model
             Location = new(data.Location);
             if (data.Status is not null) Status = data.Status;
             BoughtFor = data.BoughtFor;
-            Brand = data.Brand;
             Provider = data.Provider;
             Owner = data.Owner;
-            EmpResponsible = data.EmpResponsible;
-            CurrentPrice = data.CurrentPrice;
+            Handler = data.Handler;
+            Depreciation = data.Depreciation;
         }
 
-        public void Update(UpdatedMaterialDto data)
+        public void Update(List<dynamic> values)
         {
-            Quantity = data.Quantity ?? Quantity;
-            Status = data.Status ?? Status;
-            BoughtFor = data.BoughtFor ?? BoughtFor;
-            Closed = data.Closed ?? Closed;
-            Brand = data.Brand ?? Brand;
-            Provider = data.Provider ?? Provider;
-            Owner = data.Owner ?? Owner;
-            EmpResponsible = data.EmpResponsible ?? EmpResponsible;
-            CurrentPrice = data.CurrentPrice ?? CurrentPrice;
-            /*
-            if (data.Quantity is not null) Quantity = (int)data.Quantity;
-            if (data.Status is not null) Status = data.Status;
-            if (data.BoughtFor is not null) BoughtFor = (double)data.BoughtFor;
-            if (data.Closed is not null) Closed = data.Closed;
-            if (data.Brand is not null) Brand = data.Brand;
-            if (data.Provider is not null) Provider = data.Provider;
-            if (data.Owner is not null) Owner = data.Owner;
-            */
+            List<Action<int>> intActions = new()
+            {
+                SetQuantity,
+                SetStatus
+            };
+            List<Action<double>> doubleActions = new()
+            {
+                SetBoughtFor,
+                SetDepreciation
+            };
+            List<Action<string>> stringActions = new()
+            {
+                SetProvider,
+                SetHandler,
+                SetOwner
+            };
+
+            values.ForEach((e, i) => {
+                if (e is not null)
+                {
+                    if (i < 2) intActions[i](e);
+                    if (i < 4) doubleActions[i](e);
+                    if (i > 3) stringActions[i](e);
+                }
+            });
+        }
+
+        private void SetQuantity(int data)
+        {
+            Quantity = data;
+        }
+        private void SetStatus(int data)
+        {
+            Status = data;
+        }
+        private void SetHandler(string data)
+        {
+            Handler = data;
+        }
+        private void SetOwner(string data)
+        {
+            Owner = data;
+        }
+        private void SetBoughtFor(double data)
+        {
+            BoughtFor = data;
+        }
+        private void SetDepreciation(double data)
+        {
+            Depreciation = data;
+        }
+        private void SetProvider(string data)
+        {
+            Provider = data;
         }
     }
 }

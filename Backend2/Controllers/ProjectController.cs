@@ -4,9 +4,9 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-using Fitichos.Constructora.Repository;
+using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Model;
-using Fitichos.Constructora.Dto;
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 
 namespace Fitichos.Constructora.Controllers

@@ -4,7 +4,7 @@ using MongoDB.Driver.Linq;
 
 using Fictichos.Constructora.Utilities;
 
-namespace Fitichos.Constructora.Repository
+namespace Fictichos.Constructora.Repository
 {
     public class Repository<T> : IRepository<T>
     where T : Entity

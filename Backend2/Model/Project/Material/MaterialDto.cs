@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Fictichos.Constructora.Model;
 
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
     /// <summary>
     /// Payload for a constructor.
@@ -20,15 +20,15 @@ namespace Fitichos.Constructora.Dto
         [Required]
         public double BoughtFor { get; set; } = 0;
         [Required]
-        public string Brand { get; set; } = string.Empty;
-        [Required]
         public string Provider { get; set; } = string.Empty;
         [Required]
         public string Owner { get; set; } = string.Empty;
         [Required]
-        public string EmpResponsible { get; set; } = string.Empty;
+        public string Handler { get; set; } = string.Empty;
         [Required]
-        public double CurrentPrice { get; set; }
+        public double Depreciation { get; set; }
+        [Required]
+        public double Brand { get; set; }
     }
 
     /// <summary>
@@ -85,12 +85,12 @@ namespace Fitichos.Constructora.Dto
         public string Brand { get; set; }
         public int Quantity { get; set; }
 
-        public CurrentInventoryDto(Material data)
+        public CurrentInventoryDto(Material data, string brand)
         {
             Id = data.Id;
             Name = data.Name;
             Quantity = data.Quantity;
-            Brand = data.Brand;
+            Brand = brand;
         }
     }
     
@@ -110,12 +110,18 @@ namespace Fitichos.Constructora.Dto
         public string Brand { get; set; }
         public int Quantity { get; set; }
 
-        public MaterialDto(Material data)
+        public MaterialDto(Material data, string brand)
         {
             Id = data.Id.ToString();
             Name = data.Name;
             Owner = data.Owner;
-            Brand = data.Brand;
+            Brand = brand;
         }
+    }
+
+    public record NewMaterialCategory
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
     }
 }

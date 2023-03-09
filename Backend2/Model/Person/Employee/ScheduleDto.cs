@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-using Fictichos.Constructora.Model;
-
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
     public record NewScheduleDto
     {

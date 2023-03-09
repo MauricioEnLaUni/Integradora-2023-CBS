@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Utilities;
 
-namespace Fitichos.Constructora.Repository
+namespace Fictichos.Constructora.Repository
 {
     [BsonIgnoreExtraElements]
     public class Entity : IMongoMask

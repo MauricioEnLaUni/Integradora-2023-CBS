@@ -1,6 +1,6 @@
 using Fictichos.Constructora.Model;
 
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
     public record NewAccountDto
     {

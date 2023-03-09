@@ -1,10 +1,10 @@
 using MongoDB.Bson.Serialization.Attributes;
 using Isopoh.Cryptography.Argon2;
 
-using Fitichos.Constructora.Repository;
-using Fitichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Dto;
 
-namespace Fitichos.Constructora.Model
+namespace Fictichos.Constructora.Model
 {
     public class User : Entity
     {

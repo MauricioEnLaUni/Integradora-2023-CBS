@@ -1,4 +1,4 @@
-namespace Fitichos.Constructora.Repository
+namespace Fictichos.Constructora.Repository
 {
     public interface IRepository<T>
     where T : Entity
