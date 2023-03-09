@@ -13,7 +13,7 @@ namespace Fitichos.Constructora.Controllers
     {
         private readonly string db = "cbs";
         private readonly string col = "material";
-        private readonly Repository<Material> _repo;
+        private readonly Repository<MaterialCategory> _repo;
         public MaterialController(MongoSettings mongoClient)
         {
             _repo = new(mongoClient, db, col);
@@ -22,9 +22,9 @@ namespace Fitichos.Constructora.Controllers
         [HttpGet]
         public List<MaterialDto> GetAll()
         {
-            List<Material> source = _repo.GetAll();
+            List<MaterialCategory> source = _repo.GetAll();
             return (from m in source
-            select new MaterialDto(m)).ToList();
+            select m.AsOverview()).ToList();
         }
 
         [HttpGet("{id}")]
@@ -32,7 +32,7 @@ namespace Fitichos.Constructora.Controllers
         {
             Material? result = _repo.GetById(id);
             if(result is null) return NotFound();
-            MaterialDto? data = new(result);
+            MaterialDto? data = result.AsOverview();
             return Ok(data);
         }
 
@@ -47,14 +47,14 @@ namespace Fitichos.Constructora.Controllers
         {
             Material toInsert = new(data);
             await _repo.CreateAsync(toInsert);
-            return Ok(new MaterialDto(toInsert));
+            return Ok(toInsert.AsOverview());
         }
 
         [HttpPost("i")]
         public async Task<ActionResult<MaterialDto>> ImportMaterial(Material data)
         {
             await _repo.CreateAsync(data);
-            return Ok(new MaterialDto(data));
+            return Ok(data.AsOverview());
         }
 
         [HttpPut]

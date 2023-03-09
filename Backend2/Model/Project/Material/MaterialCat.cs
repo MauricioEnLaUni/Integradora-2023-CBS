@@ -1,22 +1,17 @@
 using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class MaterialCategory
+    public class MaterialCategory : Entity
     {
-        private Definition Definition { get; set; }
+        private string Type { get; set; }
         private List<MaterialCategory> SubCategories { get; set; } = new();
         private List<Material> Children { get; set; } = new();
 
-        public MaterialCategory(NewMaterialCategoryDto data)
+        public MaterialCategory(NewMaterialCategoryDto data) : base(data.Name, null)
         {
-            Definition = data.Definition;
-        }
-
-        private class Definition
-        {
-            public string Name { get; private set; }
-            public string Type { get; private set; }
+            Type = data.Type;
         }
     }
 }

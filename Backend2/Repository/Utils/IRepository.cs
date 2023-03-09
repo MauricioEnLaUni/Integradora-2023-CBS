@@ -1,7 +1,6 @@
 namespace Fictichos.Constructora.Repository
 {
     public interface IRepository<T>
-    where T : Entity
     {
         List<T> GetAll();
         T? GetById(string Id);

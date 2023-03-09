@@ -48,7 +48,6 @@ namespace Fictichos.Constructora.Dto
         public DateTime? Closed { get; set; }
         public string? Provider { get; set; }
         public string? Owner { get; set; }
-        public string? Brand { get; set; }
         public string? EmpResponsible { get; set; }
         public double? CurrentPrice { get; set; }
     }
@@ -80,18 +79,10 @@ namespace Fictichos.Constructora.Dto
     /// </remarks>
     public record CurrentInventoryDto
     {
-        public ObjectId Id { get; set;}
-        public string Name { get; set; }
-        public string Brand { get; set; }
-        public int Quantity { get; set; }
-
-        public CurrentInventoryDto(Material data, string brand)
-        {
-            Id = data.Id;
-            Name = data.Name;
-            Quantity = data.Quantity;
-            Brand = brand;
-        }
+        public string Id { get; set;} = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Brand { get; set; } = string.Empty;
+        public int Quantity { get; set; } = 0;
     }
     
     public record OwnerMaterialDto
@@ -104,22 +95,14 @@ namespace Fictichos.Constructora.Dto
 
     public record MaterialDto
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Owner { get; set; }
-        public string Brand { get; set; }
-        public int Quantity { get; set; }
-
-        public MaterialDto(Material data, string brand)
-        {
-            Id = data.Id.ToString();
-            Name = data.Name;
-            Owner = data.Owner;
-            Brand = brand;
-        }
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Owner { get; set; } = string.Empty;
+        public string Brand { get; set; } = string.Empty;
+        public int Quantity { get; set; } = 0;
     }
 
-    public record NewMaterialCategory
+    public record NewMaterialCategoryDto
     {
         public string Name { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;

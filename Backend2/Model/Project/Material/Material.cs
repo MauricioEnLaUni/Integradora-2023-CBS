@@ -1,11 +1,12 @@
 using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Material : Entity
+    public class Material : Entity, IMongoMask
     {
         [BsonElement("qty")]
         public int Quantity { get; private set; }
@@ -63,6 +64,27 @@ namespace Fictichos.Constructora.Model
                     if (i > 3) stringActions[i](e);
                 }
             });
+        }
+
+        public CurrentInventoryDto AsInventory()
+        {
+            return new CurrentInventoryDto()
+            {
+                Id = this.Id.ToString(),
+                Name = this.Name,
+                Quantity = this.Quantity
+            };
+        }
+
+        public MaterialDto AsOverview()
+        {
+            return new MaterialDto()
+            {
+                Id = this.Id.ToString(),
+                Name = this.Name,
+                Quantity = this.Quantity,
+                Owner = this.Owner
+            };
         }
 
         private void SetQuantity(int data)
