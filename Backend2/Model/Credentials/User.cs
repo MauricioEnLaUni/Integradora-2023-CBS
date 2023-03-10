@@ -22,7 +22,7 @@ namespace Fictichos.Constructora.Model
         
         public User(NewUserDto usr) : base(usr.Name, null)
         {
-            Password = usr.Password;
+            Password = Argon2.Hash(usr.Password);
             Email.Add(usr.Email);
         }
 

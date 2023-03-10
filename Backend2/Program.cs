@@ -11,6 +11,15 @@ builder.Services.AddSingleton(serviceProvider =>
     Console.WriteLine();
     return new MongoSettings();
 });
+var AllowOrigins = "_allowOrigins";
+builder.Services.AddCors(options => 
+{
+    options.AddPolicy(name: AllowOrigins,
+    policy => 
+    {
+        policy.WithOrigins("*");
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,6 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseCors(AllowOrigins);
 app.UseAuthorization();
 
 app.MapControllers();
