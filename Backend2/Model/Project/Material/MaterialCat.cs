@@ -5,13 +5,15 @@ namespace Fictichos.Constructora.Model
 {
     public class MaterialCategory : Entity
     {
-        private string Type { get; set; }
-        private List<MaterialCategory> SubCategories { get; set; } = new();
-        private List<Material> Children { get; set; } = new();
+        public string Type { get; private set; }
+        public string Parent { get; private set; }
+        public List<MaterialCategory> SubCategories { get; private set; } = new();
+        public List<Material> Children { get; private set; } = new();
 
         public MaterialCategory(NewMaterialCategoryDto data) : base(data.Name, null)
         {
             Type = data.Type;
+            Parent = data.Parent;
         }
     }
 }

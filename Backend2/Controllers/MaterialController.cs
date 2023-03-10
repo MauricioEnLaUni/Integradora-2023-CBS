@@ -5,7 +5,7 @@ using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 
-namespace Fitichos.Constructora.Controllers
+namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
     [Route("m")]
@@ -23,8 +23,16 @@ namespace Fitichos.Constructora.Controllers
         public List<MaterialDto> GetAll()
         {
             List<MaterialCategory> source = _repo.GetAll();
-            return (from m in source
-            select m.AsOverview()).ToList();
+            List<MaterialCategory> list =
+                (from m in source
+                select m).ToList();
+            List<MaterialDto> value = new();
+            list.ForEach(l => {
+                l.Children.ForEach(m => {
+                    value.Add(m.AsOverview());
+                });
+            });
+            return value;
         }
 
         [HttpGet("{id}")]

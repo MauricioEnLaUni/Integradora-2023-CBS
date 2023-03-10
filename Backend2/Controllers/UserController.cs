@@ -9,7 +9,7 @@ using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 
-namespace Fitichos.Constructora.Controllers
+namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
     [Route("u")]
@@ -67,7 +67,7 @@ namespace Fitichos.Constructora.Controllers
             User? exists = _repo.GetById(id);
             if (exists is null) return NotFound();
 
-            exists.Active = !exists.Active;
+            exists.SetActive();
             await _repo.UpdateAsync(exists);
             return Ok();
         }

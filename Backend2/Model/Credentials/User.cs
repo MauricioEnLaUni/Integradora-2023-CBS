@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using MongoDB.Bson.Serialization.Attributes;
 using Isopoh.Cryptography.Argon2;
 
@@ -9,13 +11,15 @@ namespace Fictichos.Constructora.Model
     public class User : Entity
     {
         [BsonElement("password")]
-        public string Password { get; set; }
+        public string Password { get; private set; }
         [BsonElement("avatar")]
-        public byte[]? Avatar { get; set; }
+        public byte[]? Avatar { get; private set; }
         [BsonElement("active")]
-        public bool Active { get; set; } = false;
+        public bool Active { get; private set; } = false;
         [BsonElement("email")]
-        public List<string> Email { get; set; } = new();
+        public List<string> Email { get; private set; } = new();
+        [BsonElement("roles")]
+        public List<string> Roles { get; private set; } = new();
         // MAC?
         // AUTH
         // ROLES = EMPLEADO, ADMIN DE PROYECTO, ADMIN GENERAL
@@ -36,6 +40,11 @@ namespace Fictichos.Constructora.Model
             if (changes.Avatar is not null) Avatar = changes.Avatar;
             if (changes.Email is not null) Email = changes.Email;
             if (changes.Password is not null) Password = changes.Password;
+        }
+
+        public void SetActive()
+        {
+            Active = !Active;
         }
     }
 }

@@ -37,33 +37,16 @@ namespace Fictichos.Constructora.Model
             Depreciation = data.Depreciation;
         }
 
-        public void Update(List<dynamic> values)
+        public void Update(UpdatedMaterialDto data)
         {
-            List<Action<int>> intActions = new()
-            {
-                SetQuantity,
-                SetStatus
-            };
-            List<Action<double>> doubleActions = new()
-            {
-                SetBoughtFor,
-                SetDepreciation
-            };
-            List<Action<string>> stringActions = new()
-            {
-                SetProvider,
-                SetHandler,
-                SetOwner
-            };
-
-            values.ForEach((e, i) => {
-                if (e is not null)
-                {
-                    if (i < 2) intActions[i](e);
-                    if (i < 4) doubleActions[i](e);
-                    if (i > 3) stringActions[i](e);
-                }
-            });
+            Quantity = data.Quantity ?? Quantity;
+            Status = data.Status ?? Status;
+            BoughtFor = data.BoughtFor ?? BoughtFor;
+            Provider = data.Provider ?? Provider;
+            Owner = data.Owner ?? Handler;
+            Handler = data.Handler ?? Handler;
+            Depreciation = data.Depreciation ?? Depreciation;
+            Location = data.Location is null ? Location : new(data.Location);
         }
 
         public CurrentInventoryDto AsInventory()
@@ -85,35 +68,6 @@ namespace Fictichos.Constructora.Model
                 Quantity = this.Quantity,
                 Owner = this.Owner
             };
-        }
-
-        private void SetQuantity(int data)
-        {
-            Quantity = data;
-        }
-        private void SetStatus(int data)
-        {
-            Status = data;
-        }
-        private void SetHandler(string data)
-        {
-            Handler = data;
-        }
-        private void SetOwner(string data)
-        {
-            Owner = data;
-        }
-        private void SetBoughtFor(double data)
-        {
-            BoughtFor = data;
-        }
-        private void SetDepreciation(double data)
-        {
-            Depreciation = data;
-        }
-        private void SetProvider(string data)
-        {
-            Provider = data;
         }
     }
 }

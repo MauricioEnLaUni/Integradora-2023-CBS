@@ -9,7 +9,7 @@ using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 
-namespace Fitichos.Constructora.Controllers
+namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
     [Route("p")]

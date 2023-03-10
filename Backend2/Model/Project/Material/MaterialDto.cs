@@ -48,8 +48,9 @@ namespace Fictichos.Constructora.Dto
         public DateTime? Closed { get; set; }
         public string? Provider { get; set; }
         public string? Owner { get; set; }
-        public string? EmpResponsible { get; set; }
-        public double? CurrentPrice { get; set; }
+        public string? Handler { get; set; }
+        public double? Depreciation { get; set; }
+        public NewAddressDto? Location { get; set; }
     }
 
     /// <summary>
@@ -106,5 +107,6 @@ namespace Fictichos.Constructora.Dto
     {
         public string Name { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
+        public string Parent { get; set; } = string.Empty;
     }
 }
