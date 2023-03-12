@@ -29,6 +29,8 @@ namespace Fictichos.Constructora.Dto
         public double Depreciation { get; set; }
         [Required]
         public double Brand { get; set; }
+        [Required]
+        public string Category { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -51,6 +53,7 @@ namespace Fictichos.Constructora.Dto
         public string? Handler { get; set; }
         public double? Depreciation { get; set; }
         public NewAddressDto? Location { get; set; }
+        public string? Category { get; set; }
     }
 
     /// <summary>
@@ -61,14 +64,8 @@ namespace Fictichos.Constructora.Dto
     /// </returns>
     public record MaterialMaintenanceDto
     {
-        public ObjectId Id { get; set; }
+        public ObjectId Id { get; set; } = new();
         public int Status { get; set; }
-
-        public MaterialMaintenanceDto(Material data)
-        {
-            Id = data.Id;
-            Status = data.Status ?? 0;
-        }
     }
 
     /// <summary>
@@ -106,7 +103,23 @@ namespace Fictichos.Constructora.Dto
     public record NewMaterialCategoryDto
     {
         public string Name { get; set; } = string.Empty;
-        public string Type { get; set; } = string.Empty;
-        public string Parent { get; set; } = string.Empty;
+        public string? Parent { get; set; } = string.Empty;
+    }
+
+    public record MaterialCategoryDto
+    {
+        public ObjectId Id { get; set; } = new();
+        public string Name { get; set; } = string.Empty;
+        public ObjectId? Parent { get; set; }
+        public List<ObjectId> Children { get; set; } = new();
+    }
+
+    public record UpdateMatCategoryDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string? Name { get; set; }
+        public string? Parent { get; set; }
+        public bool? UpdateFlag { get; set; }
+        public List<string>? Children { get; set; }
     }
 }

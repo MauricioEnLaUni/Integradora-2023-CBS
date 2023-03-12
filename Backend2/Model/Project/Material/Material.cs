@@ -1,4 +1,5 @@
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
@@ -24,6 +25,8 @@ namespace Fictichos.Constructora.Model
         public double Depreciation { get; private set; }
         [BsonElement("provider")]
         public string Provider { get; private set; }
+        [BsonElement("category")]
+        public string Category { get; private set; }
 
         public Material(NewMaterialDto data) : base(data.Name, null)
         {
@@ -35,6 +38,7 @@ namespace Fictichos.Constructora.Model
             Owner = data.Owner;
             Handler = data.Handler;
             Depreciation = data.Depreciation;
+            Category = data.Category;
         }
 
         public void Update(UpdatedMaterialDto data)
@@ -46,28 +50,41 @@ namespace Fictichos.Constructora.Model
             Owner = data.Owner ?? Handler;
             Handler = data.Handler ?? Handler;
             Depreciation = data.Depreciation ?? Depreciation;
+            Category = data.Category ?? Category;
             Location = data.Location is null ? Location : new(data.Location);
         }
 
-        public CurrentInventoryDto AsInventory()
+        public string AsInventory()
         {
-            return new CurrentInventoryDto()
+            CurrentInventoryDto data = new()
             {
                 Id = this.Id.ToString(),
                 Name = this.Name,
                 Quantity = this.Quantity
             };
+            return JsonConvert.SerializeObject(data);
         }
 
-        public MaterialDto AsOverview()
+        public string AsMaintenance()
         {
-            return new MaterialDto()
+            MaterialMaintenanceDto data = new()
+            {
+                Id = Id,
+                Status = Status ?? 0
+            };
+            return JsonConvert.SerializeObject(data);
+        }
+
+        public string AsOverview()
+        {
+            MaterialDto data = new()
             {
                 Id = this.Id.ToString(),
                 Name = this.Name,
                 Quantity = this.Quantity,
                 Owner = this.Owner
             };
+            return JsonConvert.SerializeObject(data);
         }
     }
 }
