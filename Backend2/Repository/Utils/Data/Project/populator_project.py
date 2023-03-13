@@ -56,8 +56,12 @@ class Payment:
     def in_list(self):
         """I'm not sure this is allowed."""
         i = 0
-        break_point = random.randint(1,10)
-        output = '['
+        break_point = random.randint(1,5)
+        output = '{'
+        output += f'"name":"{RandomWord().word(include_parts_of_speech=["noun","verb"]).capitalize()}",'
+        output += f'"createdAt":"{datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%dT%H:%M:%S.%fZ")}",'
+        output += '"owner":"",'
+        output += '"payments":['
         payment = Payment()
         while i < break_point:
             output += payment.stringify()
@@ -65,6 +69,7 @@ class Payment:
                 output += ','
             i += 1
         output += ']'
+        output += '},'
         return output
 
     def stringify(self):
@@ -119,20 +124,23 @@ class ProjectPopulator:
         i = 0
         while i < 10:
             pay = Payment()
-            payments = pay.in_list() if random.randint(0,9) < 8 else '[]'
-            task_number = random.randint(0,3)
+            payments = pay.in_list()
+            task_number = random.randint(0,2)
             tasks = '['
             j = 0
             while j < task_number:
-                tasks += FTask().one_task(2)
+                tasks += FTask().one_task(1)
+                if j != task_number - 1:
+                    tasks += ','
                 j += 1
             tasks += ']'
-
+            output += '{'
             output += f'"name":"{RandomWord().word(include_parts_of_speech=["noun","verb"]).capitalize()}",'
             output += f'"createdAt":\u007b"$date":"{datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%dT%H:%M:%S.%fZ")}"\u007d,'
             output += f'"deadline":\u007b"$date":"{datetime.datetime.strftime(datetime.datetime.now() + datetime.timedelta(days=30), "%Y-%m-%dT%H:%M:%S.%fZ")}"\u007d,'
-            output += f'"account":{payments},'
+            output += f'"account":{payments}'
             output += f'"tasks":{tasks}'
+            output += '}'
             if i != 10 - 1:
                 output += ','
 
