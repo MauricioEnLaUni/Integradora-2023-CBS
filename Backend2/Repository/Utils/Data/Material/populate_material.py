@@ -36,6 +36,7 @@ class MaterialPopulator:
             f.write(y)
 
     def get_address(self):
+        """Generates an address."""
         country = ['Mexico', 'USA', 'Guatemala', 'Canada'] 
         cities = [
             ('Aguascalientes','Aguascalientes'),
