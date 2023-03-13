@@ -39,6 +39,8 @@ namespace Fictichos.Constructora.Model
             [BsonElement("rate")]
             public double Rate { get; set; }
             // weekly, biweekly, monthly
+            // [BsonElement("period")]
+            // public int Period { get; set; }
             [BsonElement("hoursWeek")]
             public int? HoursWeek { get; set; }
             
