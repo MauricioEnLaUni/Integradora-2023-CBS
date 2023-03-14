@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton(serviceProvider => 
 {
-    Console.WriteLine();
     return new MongoSettings();
 });
 var AllowOrigins = "_allowOrigins";
@@ -26,7 +25,8 @@ builder.Services.AddAuthentication(Constants.COOKIENAME).AddCookie(Constants.COO
     options.Cookie.Name = Constants.COOKIENAME;
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
