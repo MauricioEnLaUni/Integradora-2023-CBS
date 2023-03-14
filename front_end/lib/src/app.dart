@@ -11,7 +11,7 @@ class App extends StatelessWidget {
       title: "a",
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("a"),
+          title: const Text("login"),
         ),
         body: const LogInPage(),
       ),

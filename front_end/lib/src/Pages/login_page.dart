@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Pages/dashboard.dart';
 import 'package:front_end/src/controllers/auth_controller.dart';
+import 'package:front_end/src/Pages/project_page.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
@@ -43,12 +44,22 @@ class LogInPage extends StatelessWidget {
           },
           child: const Text('Login'),
         ),
+        const SizedBox(
+          height: 10,
+        ),
         ElevatedButton(
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => DashBoardLayout()));
           },
           child: const Text('Go to Dashboard'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => projectLayout()));
+          },
+          child: const Text('Go to project'),
         ),
       ],
     );

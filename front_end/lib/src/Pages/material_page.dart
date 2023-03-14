@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants.dart';
+
 class FMaterialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -7,7 +9,7 @@ class FMaterialPage extends StatelessWidget {
       title: "Equipment Screen",
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Equipment Demo'),
+          title: const Text(Constants.appTitle),
           actions: <Widget>[
             IconButton(
                 icon: const Icon(Icons.manage_search),
@@ -20,7 +22,6 @@ class FMaterialPage extends StatelessWidget {
             ),
           ],
         ),
-        body: 
       ),
     );
   }
