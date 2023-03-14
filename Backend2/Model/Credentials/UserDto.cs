@@ -17,20 +17,9 @@ namespace Fictichos.Constructora.Dto
     public record LoginSuccessDto : DtoBase
     {
         public string Name { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public string[] Email { get; set; }
+        public List<string> Email { get; set; } = new();
         public byte[]? Avatar;
-
-        public LoginSuccessDto(User usr)
-        {
-            Id = usr.Id.ToString();
-            Name = usr.Name;
-            Password = usr.Password;
-            CreatedAt = usr.CreatedAt;
-            Email = usr.Email.ToArray<string>();
-            if (usr.Avatar is not null) Avatar = usr.Avatar;
-        }
     }
 
     public record NewUserDto
@@ -51,13 +40,6 @@ namespace Fictichos.Constructora.Dto
         public string? Password { get; set; } = string.Empty;
         public List<string>? Email { get; set; }
         public byte[]? Avatar { get; set; }
-
-        public UserChangesDto(User usr)
-        {
-            Password = usr.Password;
-            Email = usr.Email;
-            Avatar = usr.Avatar;
-        }
     }
 
     public record UserEmailDto : DtoBase

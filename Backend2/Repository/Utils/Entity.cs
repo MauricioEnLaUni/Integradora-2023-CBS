@@ -1,28 +1,29 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository
 {
     [BsonIgnoreExtraElements]
-    public class Entity : IMongoMask
+    public class Entity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId Id { get; set; }
+        public ObjectId Id { get; set; } = new ObjectId();
         [BsonElement("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [BsonElement("createdAt")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         [BsonElement("deadline")]
         public DateTime? Closed { get; set; }
 
-        public Entity(string name, DateTime? closes)
+        public Entity() { }
+
+        protected void SetFields(EntityDto data)
         {
-            Name = name;
-            CreatedAt = DateTime.Now;
-            if (closes is not null) Closed = closes;
+            Name = data.Name;
+            Closed = data.Closed ?? null;
         }
     }
 }

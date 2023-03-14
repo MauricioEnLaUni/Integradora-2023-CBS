@@ -1,92 +1,80 @@
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
-
 namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
-    [Route("u")]
+    [Route("[controller]")]
     public class UserController : ControllerBase
     {
         private readonly string db = "cbs";
         private readonly string col = "users";
-        private readonly Repository<User> _repo;
+        private readonly RepositoryAsync<User> _repo;
         public UserController(MongoSettings mongoClient)
         {
             _repo = new(mongoClient, db, col);
         }
 
         [HttpPost("new")]
-        public async Task<ActionResult<User>> CreateNewUser(NewUserDto newUser)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<string>> RegisterAsync(
+          [FromBody] string payload)
         {
-            User toInsert = new(newUser);
-            await _repo.CreateAsync(toInsert);
-            return Ok(toInsert);
+            User data = await _repo.CreateAsync(payload);
+            return CreatedAtAction(
+              nameof(Login),
+              new { usr = data.Name },
+              new { username = data.Name }
+            );
         }
 
         [HttpPost("login")]
-        public ActionResult<LoginSuccessDto> Login(LoginDto user)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<string>> Login(
+            [FromBody] string payload)
         {
-            User? exists =
-                (from u in _repo._col.AsQueryable()
-                where u.Name == user.Name
-                select u).SingleOrDefault();
-            if (exists is null) return NotFound();
+            LoginDto? id = JsonConvert.DeserializeObject<LoginDto>(payload);
+            if (id is null) return BadRequest();
 
-            if (!exists.ValidatePassword(user.Password)) return StatusCode(400);
-            LoginSuccessDto success = new(exists);
-            return Ok(success);
+            var filter = _repo.filterBuilder.Eq(e => e.Name, id.Name);
+            User? data = await _repo.GetOneByFilterAsync(filter);
+            if (data is null) return NotFound();
+
+            if (!data.ValidatePassword(id.Password)) return StatusCode(400);
+            if (!data.Active) return Unauthorized();
+
+            return Ok(data.AsDto());
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(UserChangesDto changes)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> Update(string payload)
         {
-            ObjectId _id = new(changes.Id);
-            User? exists =
-                (from u in _repo._col.AsQueryable()
-                where u.Id == _id
-                select u).SingleOrDefault();
-            if (exists is null) return NotFound();
+            if (payload is null) return BadRequest();
 
-            exists.Change(changes);
+            UserChangesDto? id = JsonConvert
+                .DeserializeObject<UserChangesDto>(payload);
+            if (id is null) return BadRequest();
 
-            await _repo.UpdateAsync(exists);
-            return Ok();
-        }
+            User? rawData = await _repo.GetByIdAsync(id.Id);
+            if (rawData is null) return NotFound();
 
-        [HttpPut("activation")]
-        public async Task<ActionResult> Activate(string id)
-        {
-            User? exists = _repo.GetById(id);
-            if (exists is null) return NotFound();
-
-            exists.SetActive();
-            await _repo.UpdateAsync(exists);
-            return Ok();
-        }
-
-        [HttpPut("email")]
-        public ActionResult ChangeEmail(UserEmailDto mail)
-        {
-            User? usr = _repo.GetById(mail.Id);
-            if (usr is null) return NotFound();
-
-            if (mail.method is true)
-            {
-                if (usr.Email.Contains(mail.Email)) return StatusCode(400);
-                usr.Email.Add(mail.Email);
-                return Ok();
-            }
-            if (!usr.Email.Contains(mail.Email)) return NotFound();
-            usr.Email.Remove(mail.Email);
-            return Ok();
+            rawData.Update(id);
+            
+            await _repo.UpdateAsync(rawData);
+            return NoContent();
         }
     }
 }

@@ -1,33 +1,39 @@
-using System.Collections.Generic;
-
 using MongoDB.Bson.Serialization.Attributes;
 using Isopoh.Cryptography.Argon2;
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class User : Entity
+    public class User : Entity, IQueryMask<User>
     {
+        private string _password = string.Empty;
         [BsonElement("password")]
-        public string Password { get; private set; }
+        public string Password
+        {
+            get => _password;
+            set => _password = Argon2.Hash(value);
+        }
         [BsonElement("avatar")]
         public byte[]? Avatar { get; private set; }
         [BsonElement("active")]
         public bool Active { get; private set; } = false;
         [BsonElement("email")]
         public List<string> Email { get; private set; } = new();
-        [BsonElement("roles")]
-        public List<string> Roles { get; private set; } = new();
+        // [BsonElement("roles")]
+        // public List<string> Roles { get; private set; } = new();
         // MAC?
         // AUTH
         // ROLES = EMPLEADO, ADMIN DE PROYECTO, ADMIN GENERAL
-        
-        public User(NewUserDto usr) : base(usr.Name, null)
+
+        public User() { }
+        private User(NewUserDto usr)
         {
-            Password = Argon2.Hash(usr.Password);
+            Name = usr.Name;
+            Password = usr.Password;
             Email.Add(usr.Email);
         }
 
@@ -36,7 +42,7 @@ namespace Fictichos.Constructora.Model
             return Argon2.Verify(Password, pwd);
         }
 
-        public void Change(UserChangesDto changes)
+        public void Update(UserChangesDto changes)
         {
             if (changes.Avatar is not null) Avatar = changes.Avatar;
             if (changes.Email is not null) Email = changes.Email;
@@ -50,8 +56,30 @@ namespace Fictichos.Constructora.Model
 
         public string AsDto()
         {
-            LoginSuccessDto data = new(this);
+            LoginSuccessDto data = new()
+            {
+                Name = Name,
+                CreatedAt = CreatedAt,
+                Email = Email,
+                Avatar = Avatar
+            };
             return JsonConvert.SerializeObject(data);
+        }
+
+        public User FakeConstructor(string dto)
+        {
+            try
+            {
+                return new User(JsonConvert
+                    .DeserializeObject<NewUserDto>(dto, new JsonSerializerSettings
+                {
+                    MissingMemberHandling = MissingMemberHandling.Error
+                })!);
+            }
+            catch
+            {
+                throw new JsonSerializationException();
+            }
         }
     }
 }

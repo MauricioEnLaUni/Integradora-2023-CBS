@@ -37,12 +37,6 @@ namespace Fictichos.Constructora.Utilities
             settings.LinqProvider = LinqProvider.V3;
             Client = new(settings);
         }
-
-        public IMongoCollection<IMongoMask> MakeCollection(int key)
-        {
-            return Client.GetDatabase("cbs")
-                .GetCollection<IMongoMask>(Collections[key]);
-        }
     }
 
     public static class Constants
