@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class CommonMethod {
   ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+    fontFamily: 'Noto Sans',
     appBarTheme: AppBarTheme(
       color: Colors.grey[800]
     ),
