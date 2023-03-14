@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 using MongoDB.Bson.Serialization.Attributes;
 using Isopoh.Cryptography.Argon2;
+using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
@@ -45,6 +46,12 @@ namespace Fictichos.Constructora.Model
         public void SetActive()
         {
             Active = !Active;
+        }
+
+        public string AsDto()
+        {
+            LoginSuccessDto data = new(this);
+            return JsonConvert.SerializeObject(data);
         }
     }
 }

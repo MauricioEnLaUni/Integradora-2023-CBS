@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+using Newtonsoft.Json;
+
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -37,6 +39,18 @@ namespace Fictichos.Constructora.Model
             Country = data.Country ?? null;
             Coordinates = data.Coordinates ?? null;
         }
+
+        public string AsDto()
+        {
+            AddressDto data = new(this);
+            return JsonConvert.SerializeObject(data);
+        }
+
+        public string AsSlimDto()
+        {
+            SlimAddressDto data = new(this);
+            return JsonConvert.SerializeObject(data);
+        }
     }
     public class Coordinates
     {
@@ -46,5 +60,10 @@ namespace Fictichos.Constructora.Model
         [BsonElement("longitude")]
         [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
         public string Longitude { get; set; } = string.Empty;
+
+        public string Stringify()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }
