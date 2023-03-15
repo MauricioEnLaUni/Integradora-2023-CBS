@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using MongoDB.Bson;
 
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 
@@ -25,7 +26,7 @@ namespace Fictichos.Constructora.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateNewUser(
+        public async Task<ActionResult> CreateAsync(
             [FromBody] string payload)
         {
             T data = await _repo.CreateAsync(payload);
@@ -39,7 +40,7 @@ namespace Fictichos.Constructora.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<string>>> GetAllAsync()
+        public virtual async Task<ActionResult<List<string>>> GetAllAsync()
         {
             List<T> rawData = await _repo.GetAllAsync();
             List<string> data = new();

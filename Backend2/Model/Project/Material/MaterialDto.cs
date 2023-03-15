@@ -1,8 +1,6 @@
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
-using Fictichos.Constructora.Model;
-
 namespace Fictichos.Constructora.Dto
 {
     /// <summary>

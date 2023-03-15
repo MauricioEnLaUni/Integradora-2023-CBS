@@ -9,10 +9,9 @@ namespace Fictichos.Constructora.Repository
     public class RepositoryAsync<T> : IAsyncRepository<T>
     where T : Entity, IQueryMask<T>, new()
     {
-        private readonly IMongoCollection<T> Collection;
+        public readonly IMongoCollection<T> Collection;
         public readonly FilterDefinitionBuilder<T> filterBuilder =
             Builders<T>.Filter;
-
 
         public RepositoryAsync(MongoSettings container, string database, string col)
         {

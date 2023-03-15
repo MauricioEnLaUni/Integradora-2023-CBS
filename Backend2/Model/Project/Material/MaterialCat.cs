@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using MongoDB.Bson.Serialization.Attributes;
@@ -12,9 +10,9 @@ namespace Fictichos.Constructora.Model
 {
     public class MaterialCategory : Entity, IQueryMask<MaterialCategory>
     {
-        private ObjectId? Parent { get; set; }
-        private List<MaterialCategory>? SubCategory { get; set; }
-        private List<Material>? Children { get; set; } = new();
+        public ObjectId? Parent { get; private set; }
+        public List<MaterialCategory>? SubCategory { get; private set; }
+        public List<Material>? Children { get; private set; } = new();
 
         public MaterialCategory() { }
         private MaterialCategory(NewMaterialCategoryDto data)
@@ -78,7 +76,7 @@ namespace Fictichos.Constructora.Model
             Parent = data.Parent ?? null;
         }
 
-        private class Material : Entity
+        public class Material : Entity
         {
             [BsonElement("qty")]
             public int Quantity { get; private set; }
