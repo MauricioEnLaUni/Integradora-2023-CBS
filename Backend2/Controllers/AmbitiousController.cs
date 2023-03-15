@@ -40,7 +40,7 @@ namespace Fictichos.Constructora.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public virtual async Task<ActionResult<List<string>>> GetAllAsync()
+        public async Task<ActionResult<List<string>>> GetAllAsync()
         {
             List<T> rawData = await _repo.GetAllAsync();
             List<string> data = new();
