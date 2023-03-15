@@ -1,55 +1,173 @@
+using System.Collections.Generic;
+
 using MongoDB.Bson;
 using Newtonsoft.Json;
+using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class MaterialCategory : Entity
+    public class MaterialCategory : Entity, IQueryMask<MaterialCategory>
     {
-        public ObjectId? Parent { get; private set; }
-        public List<ObjectId> Children { get; private set; } = new();
+        private ObjectId? Parent { get; set; }
+        private List<MaterialCategory>? SubCategory { get; set; }
+        private List<Material>? Children { get; set; } = new();
 
-        public MaterialCategory(NewMaterialCategoryDto data) : base(data.Name, null)
+        public MaterialCategory() { }
+        private MaterialCategory(NewMaterialCategoryDto data)
         {
-            Parent = data.Parent is null ? null : new(data.Parent);
+            Name = data.Name;
+            Parent = data.Parent ?? null;
+        }
+        public MaterialCategory FakeConstructor(string dto)
+        {
+            try
+            {
+                return new MaterialCategory(JsonConvert
+                    .DeserializeObject<NewMaterialCategoryDto>(dto, new JsonSerializerSettings
+                {
+                    MissingMemberHandling = MissingMemberHandling.Error
+                })!);
+            }
+            catch
+            {
+                throw new JsonSerializationException();
+            }
         }
 
-        public string AsDto()
+        private MaterialCategoryDto DtoInternal()
         {
-            MaterialCategoryDto temp = new()
+            List<string>? cats = null;
+            List<string>? mats = null;
+            if (SubCategory is not null)
+            {
+                cats = new();
+                SubCategory.ForEach(e => {
+                    cats.Add(JsonConvert.SerializeObject(SubCategory));
+                });
+            }
+            if (Children is not null)
+            {
+                mats = new();
+                Children.ForEach(e => {
+                    mats.Add(JsonConvert.SerializeObject(Children));
+                });
+            }
+            return new()
             {
                 Id = Id,
                 Name = Name,
                 Parent = Parent,
-                Children = Children,
+                SubCategory = cats,
+                Children = mats
             };
+        }
+
+        public string AsDto()
+        {
+            MaterialCategoryDto temp = DtoInternal();
             return JsonConvert.SerializeObject(temp);
         }
 
         public void Update(UpdateMatCategoryDto data)
         {
             Name = data.Name ?? Name;
-            Parent = data.Parent is null ? Parent : new ObjectId(data.Parent);
-            if (data.Children is not null)
-            {
-                SetChildren(data);
-            }
+            Parent = data.Parent ?? null;
         }
 
-        public void SetChildren(UpdateMatCategoryDto data)
+        private class Material : Entity
         {
-            if (data.UpdateFlag is null)
+            [BsonElement("qty")]
+            public int Quantity { get; private set; }
+            [BsonElement("owner")]
+            public ObjectId Owner { get; private set; }
+            [BsonElement("handler")]
+            public ObjectId Handler { get; private set; }
+            [BsonElement("location")]
+            public Address Location { get; private set; } = new();
+            [BsonElement("status")]
+            public int? Status { get; private set; }
+            [BsonElement("price")]
+            public double BoughtFor { get; private set; }
+            [BsonElement("currentPrice")]
+            public double Depreciation { get; private set; }
+            [BsonElement("provider")]
+            public ObjectId Provider { get; private set; }
+
+            public Material() { }
+            private Material(NewMaterialDto data)
             {
-                Children = (from c in data.Children
-                select new ObjectId(c)).ToList();
-            } else if ((bool)data.UpdateFlag)
+                Name = data.Name;
+                Quantity = data.Quantity;
+                Location = new Address().FakeConstructor(data.Location);
+                if (data.Status is not null) Status = data.Status;
+                BoughtFor = data.BoughtFor;
+                Provider = data.Provider;
+                Owner = data.Owner;
+                Handler = data.Handler;
+                Depreciation = data.Depreciation;
+            }
+            public Material FakeConstructor(string dto)
             {
-                Children.Add(new ObjectId(data.Children![0]));
-            } else
+                return new Material(JsonConvert
+                    .DeserializeObject<NewMaterialDto>(dto, new JsonSerializerSettings
+                {
+                    MissingMemberHandling = MissingMemberHandling.Error
+                })!);
+            }
+
+            public void Update(UpdatedMaterialDto data)
             {
-                Children.Remove(new ObjectId(data.Children![0]));
+                Quantity = data.Quantity ?? Quantity;
+                Status = data.Status ?? Status;
+                BoughtFor = data.BoughtFor ?? BoughtFor;
+                Provider = data.Provider ?? Provider;
+                Owner = data.Owner ?? Handler;
+                Handler = data.Handler ?? Handler;
+                Depreciation = data.Depreciation ?? Depreciation;
+                Location = data.Location is null ?
+                    Location : new Address().FakeConstructor(data.Location);
+            }
+
+            public MaterialDto DtoInternal()
+            {
+                return new()
+                {
+                    Id = Id,
+                    Name = Name,
+                    Quantity = Quantity,
+                    Owner = Owner
+                };
+            }
+
+            public string AsInventory()
+            {
+                CurrentInventoryDto data = new()
+                {
+                    Id = Id,
+                    Name = Name,
+                    Quantity = Quantity
+                };
+                return JsonConvert.SerializeObject(data);
+            }
+
+            public string AsMaintenance()
+            {
+                MaterialMaintenanceDto data = new()
+                {
+                    Id = Id,
+                    Status = Status ?? 0
+                };
+                return JsonConvert.SerializeObject(data);
+            }
+
+            public string AsOverview()
+            {
+                MaterialDto data = DtoInternal();
+                return JsonConvert.SerializeObject(data);
             }
         }
     }

@@ -28,7 +28,8 @@ namespace Fictichos.Constructora.Model
         [BsonElement("coor")]
         public Coordinates? Coordinates { get; set; }
 
-        public Address(NewAddressDto data)
+        public Address() { }
+        private Address(NewAddressDto data)
         {
             Street = data.Street ?? null;
             Number = data.Number ?? null;
@@ -38,6 +39,21 @@ namespace Fictichos.Constructora.Model
             State = data.State ?? null;
             Country = data.Country ?? null;
             Coordinates = data.Coordinates ?? null;
+        }
+        public Address FakeConstructor(string dto)
+        {
+            try
+            {
+                return new Address(JsonConvert
+                    .DeserializeObject<NewAddressDto>(dto, new JsonSerializerSettings
+                {
+                    MissingMemberHandling = MissingMemberHandling.Error
+                })!);
+            }
+            catch
+            {
+                throw new JsonSerializationException();
+            }
         }
 
         public string AsDto()
