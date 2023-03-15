@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using MongoDB.Bson;
 
-using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 
