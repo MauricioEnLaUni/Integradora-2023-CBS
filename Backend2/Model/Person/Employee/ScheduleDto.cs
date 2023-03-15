@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
 
 namespace Fictichos.Constructora.Dto
 {
@@ -9,5 +10,12 @@ namespace Fictichos.Constructora.Dto
         [Required]
         public Dictionary<TimeSpan, int> Hours { get; set; } = new();
         public NewAddressDto? Location { get; set; }
+    }
+    public record ScheduleDto
+    {
+        public ObjectId Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public Dictionary<TimeSpan, int> Hours { get; set; } = new();
+        public AddressDto? Location { get; set; }
     }
 }

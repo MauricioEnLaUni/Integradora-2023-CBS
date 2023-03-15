@@ -109,8 +109,8 @@ namespace Fictichos.Constructora.Dto
         public ObjectId Id { get; set; } = new();
         public string Name { get; set; } = string.Empty;
         public ObjectId? Parent { get; set; }
-        public List<string>? SubCategory { get; set; } = new();
-        public List<string>? Children { get; set; } = new();
+        public List<MaterialCategoryDto>? SubCategory { get; set; } = new();
+        public List<MaterialDto>? Children { get; set; } = new();
     }
 
     public record UpdateMatCategoryDto

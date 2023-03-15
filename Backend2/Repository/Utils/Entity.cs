@@ -10,7 +10,7 @@ namespace Fictichos.Constructora.Repository
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId Id { get; set; } = new ObjectId();
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         [BsonElement("name")]
         public string Name { get; set; } = string.Empty;
         [BsonElement("createdAt")]

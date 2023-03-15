@@ -8,10 +8,13 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class MaterialCategory : Entity, IQueryMask<MaterialCategory>
+    public class MaterialCategory : Entity, IQueryMask<MaterialCategory, MaterialCategoryDto>
     {
+        [BsonElement("parent")]
         public ObjectId? Parent { get; private set; }
+        [BsonElement("subcategory")]
         public List<MaterialCategory>? SubCategory { get; private set; }
+        [BsonElement("children")]
         public List<Material>? Children { get; private set; } = new();
 
         public MaterialCategory() { }
@@ -36,22 +39,22 @@ namespace Fictichos.Constructora.Model
             }
         }
 
-        private MaterialCategoryDto DtoInternal()
+        public MaterialCategoryDto ToDto()
         {
-            List<string>? cats = null;
-            List<string>? mats = null;
+            List<MaterialCategoryDto>? cats = null;
+            List<MaterialDto>? mats = null;
             if (SubCategory is not null)
             {
                 cats = new();
                 SubCategory.ForEach(e => {
-                    cats.Add(JsonConvert.SerializeObject(SubCategory));
+                    cats.Add(e.ToDto());
                 });
             }
             if (Children is not null)
             {
                 mats = new();
                 Children.ForEach(e => {
-                    mats.Add(JsonConvert.SerializeObject(Children));
+                    mats.Add(e.ToDto());
                 });
             }
             return new()
@@ -64,9 +67,9 @@ namespace Fictichos.Constructora.Model
             };
         }
 
-        public string AsDto()
+        public string SerializeDto()
         {
-            MaterialCategoryDto temp = DtoInternal();
+            MaterialCategoryDto temp = ToDto();
             return JsonConvert.SerializeObject(temp);
         }
 
@@ -74,99 +77,6 @@ namespace Fictichos.Constructora.Model
         {
             Name = data.Name ?? Name;
             Parent = data.Parent ?? null;
-        }
-
-        public class Material : Entity
-        {
-            [BsonElement("qty")]
-            public int Quantity { get; private set; }
-            [BsonElement("owner")]
-            public ObjectId Owner { get; private set; }
-            [BsonElement("handler")]
-            public ObjectId Handler { get; private set; }
-            [BsonElement("location")]
-            public Address Location { get; private set; } = new();
-            [BsonElement("status")]
-            public int? Status { get; private set; }
-            [BsonElement("price")]
-            public double BoughtFor { get; private set; }
-            [BsonElement("currentPrice")]
-            public double Depreciation { get; private set; }
-            [BsonElement("provider")]
-            public ObjectId Provider { get; private set; }
-
-            public Material() { }
-            private Material(NewMaterialDto data)
-            {
-                Name = data.Name;
-                Quantity = data.Quantity;
-                Location = new Address().FakeConstructor(data.Location);
-                if (data.Status is not null) Status = data.Status;
-                BoughtFor = data.BoughtFor;
-                Provider = data.Provider;
-                Owner = data.Owner;
-                Handler = data.Handler;
-                Depreciation = data.Depreciation;
-            }
-            public Material FakeConstructor(string dto)
-            {
-                return new Material(JsonConvert
-                    .DeserializeObject<NewMaterialDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-
-            public void Update(UpdatedMaterialDto data)
-            {
-                Quantity = data.Quantity ?? Quantity;
-                Status = data.Status ?? Status;
-                BoughtFor = data.BoughtFor ?? BoughtFor;
-                Provider = data.Provider ?? Provider;
-                Owner = data.Owner ?? Handler;
-                Handler = data.Handler ?? Handler;
-                Depreciation = data.Depreciation ?? Depreciation;
-                Location = data.Location is null ?
-                    Location : new Address().FakeConstructor(data.Location);
-            }
-
-            public MaterialDto DtoInternal()
-            {
-                return new()
-                {
-                    Id = Id,
-                    Name = Name,
-                    Quantity = Quantity,
-                    Owner = Owner
-                };
-            }
-
-            public string AsInventory()
-            {
-                CurrentInventoryDto data = new()
-                {
-                    Id = Id,
-                    Name = Name,
-                    Quantity = Quantity
-                };
-                return JsonConvert.SerializeObject(data);
-            }
-
-            public string AsMaintenance()
-            {
-                MaterialMaintenanceDto data = new()
-                {
-                    Id = Id,
-                    Status = Status ?? 0
-                };
-                return JsonConvert.SerializeObject(data);
-            }
-
-            public string AsOverview()
-            {
-                MaterialDto data = DtoInternal();
-                return JsonConvert.SerializeObject(data);
-            }
         }
     }
 }

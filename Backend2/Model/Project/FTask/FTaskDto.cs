@@ -11,7 +11,7 @@ namespace Fictichos.Constructora.Dto
         public ObjectId? Parent { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime Closed { get; set; }
-        public List<Employee> Assignees { get; set; } = new();
+        public List<ObjectId> Assignees { get; set; } = new();
         public Address? Address { get; set; }
     }
 
@@ -20,10 +20,22 @@ namespace Fictichos.Constructora.Dto
         public string Id { get; set; } = string.Empty;
         public string? Name { get; set; }
         public DateTime? StartDate { get; set; }
-        public List<ObjectId>? Subtasks { get; set; }
-        public List<Employee>? EmployeesAssigned { get; set; }
-        public List<Material>? Material { get; set; }
+        public Dictionary<ObjectId, Dictionary<int, UpdateFTaskDto>>? Subtasks { get; set; }
+        public Dictionary<ObjectId, Dictionary<int, UpdatedEmployeeDto>>? EmployeesAssigned { get; set; }
+        public Dictionary<ObjectId, Dictionary<int, UpdatedMaterialDto>>? Material { get; set; }
         public Address? Address { get; set; }
         public DateTime? Closed { get; set; }
+    }
+
+    public record FTasksDto
+    {
+        public ObjectId Id { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime Closed { get; set; }
+        public ObjectId? Parent { get; set; }
+        public List<FTasksDto> Subtasks { get; set; } = new();
+        public List<ObjectId> EmployeesAssigned { get; set; } = new();
+        public List<ObjectId> Material { get; set; } = new();
+        public Address? Address { get; set; }
     }
 }

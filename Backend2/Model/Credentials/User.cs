@@ -8,7 +8,7 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class User : Entity, IQueryMask<User>
+    public class User : Entity, IQueryMask<User, LoginSuccessDto>
     {
         private string _password = string.Empty;
         [BsonElement("password")]
@@ -30,7 +30,7 @@ namespace Fictichos.Constructora.Model
         // ROLES = EMPLEADO, ADMIN DE PROYECTO, ADMIN GENERAL
 
         public User() { }
-        private User(NewUserDto usr)
+        public User(NewUserDto usr)
         {
             Name = usr.Name;
             Password = usr.Password;
@@ -54,15 +54,20 @@ namespace Fictichos.Constructora.Model
             Active = !Active;
         }
 
-        public string AsDto()
+        public LoginSuccessDto ToDto()
         {
-            LoginSuccessDto data = new()
+            return new()
             {
                 Name = Name,
                 CreatedAt = CreatedAt,
                 Email = Email,
                 Avatar = Avatar
             };
+        }
+
+        public string SerializeDto()
+        {
+            LoginSuccessDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
 

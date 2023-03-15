@@ -6,10 +6,12 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Address
+    public class Address : Entity, IQueryMask<Address, AddressDto>
     {
         [BsonElement("street")]
         public string? Street { get; set; }
@@ -29,7 +31,7 @@ namespace Fictichos.Constructora.Model
         public Coordinates? Coordinates { get; set; }
 
         public Address() { }
-        private Address(NewAddressDto data)
+        public Address(NewAddressDto data)
         {
             Street = data.Street ?? null;
             Number = data.Number ?? null;
@@ -55,10 +57,19 @@ namespace Fictichos.Constructora.Model
                 throw new JsonSerializationException();
             }
         }
-
-        public string AsDto()
+        public Address FakeConstructor(NewAddressDto dto)
         {
-            AddressDto data = new(this);
+            return new(dto);
+        }
+
+        public AddressDto ToDto()
+        {
+            return new(this);
+        }
+
+        public string SerializeDto()
+        {
+            AddressDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
 
@@ -76,10 +87,5 @@ namespace Fictichos.Constructora.Model
         [BsonElement("longitude")]
         [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
         public string Longitude { get; set; } = string.Empty;
-
-        public string Stringify()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
     }
 }

@@ -3,51 +3,123 @@ using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Utilities;
+using Newtonsoft.Json;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Job : Entity
+    public class Job : Entity, IQueryMask<Job, JobDto>
     {
-        // Clave interna
         [BsonElement("salaryHistory")]
         public List<Salary> SalaryHistory { get; set; } = new();
         [BsonElement("role")]
-        public string Role { get; set; }
+        public string Role { get; set; } = string.Empty;
         [BsonElement("area")]
-        public string Area { get; set; }
-        // Jefe inmediato
-        // herramientas, maquinaria, autos
-        // departamento
-        // expediente > sanciones - bonos - permisos - faltas
+        public string Area { get; set; } = string.Empty;
+        [BsonElement("responsible")]// Jefe inmediato
+        public ObjectId Responsible { get; set; }
+        [BsonElement("material")]
+        public List<ObjectId> Material { get; set; } = new();
+        [BsonElement("parent")]
+        public ObjectId Parent { get; set; }
         [BsonElement("responsibilities")]
         public List<string> Responsibilities { get;  set; } = new();
 
-        public Job(NewJobDto data) : base(data.Name, null)
+        public Job(NewJobDto data)
         {
             Role = data.Role;
             Area = data.Area;
             Responsibilities = data.Responsibilities;
         }
-
-
-        public class Salary
+        public Job() { }
+        
+        public JobDto ToDto()
         {
-            public string Id { get; set; } = "";
-            public DateTime Created { get; set; } = DateTime.Now;
+            List<SalaryDto> list = new();
+            SalaryHistory.ForEach(e => {
+                list.Add(e.ToDto());
+            });
+            return new()
+            {
+                Id = Id,
+                Name = Name,
+                InternalKey = InternalKey,
+                SalaryHistory = list,
+                Role = Role
+            };
+        }
+        public string SerializeDto()
+        {
+            JobDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
+        }
+        public Job FakeConstructor(string dto)
+        {
+            try
+            {
+                return new Job(JsonConvert
+                    .DeserializeObject<NewJobDto>(dto, new JsonSerializerSettings
+                {
+                    MissingMemberHandling = MissingMemberHandling.Error
+                })!);
+            }
+            catch
+            {
+                throw new JsonSerializationException();
+            }
+        }
+
+        public class Salary : Entity, IQueryMask<Salary, SalaryDto>
+        {
             [BsonElement("reductions")]
             public Dictionary<string, double> Reductions { get; set; } = new();
             [BsonElement("rate")]
             public double Rate { get; set; }
-            // weekly, biweekly, monthly
-            // [BsonElement("period")]
-            // public int Period { get; set; }
+            [BsonElement("payPeriod")]
+            public int PayPeriod { get; set; } 
             [BsonElement("hoursWeek")]
             public int? HoursWeek { get; set; }
+
+            public Salary() { }
             
-            public Salary(double hourly, int? hoursWeek)
+            public Salary(NewSalaryDto data)
             {
-                Rate = hourly;
-                if (hoursWeek is not null) HoursWeek = hoursWeek;
+                Reductions = data.Reductions;
+                Rate = data.Rate;
+                PayPeriod = data.PayPeriod;
+                HoursWeek = data.HoursWeek ?? null;
+            }
+
+            public Salary FakeConstructor(string dto)
+            {
+                try
+                {
+                    return new Salary(JsonConvert
+                        .DeserializeObject<NewSalaryDto>(dto, new JsonSerializerSettings
+                    {
+                        MissingMemberHandling = MissingMemberHandling.Error
+                    })!);
+                }
+                catch
+                {
+                    throw new JsonSerializationException();
+                }
+            }
+            public SalaryDto ToDto()
+            {
+                return new()
+                {
+                    Id = Id,
+                    Reductions = Reductions,
+                    Rate = Rate,
+                    HoursWeek = HoursWeek
+                };
+            }
+
+            public string SerializeDto()
+            {
+                SalaryDto data = ToDto();
+                return JsonConvert.SerializeObject(data);
             }
         }
     }

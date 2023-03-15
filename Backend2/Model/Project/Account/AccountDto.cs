@@ -1,36 +1,35 @@
-using Fictichos.Constructora.Model;
+using MongoDB.Bson;
 
 namespace Fictichos.Constructora.Dto
 {
     public record NewAccountDto
     {
         public string Name { get; set; } = string.Empty;
-        public string Owner { get; set; } = string.Empty;
+        public ObjectId Owner { get; set; }
     }
 
     public record UpdateAccountDto
     {
         public string? Name { get; set; } = string.Empty;
-        public string? Owner { get; set; } = string.Empty;
+        public ObjectId? Owner { get; set; }
     }
 
     public record AccountDto
     {
+        public ObjectId Id { get; set; }
+        public DateTime CreatedAt { get; set; }
         public List<PaymentsDto> Payments { get; set; } = new();
+        public ObjectId Owner { get; set; }
     }
 
     public record PaymentsDto
     {
+        public ObjectId Id { get; set; }
         public double Amount { get; set; }
+        public string Name { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public bool Complete { get; set; }
-
-        public PaymentsDto(Payment data)
-        {
-            Amount = data.Amount;
-            CreatedAt = data.CreatedAt;
-            Complete = data.Complete;
-        }
+        public DateTime Due { get; set; }
+        public bool Complete { get; set; } = false;
     }
 
     public record NewPaymentDto

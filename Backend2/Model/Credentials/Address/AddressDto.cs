@@ -38,6 +38,7 @@ namespace Fictichos.Constructora.Dto
             State = data.State;
             Country = data.Country;
         }
+        public AddressDto() { }
     }
 
     public record SlimAddressDto
