@@ -25,15 +25,11 @@ namespace Fictichos.Constructora.Dto
         public EmployeeDto? Employee { get; set; }
     }
 
-    public record UpdatedPersonOutDto : DtoBase
+    public record UpdatedPersonDto : DtoBase
     {
         public string? Name { get; set; }
         public string? LastName { get; set; }
         public UpdatedContactDto? Contacts { get; set; }
-    }
-
-    public record UpdatedPersonInDto : UpdatedPersonOutDto
-    {
         public UpdatedEmployeeDto? Employed { get; set; }
     }
 }

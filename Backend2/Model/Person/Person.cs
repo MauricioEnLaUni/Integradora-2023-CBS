@@ -61,5 +61,17 @@ namespace Fictichos.Constructora.Model
             PersonDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
+
+        public void Update(UpdatedPersonDto data)
+        {
+            Name = data.Name ?? Name;
+            LastName = data.LastName ?? LastName;
+            if (data.Contacts is not null) Contacts.Update(data.Contacts);
+            if (data.Employed is not null)
+            {
+                Employed ??= new();
+                Employed.Update(data.Employed);
+            }
+        }
     }
 }

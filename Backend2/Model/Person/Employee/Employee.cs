@@ -90,11 +90,50 @@ namespace Fictichos.Constructora.Model
             DOB = data.DOB ?? DOB;
             CURP = data.CURP ?? CURP;
             RFC = data.RFC ?? RFC;
-            Charges = data.Charges ?? Charges;
-            
+            data.Charges?.ForEach(UpdateChargesList);
+            data.ScheduleHistory?.ForEach(UpdateScheduleList);
         }
 
-        public class Schedule : Entity, IQueryMask<Schedule, ScheduleDto>
+        public void UpdateChargesList(ListUpdatedChargesDto data)
+        {
+            if (data is null) return;
+            switch(data.Operation)
+            {
+                case 0 :
+                    Charges.Add(new (data.NewData!));
+                    break;
+                case 1:
+                    Charges.RemoveAt(data.Key);
+                    break;
+                case 2:
+                    Charges[data.Key].Update(data.UpdatedData!);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void UpdateScheduleList(ListUpdatedScheduleDto data)
+        {
+            if (data is null) return;
+            switch(data.Operation)
+            {
+                case 0 :
+                    ScheduleHistory.Add(new (data.NewData!));
+                    break;
+                case 1:
+                    ScheduleHistory.RemoveAt(data.Key);
+                    break;
+                case 2:
+                    ScheduleHistory[data.Key].Update(data.UpdatedData!);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public class Schedule : Entity,
+            IQueryMask<Schedule, ScheduleDto, UpdatedScheduleDto>
         {
             [BsonElement("hours")]
             public Dictionary<TimeSpan, int> Hours { get; set; } = new();
@@ -142,6 +181,18 @@ namespace Fictichos.Constructora.Model
             {
                 ScheduleDto data = ToDto();
                 return  JsonConvert.SerializeObject(data);
+            }
+
+            public void Update(UpdatedScheduleDto data)
+            {
+                Name = data.Name ?? Name;
+                if (data.Location is not null)
+                {
+
+                    Location ??= new();
+                    Location.Update(data.Location);
+                }
+                Hours = data.Hours ?? Hours;
             }
         }
 

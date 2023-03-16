@@ -36,13 +36,13 @@ namespace Fictichos.Constructora.Dto
         public DateOnly? DOB { get; set; }
         public string? CURP { get; set; }
         public string? RFC { get; set; }
-        public List<UpdateCharges>? Charges { get; set; }
-        public List<UpdateScheduleDto>? ScheduleHistory { get; set; }
+        public List<ListUpdatedChargesDto>? Charges { get; set; }
+        public List<ListUpdatedScheduleDto>? ScheduleHistory { get; set; }
         public DateTime? Closed { get; set; }
         public bool? Active { get; set; }
     }
 
-    public record UpdateCharges
+    public record ListUpdatedChargesDto
     {
         public int Operation { get; set; }
         public int Key { get; set; }
@@ -50,7 +50,7 @@ namespace Fictichos.Constructora.Dto
         public UpdatedJobDto? UpdatedData { get; set; } = new();
     }
 
-    public record UpdateScheduleDto
+    public record ListUpdatedScheduleDto
     {
         public int Operation { get; set; }
         public int Key { get; set; }

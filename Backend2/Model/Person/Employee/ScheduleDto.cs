@@ -19,12 +19,10 @@ namespace Fictichos.Constructora.Dto
         public AddressDto? Location { get; set; }
     }
 
-    public record UpdatedScheduleDto
+    public record UpdatedScheduleDto : DtoBase
     {
-        [Required]
-        public ObjectId Id { get; set; }
         public string? Name { get; set; }
         public Dictionary<TimeSpan, int>? Hours { get; set; }
-        public NewAddressDto? Address { get; set; }
+        public NewAddressDto? Location { get; set; }
     }
 }
