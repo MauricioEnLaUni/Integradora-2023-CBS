@@ -12,7 +12,7 @@ namespace Fictichos.Constructora.Controllers
     [ApiController]
     [Route("m")]
     public class MaterialController:
-        FApiControllerBase<MaterialCategory, MaterialCategoryDto>
+        FApiControllerBase<MaterialCategory, MaterialCategoryDto, UpdatedMatCategoryDto>
     {
         private new readonly string col = "material";
         private readonly ProjectionDefinitionBuilder<MaterialCategory> defMat;

@@ -8,7 +8,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Contact : Entity, IQueryMask<Contact, ContactDto>
+    public class Contact : Entity,
+        IQueryMask<Contact, ContactDto, UpdatedContactDto>
     {
         [BsonElement("addresses")]
         public List<Address> Addresses { get; private set; } = new List<Address>();
@@ -56,6 +57,11 @@ namespace Fictichos.Constructora.Model
                 Phones = Phones,
                 Emails = Emails
             };
+        }
+
+        public void Update(UpdatedContactDto data)
+        {
+            
         }
 
         public string SerializeDto()

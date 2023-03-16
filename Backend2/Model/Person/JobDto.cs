@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-using MongoDB.Bson;
-
 namespace Fictichos.Constructora.Dto
 {
     public record NewJobDto
@@ -18,18 +16,16 @@ namespace Fictichos.Constructora.Dto
         public List<string> Responsibilities { get; set; } = new();
     }
 
-    public record JobDto
+    public record JobDto : DtoBase
     {
-        public ObjectId Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string InternalKey { get; set; } = string.Empty;
         public List<SalaryDto> SalaryHistory { get; set; } = new();
         public string Role { get; set; } = string.Empty;
     }
 
-    public record UpdatedJobDto
+    public record UpdatedJobDto : DtoBase
     {
-        public ObjectId Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         

@@ -8,7 +8,8 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class MaterialCategory : Entity, IQueryMask<MaterialCategory, MaterialCategoryDto>
+    public class MaterialCategory : Entity,
+        IQueryMask<MaterialCategory, MaterialCategoryDto, UpdatedMatCategoryDto>
     {
         [BsonElement("parent")]
         public ObjectId? Parent { get; private set; }
@@ -73,7 +74,7 @@ namespace Fictichos.Constructora.Model
             return JsonConvert.SerializeObject(temp);
         }
 
-        public void Update(UpdateMatCategoryDto data)
+        public void Update(UpdatedMatCategoryDto data)
         {
             Name = data.Name ?? Name;
             Parent = data.Parent ?? null;

@@ -15,12 +15,11 @@ namespace Fictichos.Constructora.Dto
         public Address? Address { get; set; }
     }
 
-    public record UpdateFTaskDto
+    public record UpdatedFTaskDto : DtoBase
     {
-        public string Id { get; set; } = string.Empty;
         public string? Name { get; set; }
         public DateTime? StartDate { get; set; }
-        public List<UpdateSubtaskDto>? Subtasks { get; set; }
+        public List<UpdatedSubtaskDto>? Subtasks { get; set; }
         public List<UpdateEmbeddedDto>? Material { get; set; }
         public List<UpdateEmbeddedDto>? EmployeesAssigned { get; set; }
         public Address? Address { get; set; }
@@ -39,12 +38,12 @@ namespace Fictichos.Constructora.Dto
         public Address? Address { get; set; }
     }
 
-    public record UpdateSubtaskDto
+    public record UpdatedSubtaskDto : DtoBase
     {
         public int Operation { get; set; }
         public int Key { get; set; }
         public NewFTaskDto? NewTask { get; set; }
-        public UpdateFTaskDto? Task { get; set; }
+        public UpdatedFTaskDto? Task { get; set; }
     }
 
     public record UpdateEmbeddedDto

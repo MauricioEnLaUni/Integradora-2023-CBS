@@ -3,7 +3,7 @@ using Fictichos.Constructora.Model;
 
 namespace Fictichos.Constructora.Dto
 {
-    public record NewAddressDto
+    public record NewAddressDto : DtoBase
     {
         [StringLength(32)]
         public string? Street { get; set; }

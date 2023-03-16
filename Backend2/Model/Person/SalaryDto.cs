@@ -14,11 +14,19 @@ namespace Fictichos.Constructora.Dto
         public int PayPeriod { get; set; }
         public int? HoursWeek { get; set; }
     }
-    public record SalaryDto
+    public record SalaryDto : DtoBase
     {
-        public ObjectId Id { get; set; }
         public Dictionary<string, double> Reductions { get; set; } = new();
         public double Rate { get; set; }
         public int? HoursWeek { get; set; }
+    }
+
+    public record UpdatedSalaryDto : DtoBase
+    {
+        public double? Rate { get; set; }
+        public Dictionary<string, double>? Reductions { get; set;} = new();
+        public int? PayPeriod { get; set; }
+        public int? HoursWeek { get; set; }
+        public DateTime? Closed { get; set; }
     }
 }

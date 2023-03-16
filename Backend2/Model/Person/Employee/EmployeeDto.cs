@@ -30,9 +30,8 @@ namespace Fictichos.Constructora.Dto
         public List<ScheduleDto> ScheduleHistory { get; set; } = new();
     }
 
-    public record UpdatedEmployeeDto
+    public record UpdatedEmployeeDto : DtoBase
     {
-        public ObjectId? Id { get; set; }
         public string? Name { get; set; }
         public DateOnly? DOB { get; set; }
         public string? CURP { get; set; }

@@ -2,7 +2,9 @@ using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 
 using MongoDB.Bson;
+using Newtonsoft.Json;
 
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 
@@ -10,12 +12,13 @@ namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FApiControllerBase<T, U> : ControllerBase
-    where T : Entity, IQueryMask<T, U>, new()
+    public class FApiControllerBase<T, U, V> : ControllerBase
+    where T : Entity, IQueryMask<T, U, V>, new()
+    where V : DtoBase
     {
         protected readonly string db = "cbs";
         protected readonly string col = "users";
-        protected readonly RepositoryAsync<T, U> _repo;
+        protected readonly RepositoryAsync<T, U, V> _repo;
 
         public FApiControllerBase(MongoSettings mongoClient)
         {
@@ -63,9 +66,16 @@ namespace Fictichos.Constructora.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> UpdateAsync(string payload)
         {
-            T data = new T().FakeConstructor(payload);
+            if (payload is null) return BadRequest();
+            V update = JsonConvert.DeserializeObject<V>(payload)!;
+
+            T? data = await _repo.GetByIdAsync(update.Id);
+            if (data is null) return NotFound();
+
+            data.Update(update);
             await _repo.UpdateAsync(data);
             return NoContent();
         }

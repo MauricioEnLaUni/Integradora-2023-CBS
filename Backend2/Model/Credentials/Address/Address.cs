@@ -11,7 +11,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Address : Entity, IQueryMask<Address, AddressDto>
+    public class Address : Entity,
+        IQueryMask<Address, AddressDto, NewAddressDto>
     {
         [BsonElement("street")]
         public string? Street { get; set; }
@@ -42,6 +43,19 @@ namespace Fictichos.Constructora.Model
             Country = data.Country ?? null;
             Coordinates = data.Coordinates ?? null;
         }
+
+        public void Update(NewAddressDto data)
+        {
+            Street = data.Street ?? null;
+            Number = data.Number ?? null;
+            Colony = data.Colony ?? null;
+            PostalCode = data.PostalCode ?? null;
+            City = data.City ?? null;
+            State = data.State ?? null;
+            Country = data.Country ?? null;
+            Coordinates = data.Coordinates ?? null;
+        }
+
         public Address FakeConstructor(string dto)
         {
             try

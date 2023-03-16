@@ -8,7 +8,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Person : Entity, IQueryMask<Person, PersonDto>
+    public class Person : Entity,
+        IQueryMask<Person, PersonDto, UpdatedPersonDto>
     {
         [BsonElement("lastName")]
         public string LastName { get;  set; } = string.Empty;

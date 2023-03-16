@@ -15,7 +15,7 @@ namespace Fictichos.Constructora.Dto
         public string Name { get; set; } = string.Empty;
     }
 
-    public record ProjectChangesDto : DtoBase
+    public record UpdatedProjectDto : DtoBase
     {
         public string? Name { get; set; }
         public List<FTasks>? Tasks { get; set; }

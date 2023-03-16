@@ -8,7 +8,8 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Material : Entity, IQueryMask<Material, MaterialDto>
+    public class Material
+        : Entity, IQueryMask<Material, MaterialDto, UpdatedMaterialDto>
     {
         [BsonElement("qty")]
         public int Quantity { get; private set; }

@@ -2,12 +2,14 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Repository
 {
-    public class RepositoryAsync<T, U> : IAsyncRepository<T>
-    where T : Entity, IQueryMask<T, U>, new()
+    public class RepositoryAsync<T, U, V> : IAsyncRepository<T>
+    where T : Entity, IQueryMask<T, U, V>, new()
+    where V : DtoBase
     {
         public readonly IMongoCollection<T> Collection;
         public readonly FilterDefinitionBuilder<T> filterBuilder =

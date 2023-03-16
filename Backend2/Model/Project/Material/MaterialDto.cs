@@ -38,10 +38,8 @@ namespace Fictichos.Constructora.Dto
     /// Contains all editable class members as nulls, if a field isn't 
     /// null the adopts it as the updated value.
     /// </remarks>
-    public record UpdatedMaterialDto
+    public record UpdatedMaterialDto : DtoBase
     {
-        [Required]
-        public string Id { get; set; } = string.Empty;
         public int? Quantity { get; set; }
         public int? Status { get; set; }
         public double? BoughtFor { get; set; }
@@ -113,9 +111,8 @@ namespace Fictichos.Constructora.Dto
         public List<MaterialDto>? Children { get; set; } = new();
     }
 
-    public record UpdateMatCategoryDto
+    public record UpdatedMatCategoryDto : DtoBase
     {
-        public ObjectId Id { get; set; }
         public string? Name { get; set; }
         public ObjectId? Parent { get; set; }
     }

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Job : Entity, IQueryMask<Job, JobDto>
+    public class Job : Entity, IQueryMask<Job, JobDto, UpdatedJobDto>
     {
         [BsonElement("salaryHistory")]
         public List<Salary> SalaryHistory { get; set; } = new();
@@ -52,6 +52,7 @@ namespace Fictichos.Constructora.Model
             JobDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
+
         public Job FakeConstructor(string dto)
         {
             try
@@ -68,7 +69,13 @@ namespace Fictichos.Constructora.Model
             }
         }
 
-        public class Salary : Entity, IQueryMask<Salary, SalaryDto>
+        public void Update(UpdatedJobDto data)
+        {
+
+        }
+
+        public class Salary : Entity,
+            IQueryMask<Salary, SalaryDto, UpdatedSalaryDto>
         {
             [BsonElement("reductions")]
             public Dictionary<string, double> Reductions { get; set; } = new();
@@ -119,6 +126,15 @@ namespace Fictichos.Constructora.Model
             {
                 SalaryDto data = ToDto();
                 return JsonConvert.SerializeObject(data);
+            }
+
+            public void Update(UpdatedSalaryDto data)
+            {
+                Closed = data.Closed ?? Closed;
+                Reductions = data.Reductions ?? Reductions;
+                PayPeriod = data.PayPeriod ?? PayPeriod;
+                HoursWeek = data.HoursWeek ?? HoursWeek;
+                Rate = data.Rate ?? Rate;
             }
         }
     }

@@ -8,7 +8,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Project : Entity, IQueryMask<Project, ProjectDto>
+    public class Project
+        : Entity, IQueryMask<Project, ProjectDto, UpdatedProjectDto>
     {
         [BsonElement("responsible")]
         public ObjectId Responsible { get; private set; }
@@ -54,7 +55,7 @@ namespace Fictichos.Constructora.Model
         }
 
 
-        public void Change(ProjectChangesDto data)
+        public void Update(UpdatedProjectDto data)
         {
             if (data.Name is not null) Name = data.Name;
             if (data.Tasks is not null) Tasks = data.Tasks;

@@ -8,7 +8,7 @@ namespace Fictichos.Constructora.Dto
         public ObjectId Owner { get; set; }
     }
 
-    public record UpdateAccountDto
+    public record UpdatedAccountDto : DtoBase
     {
         public string? Name { get; set; } = string.Empty;
         public ObjectId? Owner { get; set; }
@@ -39,9 +39,8 @@ namespace Fictichos.Constructora.Dto
         public DateTime Due { get; set; }
     }
 
-    public record UpdatePaymentDto
+    public record UpdatedPaymentDto : DtoBase
     {
-        public string Id { get; set; } = string.Empty;
         public string? Name;
         public DateTime? Due;
         public double? Amount;

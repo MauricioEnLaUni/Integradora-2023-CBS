@@ -8,7 +8,7 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class FTasks : Entity, IQueryMask<FTasks, FTasksDto>
+    public class FTasks : Entity, IQueryMask<FTasks, FTasksDto, UpdatedFTaskDto>
     {
         [BsonElement("starts")]
         public DateTime StartDate { get; set; }
@@ -78,7 +78,7 @@ namespace Fictichos.Constructora.Model
             return JsonConvert.SerializeObject(data);
         }
 
-        public void Update(UpdateFTaskDto data)
+        public void Update(UpdatedFTaskDto data)
         {
             if (data.Name is not null) Name = data.Name;
             if (data.StartDate is not null) StartDate = (DateTime)data.StartDate;
@@ -93,7 +93,7 @@ namespace Fictichos.Constructora.Model
             if (data.Closed is not null) Closed = (DateTime)data.Closed!;
         }
 
-        public void UpdateSub(UpdateSubtaskDto data)
+        public void UpdateSub(UpdatedSubtaskDto data)
         {
             switch(data.Operation)
             {

@@ -8,7 +8,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Account : Entity, IQueryMask<Account, AccountDto>
+    public class Account : Entity,
+        IQueryMask<Account, AccountDto, UpdatedAccountDto>
     {
         [BsonElement("payments")]
         public List<Payment> Payments { get; set; } = new();
@@ -58,7 +59,7 @@ namespace Fictichos.Constructora.Model
             return JsonConvert.SerializeObject(data);
         }
 
-        public void Update(UpdateAccountDto data)
+        public void Update(UpdatedAccountDto data)
         {
             Name = data.Name ?? Name;
             Owner = data.Owner ?? Owner;
