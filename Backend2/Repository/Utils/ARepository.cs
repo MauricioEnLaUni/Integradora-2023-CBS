@@ -6,8 +6,8 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Repository
 {
-    public class RepositoryAsync<T> : IAsyncRepository<T>
-    where T : Entity, IQueryMask<T>, new()
+    public class RepositoryAsync<T, U> : IAsyncRepository<T>
+    where T : Entity, IQueryMask<T, U>, new()
     {
         public readonly IMongoCollection<T> Collection;
         public readonly FilterDefinitionBuilder<T> filterBuilder =

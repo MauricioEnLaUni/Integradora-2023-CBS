@@ -6,9 +6,8 @@ namespace Fictichos.Constructora.Dto
 {
     public record ProjectDto
     {
-        public ObjectId Responsible { get; }
-        public AccountDto? PayHistory { get; }
-        public List<FTasksDto> Tasks { get; } = new();
+        public ObjectId Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public record NewProjectDto

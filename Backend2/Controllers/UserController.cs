@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 
-using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Repository;
+
 namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
@@ -15,7 +16,7 @@ namespace Fictichos.Constructora.Controllers
     {
         private readonly string db = "cbs";
         private readonly string col = "users";
-        private readonly RepositoryAsync<User> _repo;
+        private readonly RepositoryAsync<User, LoginSuccessDto> _repo;
         public UserController(MongoSettings mongoClient)
         {
             _repo = new(mongoClient, db, col);
@@ -53,7 +54,7 @@ namespace Fictichos.Constructora.Controllers
             if (!data.ValidatePassword(id.Password)) return StatusCode(400);
             if (!data.Active) return Unauthorized();
 
-            return Ok(data.AsDto());
+            return Ok(data.SerializeDto());
         }
 
         [HttpPut]

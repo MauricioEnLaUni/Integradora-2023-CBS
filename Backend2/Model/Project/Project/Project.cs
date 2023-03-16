@@ -18,7 +18,7 @@ namespace Fictichos.Constructora.Model
         public List<FTasks> Tasks { get; private set; } = new();
 
         public Project() { }
-        private Project(NewProjectDto data)
+        public Project(NewProjectDto data)
         {
             Name = data.Name;
         }
@@ -37,18 +37,29 @@ namespace Fictichos.Constructora.Model
                 throw new JsonSerializationException();
             }
         }
-        public string AsDto()
+
+        public ProjectDto ToDto()
         {
-            return JsonConvert.SerializeObject(this);
+            return new()
+            {
+                Id = Id,
+                Name = Name
+            };
+        }
+
+        public string SerializeDto()
+        {
+            ProjectDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
         }
 
 
-        public void Change(ProjectChangesDto chg)
+        public void Change(ProjectChangesDto data)
         {
-            if (chg.Name is not null) Name = chg.Name;
-            if (chg.Tasks is not null) Tasks = chg.Tasks;
-            if (Closed is not null) Closed = chg.Closed;
-            if (PayHistory is not null) PayHistory = chg.PayHistory;
+            if (data.Name is not null) Name = data.Name;
+            if (data.Tasks is not null) Tasks = data.Tasks;
+            if (Closed is not null) Closed = data.Closed;
+            if (PayHistory is not null) PayHistory = data.PayHistory;
         }
     }
 }

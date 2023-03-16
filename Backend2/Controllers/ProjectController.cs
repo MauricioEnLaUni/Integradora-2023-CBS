@@ -46,7 +46,7 @@ namespace Fictichos.Constructora.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(ProjectChangesDto changes)
         {
-            ObjectId _id = new(changes.Id);
+            ObjectId _id = changes.Id;
             Project? exists =
                 (from u in _repo._col.AsQueryable()
                 where u.Id == _id

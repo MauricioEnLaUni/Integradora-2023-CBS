@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using MongoDB.Bson;
 
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
-using static Fictichos.Constructora.Model.MaterialCategory;
 
 namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
     [Route("m")]
-    public class MaterialController : FApiControllerBase<MaterialCategory>
+    public class MaterialController:
+        FApiControllerBase<MaterialCategory, MaterialCategoryDto>
     {
         private new readonly string col = "material";
         private readonly ProjectionDefinitionBuilder<MaterialCategory> defMat;

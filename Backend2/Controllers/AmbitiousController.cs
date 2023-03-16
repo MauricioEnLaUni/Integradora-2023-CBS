@@ -10,12 +10,12 @@ namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FApiControllerBase<T> : ControllerBase
-    where T : Entity, IQueryMask<T>, new()
+    public class FApiControllerBase<T, U> : ControllerBase
+    where T : Entity, IQueryMask<T, U>, new()
     {
         protected readonly string db = "cbs";
         protected readonly string col = "users";
-        protected readonly RepositoryAsync<T> _repo;
+        protected readonly RepositoryAsync<T, U> _repo;
 
         public FApiControllerBase(MongoSettings mongoClient)
         {
@@ -33,7 +33,7 @@ namespace Fictichos.Constructora.Controllers
             return CreatedAtAction(
                 nameof(GetByIdAsync),
                 new { id = data.Id.ToString() },
-                data.AsDto()
+                data.ToDto()
             );
         }
 
@@ -44,7 +44,7 @@ namespace Fictichos.Constructora.Controllers
             List<T> rawData = await _repo.GetAllAsync();
             List<string> data = new();
             rawData.ForEach(e => {
-                data.Add(e.AsDto());
+                data.Add(e.SerializeDto());
             });
             return Ok(data);
         }
@@ -56,7 +56,7 @@ namespace Fictichos.Constructora.Controllers
         {
             T? result = await _repo.GetByIdAsync(new ObjectId(id));
             if (result is null) return NotFound($"Document: ${id} does not exist in ${col} collection.");
-            return Ok(result.AsDto());
+            return Ok(result.SerializeDto());
         }
 
         [HttpPut]
