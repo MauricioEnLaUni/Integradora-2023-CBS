@@ -1,10 +1,10 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Repository;
-using Newtonsoft.Json;
 
 namespace Fictichos.Constructora.Model
 {
@@ -72,15 +72,59 @@ namespace Fictichos.Constructora.Model
             };
         }
 
+        public string SerializeDto()
+        {
+            FTasksDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
+        }
+
         public void Update(UpdateFTaskDto data)
         {
             if (data.Name is not null) Name = data.Name;
             if (data.StartDate is not null) StartDate = (DateTime)data.StartDate;
-            if (data.Subtasks is not null) Subtasks = data.Subtasks;
-            if (data.EmployeesAssigned is not null) EmployeesAssigned = data.EmployeesAssigned;
-            // if (data.Material is not null) Material = new Material().FakeConstructor(data.Material);
+            data.Subtasks?.ForEach(UpdateSub);
+            data.Material?.ForEach(e => {
+                UpdateEmbedded(false, e);
+            });
+            data.EmployeesAssigned?.ForEach(e => {
+                UpdateEmbedded(true, e);
+            });
             if (data.Address is not null) Address = data.Address;
             if (data.Closed is not null) Closed = (DateTime)data.Closed!;
+        }
+
+        public void UpdateSub(UpdateSubtaskDto data)
+        {
+            switch(data.Operation)
+            {
+                case 0:
+                    Subtasks.Add(new(data.NewTask!));
+                    break;
+                case 1:
+                    Subtasks.RemoveAt(data.Key);
+                    break;
+                case 2:
+                    Subtasks[data.Key].Update(data.Task!);
+                    break;
+                default:
+                    throw new Exception("Empty data.");
+            }
+        }
+
+        public void UpdateEmbedded(bool flag, UpdateEmbeddedDto data)
+        {
+            List<ObjectId> list = flag ? EmployeesAssigned : Material;
+            switch(data.Operation)
+            {
+                case 0:
+                    list.Add(data.Data);
+                    break;
+                case 1:
+                    list.Remove(data.Data);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Project : Entity, IQueryMask<Project>
+    public class Project : Entity, IQueryMask<Project, ProjectDto>
     {
         [BsonElement("responsible")]
         public ObjectId Responsible { get; private set; }

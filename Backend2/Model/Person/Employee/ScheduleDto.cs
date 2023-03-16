@@ -18,4 +18,13 @@ namespace Fictichos.Constructora.Dto
         public Dictionary<TimeSpan, int> Hours { get; set; } = new();
         public AddressDto? Location { get; set; }
     }
+
+    public record UpdatedScheduleDto
+    {
+        [Required]
+        public ObjectId Id { get; set; }
+        public string? Name { get; set; }
+        public Dictionary<TimeSpan, int>? Hours { get; set; }
+        public NewAddressDto? Address { get; set; }
+    }
 }

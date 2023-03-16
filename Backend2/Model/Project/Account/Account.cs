@@ -41,7 +41,7 @@ namespace Fictichos.Constructora.Model
         {
             List<PaymentsDto> list = new();
             Payments.ForEach(e => {
-                list.Add(new(e));
+                list.Add(e.ToDto());
             });
             return new()
             {

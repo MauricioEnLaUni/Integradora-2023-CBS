@@ -11,26 +11,26 @@ namespace Fictichos.Constructora.Model
     public class Employee : Entity, IQueryMask<Employee, EmployeeDto>
     {
         [BsonElement("active")]
-        private bool Active { get; set; } = false;
+        public bool Active { get; private set; } = false;
         [BsonElement("dob")]
-        private DateOnly DOB { get; set; }
+        public DateOnly DOB { get; private set; }
         [BsonElement]
-        private string RFC { get; set; } = string.Empty;
+        public string RFC { get; private set; } = string.Empty;
         [BsonElement("curp")]
-        private string CURP { get; set; } = string.Empty;
+        public string CURP { get; private set; } = string.Empty;
         // visa pass w.e.
         // INE
         // Fotos de documentos => se vera
         // expediente > sanciones - bonos - permisos - faltas
         [BsonElement("internal")]
-        public string InternalKey { get; set; } = string.Empty;
+        public string InternalKey { get; private set; } = string.Empty;
         [BsonElement("charges")]
-        private List<Job> Charges { get; set; } = new List<Job>();
+        public List<Job> Charges { get; private set; } = new List<Job>();
         [BsonElement("scheduleHistory")]
-        private List<Schedule> ScheduleHistory { get; set; } = new List<Schedule>();
+        public List<Schedule> ScheduleHistory { get; private set; } = new List<Schedule>();
 
         public Employee() { }
-        private Employee(NewEmployeeDto data)
+        public Employee(NewEmployeeDto data)
         {
             Name = data.Name;
             DOB = data.DOB;

@@ -43,7 +43,6 @@ namespace Fictichos.Constructora.Model
             {
                 Id = Id,
                 Name = Name,
-                InternalKey = InternalKey,
                 SalaryHistory = list,
                 Role = Role
             };

@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+using MongoDB.Bson;
+
 namespace Fictichos.Constructora.Dto
 {
     public record NewPersonDto
@@ -13,5 +15,13 @@ namespace Fictichos.Constructora.Dto
         [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")]
         public string? Email { get; set; } = string.Empty;
         public NewEmployeeDto? IsEmployee { get; set; }
+    }
+
+    public record PersonDto
+    {
+        public ObjectId Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public ContactDto Contact { get; set; } = new();
+        public EmployeeDto? Employee { get; set; }
     }
 }

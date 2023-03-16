@@ -37,9 +37,25 @@ namespace Fictichos.Constructora.Dto
         public DateOnly? DOB { get; set; }
         public string? CURP { get; set; }
         public string? RFC { get; set; }
-        public Dictionary<ObjectId, Dictionary<int, UpdatedJobDto>>? Charges { get; set; }
-        public Dictionary<ObjectId, Dictionary<int, UpdatedScheduleDto>>? ScheduleHistory { get; set; }
+        public List<UpdateCharges>? Charges { get; set; }
+        public List<UpdateScheduleDto>? ScheduleHistory { get; set; }
         public DateTime? Closed { get; set; }
         public bool? Active { get; set; }
+    }
+
+    public record UpdateCharges
+    {
+        public int Operation { get; set; }
+        public int Key { get; set; }
+        public NewJobDto? NewData { get; set; } = new();
+        public UpdatedJobDto? UpdatedData { get; set; } = new();
+    }
+
+    public record UpdateScheduleDto
+    {
+        public int Operation { get; set; }
+        public int Key { get; set; }
+        public NewScheduleDto? NewData { get; set; } = new();
+        public UpdatedScheduleDto? UpdatedData { get; set; } = new();
     }
 }
