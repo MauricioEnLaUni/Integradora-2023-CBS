@@ -8,7 +8,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Employee : Entity, IQueryMask<Employee, EmployeeDto>
+    public class Employee : Entity,
+        IQueryMask<Employee, EmployeeDto, UpdatedEmployeeDto>
     {
         [BsonElement("active")]
         public bool Active { get; private set; } = false;
@@ -76,10 +77,21 @@ namespace Fictichos.Constructora.Model
                 RFC = RFC,
             };
         }
+
         public string SerializeDto()
         {
             EmployeeDto data = ToDto();
             return JsonConvert.SerializeObject(data);
+        }
+
+        public void Update(UpdatedEmployeeDto data)
+        {
+            Name = data.Name ?? Name;
+            DOB = data.DOB ?? DOB;
+            CURP = data.CURP ?? CURP;
+            RFC = data.RFC ?? RFC;
+            Charges = data.Charges ?? Charges;
+            
         }
 
         public class Schedule : Entity, IQueryMask<Schedule, ScheduleDto>
