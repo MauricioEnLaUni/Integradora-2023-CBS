@@ -8,7 +8,7 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class User : Entity, IQueryMask<User, LoginSuccessDto>
+    public class User : Entity, IQueryMask<User, LoginSuccessDto, UpdatedUserDto>
     {
         private string _password = string.Empty;
         [BsonElement("password")]
@@ -42,7 +42,7 @@ namespace Fictichos.Constructora.Model
             return Argon2.Verify(Password, pwd);
         }
 
-        public void Update(UserChangesDto changes)
+        public void Update(UpdatedUserDto changes)
         {
             if (changes.Avatar is not null) Avatar = changes.Avatar;
             if (changes.Email is not null) Email = changes.Email;

@@ -35,7 +35,7 @@ namespace Fictichos.Constructora.Dto
         public string Email { get; set; } = string.Empty;
     }
 
-    public record UserChangesDto : DtoBase
+    public record UpdatedUserDto : DtoBase
     {
         public string? Password { get; set; } = string.Empty;
         public List<string>? Email { get; set; }

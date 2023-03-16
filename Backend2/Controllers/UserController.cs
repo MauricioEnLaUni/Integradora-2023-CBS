@@ -16,7 +16,7 @@ namespace Fictichos.Constructora.Controllers
     {
         private readonly string db = "cbs";
         private readonly string col = "users";
-        private readonly RepositoryAsync<User, LoginSuccessDto> _repo;
+        private readonly RepositoryAsync<User, LoginSuccessDto, UpdatedUserDto> _repo;
         public UserController(MongoSettings mongoClient)
         {
             _repo = new(mongoClient, db, col);
@@ -65,8 +65,8 @@ namespace Fictichos.Constructora.Controllers
         {
             if (payload is null) return BadRequest();
 
-            UserChangesDto? id = JsonConvert
-                .DeserializeObject<UserChangesDto>(payload);
+            UpdatedUserDto? id = JsonConvert
+                .DeserializeObject<UpdatedUserDto>(payload);
             if (id is null) return BadRequest();
 
             User? rawData = await _repo.GetByIdAsync(id.Id);
