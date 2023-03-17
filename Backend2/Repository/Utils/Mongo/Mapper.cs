@@ -10,9 +10,29 @@ namespace Fictichos.Constructora.Utilities.MongoDB
     /// </summary>
     public class EntityMapper
     {
+        /// <summary>
+        /// Driver class for mapping all entities on the database.
+        /// </summary>
         public void MapClasses()
         {
-            
+            MapBaseEntity();
+            MapProject();
+            MapMaterial();
+            MapMaterialCategory();
+            MapFTasks();
+            MapAccount();
+            MapPayment();
+            MapSalary();
+            MapPerson();
+            MapJob();
+            MapEmployee();
+            MapSchedule();
+            MapEducation();
+            MapGrade();
+            MapUser();
+            MapContact();
+            MapAddress();
+            MapCoordinates();
         }
 
         public void MapBaseEntity()
