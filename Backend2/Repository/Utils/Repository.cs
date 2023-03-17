@@ -39,9 +39,9 @@ namespace Fictichos.Constructora.Repository
         {
             ObjectId _id = new(id);
             return
-                (from e in _col.AsQueryable<T>()
+                (from e in _col.AsQueryable()
                 where e.Id == _id
-                select e).SingleOrDefault<T>();
+                select e).SingleOrDefault();
         }
 
         public async Task UpdateAsync(T entity)
