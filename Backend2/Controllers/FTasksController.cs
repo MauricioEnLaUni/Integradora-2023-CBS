@@ -92,7 +92,7 @@ namespace Fictichos.Constructora.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateTask(UpdateFTaskDto data)
+        public async Task<ActionResult> UpdateTask(UpdatedFTaskDto data)
         {
             if (data.Name is null && data.StartDate is null && data.Address is null
                 && data.Subtasks is null && data.EmployeesAssigned is null

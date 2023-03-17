@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 using Newtonsoft.Json;
 
 using MongoDB.Bson;
@@ -92,14 +90,5 @@ namespace Fictichos.Constructora.Model
             SlimAddressDto data = new(this);
             return JsonConvert.SerializeObject(data);
         }
-    }
-    public class Coordinates
-    {
-        [BsonElement("latitude")]
-        [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
-        public string Latitude { get; set; } = string.Empty;
-        [BsonElement("longitude")]
-        [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
-        public string Longitude { get; set; } = string.Empty;
     }
 }

@@ -28,6 +28,7 @@ namespace Fictichos.Constructora.Model
         // MAC?
         // AUTH
         // ROLES = EMPLEADO, ADMIN DE PROYECTO, ADMIN GENERAL
+        public List<ICredentials> Credentials { get; private set; } = new();
 
         public User() { }
         public User(NewUserDto usr)

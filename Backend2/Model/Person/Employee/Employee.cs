@@ -19,6 +19,7 @@ namespace Fictichos.Constructora.Model
         public string RFC { get; private set; } = string.Empty;
         [BsonElement("curp")]
         public string CURP { get; private set; } = string.Empty;
+        public List<byte[]> Documents { get; private set; } = new();
         // visa pass w.e.
         // INE
         // Fotos de documentos => se vera
@@ -129,102 +130,6 @@ namespace Fictichos.Constructora.Model
                     break;
                 default:
                     break;
-            }
-        }
-
-        public class Schedule : Entity,
-            IQueryMask<Schedule, ScheduleDto, UpdatedScheduleDto>
-        {
-            [BsonElement("hours")]
-            public Dictionary<TimeSpan, int> Hours { get; set; } = new();
-            [BsonElement("location")]
-            public Address? Location { get; set; }
-
-            public Schedule(NewScheduleDto data)
-            {
-                Name = data.Name;
-                Hours = data.Hours;
-                if (data.Location is not null)
-                {
-                    Location = new Address().FakeConstructor(data.Location);
-                }
-            }
-            public Schedule() { }
-            public Schedule FakeConstructor(string dto)
-            {
-                try
-                {
-                    return new Schedule(JsonConvert
-                        .DeserializeObject<NewScheduleDto>(dto, new JsonSerializerSettings
-                    {
-                        MissingMemberHandling = MissingMemberHandling.Error
-                    })!);
-                }
-                catch
-                {
-                    throw new JsonSerializationException();
-                }
-            }
-            public ScheduleDto ToDto()
-            {
-                AddressDto? loc = null;
-                if (Location is not null) loc = Location.ToDto();
-                return new()
-                {
-                    Id = Id,
-                    Name = Name,
-                    Hours = Hours,
-                    Location = loc
-                };
-            }
-            public string SerializeDto()
-            {
-                ScheduleDto data = ToDto();
-                return  JsonConvert.SerializeObject(data);
-            }
-
-            public void Update(UpdatedScheduleDto data)
-            {
-                Name = data.Name ?? Name;
-                if (data.Location is not null)
-                {
-
-                    Location ??= new();
-                    Location.Update(data.Location);
-                }
-                Hours = data.Hours ?? Hours;
-            }
-        }
-
-        public class Education
-        {
-            [BsonElement("grades")]
-            public List<Grade> Grades { get; set; } = new List<Grade>();
-            [BsonElement("certifications")]
-            public List<Grade> Certification { get; set; } = new List<Grade>();
-
-            public class Grade
-            {
-                [BsonElement("grade")]
-                public Dictionary<string, string> SchoolGrade { get; set; } = new();
-                [BsonElement("overseas")]
-                public Dictionary<bool, string>? Overseas { get; set; }
-                [BsonElement("period")]
-                public TimeSpan Period { get; set; }
-
-                public Grade(DateTime start, DateTime end)
-                {
-                    Period = end.Subtract(start);
-                }
-
-                public Grade(DateTime start, DateTime end, bool overseas, string equivalent)
-                {
-                    Period = end.Subtract(start);
-                    Overseas = new Dictionary<bool, string>
-                    {
-                        { overseas, equivalent }
-                    };
-                }
             }
         }
     }
