@@ -1,3 +1,4 @@
+using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 
 DotEnvManager env = new();
@@ -10,6 +11,8 @@ builder.Services.AddSingleton(serviceProvider =>
 {
     return new MongoSettings();
 });
+builder.Services.AddSingleton<UserService>();
+
 var AllowOrigins = "_allowOrigins";
 builder.Services.AddCors(options => 
 {

@@ -41,8 +41,7 @@ namespace Fictichos.Constructora.Model
         {
             return new()
             {
-                Id = Id,
-                Name = Name
+                Name = Name,
             };
         }
 

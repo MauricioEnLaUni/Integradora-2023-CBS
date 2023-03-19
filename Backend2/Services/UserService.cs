@@ -8,8 +8,6 @@ namespace Fictichos.Constructora.Repository
         : BaseRepositoryService<User, LoginSuccessDto, NewUserDto>,
             IRepositoryService<User, LoginSuccessDto, NewUserDto>
     {
-        private new string DB { get; } = "cbs";
-        private new string COL { get; } = "cbs";
         public override Dictionary<string, Action<User, dynamic>>
             Properties { get; } = new()
             {
@@ -23,6 +21,7 @@ namespace Fictichos.Constructora.Repository
                     .GetProperty("Credentials")!.SetValue }
             };
 
-        public UserService(MongoSettings container) : base(container) { }
+        public UserService(MongoSettings container)
+            : base(container, "cbs", "users") { }
     }
 }

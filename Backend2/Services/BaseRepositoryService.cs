@@ -11,9 +11,6 @@ namespace Fictichos.Constructora.Repository
         : IRepositoryService<T, U, V>
         where T : AbstractEntity<T, U, V>, new()
     {
-        public virtual string DB { get; } = "cbs";
-        public virtual string COL { get; } = "gy";
-
         public abstract Dictionary<string, Action<T, dynamic>>
             Properties { get; }
         public Dictionary<string,
@@ -25,7 +22,10 @@ namespace Fictichos.Constructora.Repository
         public readonly ProjectionDefinitionBuilder<T> projectBuilder =
             Builders<T>.Projection;
 
-        public BaseRepositoryService(MongoSettings container)
+        public BaseRepositoryService(
+            MongoSettings container,
+            string DB,
+            string COL)
         {
             Filters = new Filter<T>().Filters;
             IMongoDatabase db = container.Client.GetDatabase(DB);

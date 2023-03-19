@@ -29,9 +29,9 @@ namespace Fictichos.Constructora.Controllers
             T data = await Repo.CreateAsync(payload);
 
             return CreatedAtAction(
-                nameof(GetByIdAsync),
-                new { id = data.Id.ToString() },
-                data.ToDto()
+                actionName: nameof(GetByIdAsync),
+                routeValues: new { id = data.Id.ToString() },
+                value: data.ToDto()
             );
         }
 
