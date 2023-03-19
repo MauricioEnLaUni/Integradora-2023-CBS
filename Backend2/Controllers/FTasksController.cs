@@ -98,7 +98,7 @@ namespace Fictichos.Constructora.Controllers
                 && data.Subtasks is null && data.EmployeesAssigned is null
                     && data.Material is null && data.Closed is null) return BadRequest();
 
-            FTasks? item = _repo.GetById(data.Id);
+            FTasks? item = _repo.GetById(data.Id.ToString());
             if (item is null) return NotFound();
 
             item.Update(data);

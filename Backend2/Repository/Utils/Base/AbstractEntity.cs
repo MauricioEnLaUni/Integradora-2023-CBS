@@ -12,11 +12,9 @@ namespace Fictichos.Constructora.Repository
     /// </summary>
     /// <typeparam name="T">Stores itself, useful for the Instantiate method.</typeparam>
     /// <typeparam name="U">Stores Dto type for Mapping.</typeparam>
-    /// <typeparam name="V">Updated data.</typeparam>
-    /// <typeparam name="W">New Dto type, used for private constructor.</typeparam>
-    public abstract class AbstractEntity<T, U, V, W> : BaseEntity
-    where T : BaseEntity, IRepositoryMask<T, U, V, W>
-    where V : UpdatableDto
+    /// <typeparam name="V">Dto used for instancing</typeparam>
+    public abstract class AbstractEntity<T, U, V> : BaseEntity, IRepositoryMask<T, U, V>
+    where T : BaseEntity, IRepositoryMask<T, U, V>, new()
     {
         /// <summary>
         /// Instantiates a new member from Json.
@@ -30,19 +28,20 @@ namespace Fictichos.Constructora.Repository
         /// <remarks>
         /// Let's the class instantiates itself through a Dto, rather than a Json. Gives some leeway so the class can be instantiated within another method.
         /// </remarks>
-        public abstract T Instantiate(W dto);
+        public abstract T Instantiate(V dto);
 
         /// <summary>
         /// Generates a general Dto
         /// </summary>
         /// <remarks>
-        /// Generates a general Dto, class should be used for the most general operations.<br />
+        /// Generates a general Dto, class should be used for the most general
+        /// operations.<br />
         /// A class may contain other methods for Dto generation.
         /// </remarks>
         public abstract U ToDto();
 
         /// <summary>
-        /// Generates a JSON object
+        /// Generates a JSON string from an object.
         /// </summary>
         public string SerializeDto()
         {
@@ -53,11 +52,12 @@ namespace Fictichos.Constructora.Repository
         /// <summary>
         /// Updates every field of a class.
         /// </summary>
-        /// <param name="data">New values for the class, also includes Id for the outer method to get the instance to be updated.</param>
+        /// <param name="data">New values for the class, also includes Id for
+        /// the outer method to get the instance to be updated.</param>
         /// <param name="ActionsCache">Includes all of the updatable properties and is used to iterate over them.</param>
-        public void Update(V data, Dictionary<string, dynamic> ActionsCache)
+        public void Update(IUpdateDto data)
 		{
-			foreach(var actions in ActionsCache)
+			foreach(var actions in data.ActionsCache)
 			{
 				if(data.Changes[actions.Key] is not null)
 				{
@@ -65,5 +65,30 @@ namespace Fictichos.Constructora.Repository
 				}
 			}
 		}
+
+        /// <summary>
+        /// Method that updates elements in a list. This method simply adds the
+        /// new elements or modifies the element at the specified index so for
+        /// objects' lists it is necessary for them to be instantiated before
+        /// this method is run.
+        /// </summary>
+        public void UpdateList(IUpdateList data)
+        {
+            if (data is null) return;
+            switch(data.Operation)
+            {
+                case 0 :
+                    data.props.Add(data.NewItem!);
+                    break;
+                case 1:
+                    data.props.RemoveAt(data.Key);
+                    break;
+                case 2:
+                    data.props[data.Key] = data;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

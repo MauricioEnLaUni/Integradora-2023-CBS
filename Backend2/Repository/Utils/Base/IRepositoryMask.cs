@@ -3,13 +3,13 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Utilities
 {
-    public interface IRepositoryMask<T, U, V, W>
-    where T : BaseEntity, IRepositoryMask<T, U, V, W>
-    where V : DtoBase
+    public interface IRepositoryMask<T, U, V>
+    where T : BaseEntity, IRepositoryMask<T, U, V>
     {
-        public T FakeConstructor(string dto);
+        public abstract T Instantiate(string dto);
+        public abstract T Instantiate(V dto);
         public string SerializeDto();
         public U ToDto();
-        public void Update(V data);
+        public void Update(IUpdateDto data);
     }
 }

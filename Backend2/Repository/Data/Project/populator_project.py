@@ -7,7 +7,7 @@ from wonderwords import RandomWord
 
 class Address:
     """Generates an address."""
-    country = ['Mexico', 'USA', 'Guatemala', 'Canada'] 
+    country = ['Mexico', 'USA', 'Guatemala', 'Canada']
     cities = [
         ('Aguascalientes','Aguascalientes'),
         ('Nuevo León','Monterrey'),
@@ -25,13 +25,13 @@ class Address:
     def choose(self):
         """Sets the country, state and city."""
         temp = random.randint(1,28)
-        if (temp < 21):
+        if temp < 21:
             self.chosen_country = self.country[0]
             self.chosen_city = self.cities[random.randint(0,3)]
-        elif (temp < 26):
+        elif temp < 26:
             self.chosen_country = self.country[1]
             self.chosen_city = self.cities[random.randint(4,6)]
-        elif(temp < 28):
+        elif temp < 28:
             self.chosen_country = self.country[2]
             self.chosen_city = self.cities[7]
         else:

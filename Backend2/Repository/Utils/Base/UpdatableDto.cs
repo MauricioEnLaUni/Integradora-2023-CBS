@@ -2,8 +2,9 @@ using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Utilities
 {
-    public record UpdatableDto : DtoBase
+    public record IUpdateDto : DtoBase
     {
-        public Dictionary<string, dynamic> Changes { get; set; } = new();
+        public Dictionary<string, dynamic> Changes { get; init; } = new();
+        public Dictionary<string, dynamic> ActionsCache { get; init; } = new();
     }
 }
