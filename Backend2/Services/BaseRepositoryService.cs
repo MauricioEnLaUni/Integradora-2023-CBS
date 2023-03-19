@@ -3,18 +3,21 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository
 {
-    public abstract class BaseRepositoryService<T, U, V> : IRepositoryService<T>
-    where T : AbstractEntity<T, U, V>, new()
-    where V : IUpdateDto
+    public abstract class BaseRepositoryService<T, U, V>
+        : IRepositoryService<T, U, V>
+        where T : AbstractEntity<T, U, V>, new()
     {
         public virtual string DB { get; } = "cbs";
         public virtual string COL { get; } = "gy";
-        public abstract Dictionary<string, Action<T, dynamic>> Properties { get; }
-        public abstract Dictionary<string, Action> Filters { get; }
-        public abstract Dictionary<string, Action> Projects { get; }
+
+        public abstract Dictionary<string, Action<T, dynamic>>
+            Properties { get; }
+        public Dictionary<string,
+            Func<string, BsonValue, FilterDefinition<T>>> Filters { get; init; }
 
         public readonly IMongoCollection<T> Collection;
         public readonly FilterDefinitionBuilder<T> filterBuilder =
@@ -24,6 +27,7 @@ namespace Fictichos.Constructora.Repository
 
         public BaseRepositoryService(MongoSettings container)
         {
+            Filters = new Filter<T>().Filters;
             IMongoDatabase db = container.Client.GetDatabase(DB);
             Collection = db.GetCollection<T>(COL);
         }
@@ -43,13 +47,15 @@ namespace Fictichos.Constructora.Repository
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await Collection.Find(new BsonDocument()).ToListAsync<T>();
+            return await Collection.Find(new BsonDocument())
+                .ToListAsync<T>();
         }
 
         public async Task<T?> GetByIdAsync(ObjectId id)
         {
             var filter = filterBuilder.Eq(e => e.Id, id);
-            return await Collection.Find(filter).SingleOrDefaultAsync<T>();
+            return await Collection.Find(filter)
+                .SingleOrDefaultAsync<T>();
         }
 
         public async Task UpdateAsync(T data)

@@ -2,7 +2,8 @@ using MongoDB.Bson;
 
 namespace Fictichos.Constructora.Repository
 {
-    public interface IRepositoryService<T>
+    public interface IRepositoryService<T, U, V>
+    where T : AbstractEntity<T, U, V>, new()
     {
         Task<List<T>> GetAllAsync();
         Task<T?> GetByIdAsync(ObjectId Id);

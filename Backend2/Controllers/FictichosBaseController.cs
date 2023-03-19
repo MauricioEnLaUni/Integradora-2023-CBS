@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 
-using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 
@@ -12,18 +11,14 @@ namespace Fictichos.Constructora.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FApiControllerBase<T, U, V> : ControllerBase
-    where T : Entity, IQueryMask<T, U, V>, new()
-    where V : DtoBase
+    public abstract class FApiControllerBase<T, U, V, W, X> : ControllerBase
+    where T : AbstractEntity<T, U, V>, new()
+    where W : IUpdateDto
+    where X : BaseRepositoryService<T, U, V>
     {
         protected readonly string db = "cbs";
         protected readonly string col = "users";
-        protected readonly RepositoryAsync<T, U, V> _repo;
-
-        public FApiControllerBase(MongoSettings mongoClient)
-        {
-            _repo = new(mongoClient, db, col);
-        }
+        protected abstract X Repo { get; init; }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -31,7 +26,7 @@ namespace Fictichos.Constructora.Controllers
         public async Task<ActionResult> CreateAsync(
             [FromBody] string payload)
         {
-            T data = await _repo.CreateAsync(payload);
+            T data = await Repo.CreateAsync(payload);
 
             return CreatedAtAction(
                 nameof(GetByIdAsync),
@@ -44,7 +39,7 @@ namespace Fictichos.Constructora.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<string>>> GetAllAsync()
         {
-            List<T> rawData = await _repo.GetAllAsync();
+            List<T> rawData = await Repo.GetAllAsync();
             List<string> data = new();
             rawData.ForEach(e => {
                 data.Add(e.SerializeDto());
@@ -57,7 +52,7 @@ namespace Fictichos.Constructora.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<string?>> GetByIdAsync(string id)
         {
-            T? result = await _repo.GetByIdAsync(new ObjectId(id));
+            T? result = await Repo.GetByIdAsync(new ObjectId(id));
             if (result is null) return NotFound($"Document: ${id} does not exist in ${col} collection.");
             return Ok(result.SerializeDto());
         }
@@ -70,13 +65,13 @@ namespace Fictichos.Constructora.Controllers
         public async Task<ActionResult> UpdateAsync(string payload)
         {
             if (payload is null) return BadRequest();
-            V update = JsonConvert.DeserializeObject<V>(payload)!;
+            W update = JsonConvert.DeserializeObject<W>(payload)!;
 
-            T? data = await _repo.GetByIdAsync(update.Id);
+            T? data = await Repo.GetByIdAsync(update.Id);
             if (data is null) return NotFound();
 
             data.Update(update);
-            await _repo.UpdateAsync(data);
+            await Repo.UpdateAsync(data);
             return NoContent();
         }
         
@@ -86,7 +81,7 @@ namespace Fictichos.Constructora.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteAsync(string id)
         {
-            await _repo.DeleteAsync(new ObjectId(id));
+            await Repo.DeleteAsync(new ObjectId(id));
             return NoContent();
         }
 
@@ -97,7 +92,7 @@ namespace Fictichos.Constructora.Controllers
             [FromBody] List<string> payload)
         {
             payload.ForEach(async e => {
-                await _repo.DeleteAsync(new ObjectId(e));
+                await Repo.DeleteAsync(new ObjectId(e));
             });
             return NoContent();
         }
