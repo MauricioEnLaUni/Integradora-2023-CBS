@@ -8,7 +8,7 @@ namespace Fictichos.Constructora.Repository
         : BaseRepositoryService<User, LoginSuccessDto, NewUserDto>,
             IRepositoryService<User, LoginSuccessDto, NewUserDto>
     {
-        public override Dictionary<string, Action<User, dynamic>>
+        public Dictionary<string, Action<User, dynamic>>
             Properties { get; } = new()
             {
                 { "Name", typeof(User).GetProperty("Name")!.SetValue },

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Dto
@@ -34,11 +35,9 @@ namespace Fictichos.Constructora.Dto
         public string Email { get; set; } = string.Empty;
     }
 
-    public record UpdatedUserDto : IUpdateDto
+    public record UpdatedUserDto : IUpdateDto<User>
     {
-        public string? Password { get; set; } = string.Empty;
-        public List<string>? Email { get; set; }
-        public byte[]? Avatar { get; set; }
+        public new Dictionary<string, dynamic> Changes { get; set; } = new();
     }
 
     public record UserEmailDto : DtoBase

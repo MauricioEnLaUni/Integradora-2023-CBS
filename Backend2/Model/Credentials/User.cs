@@ -13,7 +13,7 @@ namespace Fictichos.Constructora.Model
         public string Password
         {
             get => _password;
-            set => _password = Argon2.Hash(value);
+            private set => _password = Argon2.Hash(value);
         }
         public byte[]? Avatar { get; private set; }
         public bool Active { get; private set; } = false;

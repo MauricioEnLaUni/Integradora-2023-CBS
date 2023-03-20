@@ -14,7 +14,7 @@ namespace Fictichos.Constructora.Repository
     /// <typeparam name="U">Stores Dto type for Mapping.</typeparam>
     /// <typeparam name="V">Dto used for instancing</typeparam>
     public abstract class AbstractEntity<T, U, V> : BaseEntity, IRepositoryMask<T, U, V>
-    where T : BaseEntity, IRepositoryMask<T, U, V>, new()
+    where T : AbstractEntity<T, U, V>, new()
     {
         /// <summary>
         /// Instantiates a new member from Json.
@@ -55,13 +55,13 @@ namespace Fictichos.Constructora.Repository
         /// <param name="data">New values for the class, also includes Id for
         /// the outer method to get the instance to be updated.</param>
         /// <param name="ActionsCache">Includes all of the updatable properties and is used to iterate over them.</param>
-        public void Update(IUpdateDto data)
+        public void Update(IUpdateDto<T> data)
 		{
 			foreach(var actions in data.ActionsCache)
 			{
 				if(data.Changes[actions.Key] is not null)
 				{
-					actions.Value(this, data.Changes[actions.Key]);
+					actions.Value((T)this, data.Changes[actions.Key]);
 				}
 			}
 		}

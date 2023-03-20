@@ -7,15 +7,12 @@ using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository
 {
-    public abstract class BaseRepositoryService<T, U, V>
+    public class BaseRepositoryService<T, U, V>
         : IRepositoryService<T, U, V>
         where T : AbstractEntity<T, U, V>, new()
     {
-        public abstract Dictionary<string, Action<T, dynamic>>
-            Properties { get; }
         public Dictionary<string,
             Func<string, BsonValue, FilterDefinition<T>>> Filters { get; init; }
-
         public readonly IMongoCollection<T> Collection;
         public readonly FilterDefinitionBuilder<T> filterBuilder =
             Builders<T>.Filter;
@@ -39,7 +36,7 @@ namespace Fictichos.Constructora.Repository
             return newItem;
         }
 
-        public async Task DeleteAsync(ObjectId id)
+        public async Task DeleteAsync(string id)
         {
             var filter = Builders<T>.Filter.Eq("_id", id);
             await Collection.DeleteOneAsync(filter);
@@ -51,7 +48,7 @@ namespace Fictichos.Constructora.Repository
                 .ToListAsync<T>();
         }
 
-        public async Task<T?> GetByIdAsync(ObjectId id)
+        public async Task<T?> GetByIdAsync(string id)
         {
             var filter = filterBuilder.Eq(e => e.Id, id);
             return await Collection.Find(filter)

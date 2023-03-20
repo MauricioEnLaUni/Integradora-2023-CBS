@@ -10,6 +10,6 @@ namespace Fictichos.Constructora.Utilities
         public abstract T Instantiate(V dto);
         public string SerializeDto();
         public U ToDto();
-        public void Update(IUpdateDto data);
+        public void Update(IUpdateDto<T> data);
     }
 }

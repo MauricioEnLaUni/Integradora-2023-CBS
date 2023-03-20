@@ -6,9 +6,9 @@ namespace Fictichos.Constructora.Repository
     where T : AbstractEntity<T, U, V>, new()
     {
         Task<List<T>> GetAllAsync();
-        Task<T?> GetByIdAsync(ObjectId Id);
+        Task<T?> GetByIdAsync(string Id);
         Task<T> CreateAsync(string newItem);
         Task UpdateAsync(T entity);
-        Task DeleteAsync(ObjectId Id);
+        Task DeleteAsync(string Id);
     }
 }
