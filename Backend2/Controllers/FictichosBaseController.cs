@@ -33,7 +33,7 @@ namespace Fictichos.Constructora.Controllers
     [Route("[controller]")]
     public abstract class FApiControllerBase<T, U, V, W, X> : ControllerBase
     where T : AbstractEntity<T, U, V>, new()
-    where W : IUpdateDto<T>
+    where W : DtoBase
     where X : BaseRepositoryService<T, U, V>
     {
         protected readonly string db = "cbs";
@@ -86,12 +86,12 @@ namespace Fictichos.Constructora.Controllers
             [FromBody] W payload)
         {
             if (payload is null) return BadRequest();
-            W update = JsonConvert.DeserializeObject<W>(payload)!;
+            
 
-            T? data = await Repo.GetByIdAsync(update.Id);
+            T? data = await Repo.GetByIdAsync(payload.Id);
             if (data is null) return NotFound();
 
-            data.Update(update);
+            data.Update(payload);
             await Repo.UpdateAsync(data);
             return NoContent();
         }

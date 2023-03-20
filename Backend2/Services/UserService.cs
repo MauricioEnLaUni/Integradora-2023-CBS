@@ -20,6 +20,16 @@ namespace Fictichos.Constructora.Repository
                 { "Credentials", typeof(User)
                     .GetProperty("Credentials")!.SetValue }
             };
+        public Dictionary<string, Dictionary<string, Action<object?, object?>>>
+            Embedded { get; } = new()
+            {
+                { "Credentials", new Dictionary<string, Action<object?, object?>>()
+                    {
+                        { "Claims",  typeof(Credentials).GetProperty("Claims")!.SetValue },
+                        { "Identity",  typeof(Credentials).GetProperty("Identity")!.SetValue }
+                    }
+                }
+            };
 
         public UserService(MongoSettings container)
             : base(container, "cbs", "users") { }

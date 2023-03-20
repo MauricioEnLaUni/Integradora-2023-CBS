@@ -55,7 +55,7 @@ namespace Fictichos.Constructora.Repository
         /// <param name="data">New values for the class, also includes Id for
         /// the outer method to get the instance to be updated.</param>
         /// <param name="ActionsCache">Includes all of the updatable properties and is used to iterate over them.</param>
-        public void Update(IUpdateDto<T> data)
+        public void Update(UpdateObject<T> data)
 		{
 			foreach(var actions in data.ActionsCache)
 			{

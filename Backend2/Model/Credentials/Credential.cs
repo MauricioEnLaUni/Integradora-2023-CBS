@@ -7,12 +7,12 @@ namespace Fictichos.Constructora.Model
     {
     }
 
-    public class EmployeeCredentials : ICredentials
+    public class Credentials : ICredentials
     {
-        private List<Claim> Claims = new();
-        private ClaimsIdentity Identity;
+        public List<Claim> Claims { get; set; } = new();
+        public ClaimsIdentity Identity { get; set; }
 
-        EmployeeCredentials(User data)
+        Credentials(User data)
         {
             Claims.Add(new Claim(ClaimTypes.Name, data.Name));
             Claims.Add(new Claim(ClaimTypes.Email, data.Email[0]));
