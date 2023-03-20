@@ -1,16 +1,17 @@
 namespace Fictichos.Constructora.Utilities
 {
-    public interface IUpdateList<T>
+    public record UpdateList<T>
     {
         public int Operation { get; set; }
         public int Key { get; set; }
         public T? NewItem { get; set; }
     }
 
-    public interface IUpdateObjectList<T>
+    public record IndexedObjectUpdate<T, U>
     {
         public int Operation { get; set; }
-        public dynamic Key { get; set; }
-        public T NewItem { get; set; }
+        public int Key { get; set; }
+        public T? NewItem { get; set; }
+        public U? UpdateItem { get; set; }
     }
 }

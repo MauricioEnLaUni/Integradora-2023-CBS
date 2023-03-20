@@ -39,8 +39,8 @@ namespace Fictichos.Constructora.Dto
     {
         public string? Password { get; set; } = string.Empty;
         public bool? Active { get; set; }
-        public List<IUpdateList<string>>? Email { get; set; }
-        public List<IUpdateList<string>>? Roles { get; set; }
+        public List<UpdateList<string>>? Email { get; set; }
+        public List<UpdateList<string>>? Roles { get; set; }
         public UpdatedCredentialsDto? Credentials { get; set; }
         public byte[]? Avatar { get; set; }
     }

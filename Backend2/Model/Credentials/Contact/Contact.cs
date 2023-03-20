@@ -8,8 +8,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Contact : Entity,
-        IQueryMask<Contact, ContactDto, UpdatedContactDto>
+    public class Contact : BaseEntity,
+        IQueryMask<Contact, NewContactDto, UpdatedContactDto>
     {
         [BsonElement("addresses")]
         public List<Address> Addresses { get; private set; } = new List<Address>();
@@ -29,20 +29,9 @@ namespace Fictichos.Constructora.Model
             if (data.Emails is not null) Emails.Add(data.Emails);
         }
         
-        public Contact FakeConstructor(string dto)
+        public Contact Instantiate(NewContactDto data)
         {
-            try
-            {
-                return new Contact(JsonConvert
-                    .DeserializeObject<NewContactDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public ContactDto ToDto()
@@ -61,10 +50,21 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedContactDto data)
         {
-            
+            if (data.Addresses is not null)
+            {
+                data.Addresses.ForEach(Addresses.UpdateObjectWithIndex);
+            }
+            if (data.Phones is not null)
+            {
+                data.Phones.ForEach(Phones.UpdateWithIndex);
+            }
+            if (data.Emails is not null)
+            {
+                data.Emails.ForEach(Emails.UpdateWithIndex);
+            }
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             ContactDto data = ToDto();
             return JsonConvert.SerializeObject(data);

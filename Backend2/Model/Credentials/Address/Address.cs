@@ -49,6 +49,7 @@ namespace Fictichos.Constructora.Model
 
         public void Update(NewAddressDto data)
         {
+            ModifiedAt = DateTime.Now;
             Street = data.Street ?? null;
             Number = data.Number ?? null;
             Colony = data.Colony ?? null;

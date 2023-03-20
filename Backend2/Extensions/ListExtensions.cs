@@ -1,3 +1,6 @@
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
+
 namespace Fictichos.Constructora.Utilities
 {
     public static class EnumExtension
@@ -17,7 +20,7 @@ namespace Fictichos.Constructora.Utilities
         /// </summary>
         public static void UpdateWithIndex<T>(
             this List<T> props,
-            IUpdateList<T> data)
+            UpdateList<T> data)
         {
             if (data is null) return;
             switch(data.Operation)
@@ -30,6 +33,33 @@ namespace Fictichos.Constructora.Utilities
                     break;
                 case 2:
                     props[data.Key] = data.NewItem!;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public static void UpdateObjectWithIndex<T, U, V>(
+            this List<T> props,
+            IndexedObjectUpdate<U, V> data
+        )
+        where T : BaseEntity, IQueryMask<T, U, V>, new()
+        where V : DtoBase
+        {
+            if (data is null) return;
+            switch(data.Operation)
+            {
+                case 0 :
+                    if (data.NewItem is null) return;
+                    T newItem = new T().Instantiate(data.NewItem);
+                    props.Add(newItem);
+                    break;
+                case 1:
+                    props.RemoveAt(data.Key);
+                    break;
+                case 2:
+                    if (data.UpdateItem is null) return;
+                    props[data.Key].Update(data.UpdateItem);
                     break;
                 default:
                     break;

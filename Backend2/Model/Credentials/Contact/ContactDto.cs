@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Dto
 {
@@ -18,22 +19,9 @@ namespace Fictichos.Constructora.Dto
 
     public record UpdatedContactDto : DtoBase
     {
-        public List<NewAddressDto>? Addresses { get; init; } = new();
-        public List<UpdatedPhone> Phones { get; init; } = new();
-        public List<UpdatedEmail> Emails { get; init; } = new();
-    }
-
-    public record UpdatedPhone
-    {
-        public int? Index { get; set; }
-        public int Operation { get; set; }
-        public string Data { get; set; } = string.Empty;
-    }
-
-    public record UpdatedEmail
-    {
-        public int? Index { get; set; }
-        public int Operation { get; set; }
-        public string Data { get; set; } = string.Empty;
+        public List<IndexedObjectUpdate<NewAddressDto, NewAddressDto>>?
+            Addresses { get; init; } = new();
+        public List<UpdateList<string>>? Phones { get; init; } = new();
+        public List<UpdateList<string>>? Emails { get; init; } = new();
     }
 }
