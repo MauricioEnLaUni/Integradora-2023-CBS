@@ -1,12 +1,11 @@
-using System.Linq;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 
-using MongoDB.Bson;
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Controllers
 {
@@ -20,37 +19,32 @@ namespace Fictichos.Constructora.Controllers
     /// <remarks>
     /// Every in the controller operation is Asynchronous.
     /// </remarks>
-    /// <typeparam name="T">The type the controller poperates with. It is
-    /// necessary for the collection to search for these types.</typeparam>
-    /// <typeparam name="U">Base Dto type, can probably be refactored into an
-    /// interface.</typeparam>
-    /// <typeparam name="V">Data for creating new Ts through instantiate.
-    /// </typeparam>
-    /// <typeparam name="W">Data for the Update method.</typeparam>
-    /// <typeparam name="X">Service for repository.</typeparam>
+    /// <typeparam name="T">Base controller type.</typeparam>
+    /// <typeparam name="U">Container for new object.</typeparam>
+    /// <typeparam name="V">Update values.</typeparam>
     [ApiController]
     [Route("[controller]")]
-    public abstract class FApiControllerBase<T, U, V, W, X> : ControllerBase
-    where T : AbstractEntity<T, U, V, W>, new()
-    where W : DtoBase
-    where X : BaseRepositoryService<T, U, V, W>
+    public abstract class FApiControllerBase<T, U, V, W> : ControllerBase
+    where T : BaseEntity, IQueryMask<T, U, V>, new()
+    where V : DtoBase
+    where W : BaseRepositoryService<T, U, V>
     {
         protected readonly string db = "cbs";
         protected readonly string col = "users";
-        protected abstract X Repo { get; init; }
+        protected abstract W Repo { get; init; }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateAsync(
-            [FromBody] string payload)
+            [FromBody] U payload)
         {
             T data = await Repo.CreateAsync(payload);
 
             return CreatedAtAction(
                 actionName: nameof(GetByIdAsync),
                 routeValues: JsonConvert.SerializeObject(new { id = data.Id }),
-                value: data.ToDto()
+                value: data.Serialize()
             );
         }
 
@@ -61,7 +55,7 @@ namespace Fictichos.Constructora.Controllers
             List<T> rawData = await Repo.GetAllAsync();
             List<string> data = new();
             rawData.ForEach(e => {
-                data.Add(e.SerializeDto());
+                data.Add(e.Serialize());
             });
             return Ok(data);
         }
@@ -73,7 +67,7 @@ namespace Fictichos.Constructora.Controllers
         {
             T? result = await Repo.GetByIdAsync(id);
             if (result is null) return NotFound($"Document: ${id} does not exist in ${col} collection.");
-            return Ok(result.SerializeDto());
+            return Ok(result.Serialize());
         }
 
         [HttpPut]
@@ -82,7 +76,7 @@ namespace Fictichos.Constructora.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> UpdateAsync(
-            [FromBody] W payload)
+            [FromBody] V payload)
         {
             if (payload is null) return BadRequest();
             

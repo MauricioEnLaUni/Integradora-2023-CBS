@@ -18,7 +18,7 @@ namespace Fictichos.Constructora.Dto
         public Coordinates? Coordinates { get; set; }
     }
 
-    public record AddressDto
+    public record AddressDto : DtoBase
     {
         public string? Street { get; set; }
         public string? Number { get; set; }

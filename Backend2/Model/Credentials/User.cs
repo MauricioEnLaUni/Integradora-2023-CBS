@@ -7,7 +7,8 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class User : AbstractEntity<User, LoginSuccessDto, NewUserDto, UpdatedUserDto>
+    public class User
+        : BaseEntity, IQueryMask<User, NewUserDto, UpdatedUserDto>
     {
         public string Name { get; init; } = string.Empty;
         private string _password = string.Empty;
@@ -26,11 +27,11 @@ namespace Fictichos.Constructora.Model
         public List<ICredentials> Credentials { get; private set; } = new();
 
         public User() { }
-        public User(NewUserDto usr)
+        public User(NewUserDto data)
         {
-            Name = usr.Name;
-            Password = usr.Password;
-            Email.Add(usr.Email);
+            Name = data.Name;
+            Password = data.Password;
+            Email.Add(data.Email);
         }
 
         public bool ValidatePassword(string pwd)
@@ -38,7 +39,7 @@ namespace Fictichos.Constructora.Model
             return Argon2.Verify(Password, pwd);
         }
 
-        public override LoginSuccessDto ToDto()
+        public LoginSuccessDto ToDto()
         {
             return new()
             {
@@ -46,28 +47,18 @@ namespace Fictichos.Constructora.Model
             };
         }
 
-        public override User Instantiate(string dto)
+        public string Serialize()
         {
-            try
-            {
-                return new User(JsonConvert
-                    .DeserializeObject<NewUserDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            LoginSuccessDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
         }
 
-        public override User Instantiate(NewUserDto dto)
+        public User Instantiate(NewUserDto dto)
         {
             return new(dto);
         }
 
-        public override void Update(UpdatedUserDto data)
+        public void Update(UpdatedUserDto data)
         {
             Avatar = data.Avatar ?? Avatar;
             Password = data.Password ?? Password;

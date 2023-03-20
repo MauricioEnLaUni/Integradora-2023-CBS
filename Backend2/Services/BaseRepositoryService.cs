@@ -8,10 +8,9 @@ using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository
 {
-    public class BaseRepositoryService<T, U, V, W>
-        : IRepositoryService<T, U, V, W>
-        where T : AbstractEntity<T, U, V, W>, new()
-        where W : DtoBase
+    public class BaseRepositoryService<T, U, V>
+    where T : BaseEntity, IQueryMask<T, U, V>, new()
+    where V : DtoBase
     {
         public Dictionary<string,
             Func<string, BsonValue, FilterDefinition<T>>> Filters { get; init; }
@@ -31,7 +30,7 @@ namespace Fictichos.Constructora.Repository
             Collection = db.GetCollection<T>(COL);
         }
 
-        public async Task<T> CreateAsync(string data)
+        public async Task<T> CreateAsync(U data)
         {
             T newItem = new T().Instantiate(data);
             await Collection.InsertOneAsync(newItem);

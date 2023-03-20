@@ -9,8 +9,8 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Address : Entity,
-        IQueryMask<Address, AddressDto, NewAddressDto>
+    public class Address : BaseEntity,
+        IQueryMask<Address, NewAddressDto, NewAddressDto>
     {
         [BsonElement("street")]
         public string? Street { get; set; }
@@ -42,6 +42,11 @@ namespace Fictichos.Constructora.Model
             Coordinates = data.Coordinates ?? null;
         }
 
+        public Address Instantiate(NewAddressDto data)
+        {
+            return new Address(data);
+        }
+
         public void Update(NewAddressDto data)
         {
             Street = data.Street ?? null;
@@ -54,38 +59,18 @@ namespace Fictichos.Constructora.Model
             Coordinates = data.Coordinates ?? null;
         }
 
-        public Address FakeConstructor(string dto)
-        {
-            try
-            {
-                return new Address(JsonConvert
-                    .DeserializeObject<NewAddressDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
-        }
-        public Address FakeConstructor(NewAddressDto dto)
-        {
-            return new(dto);
-        }
-
         public AddressDto ToDto()
         {
             return new(this);
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             AddressDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
 
-        public string AsSlimDto()
+        public string ToSlimDto()
         {
             SlimAddressDto data = new(this);
             return JsonConvert.SerializeObject(data);

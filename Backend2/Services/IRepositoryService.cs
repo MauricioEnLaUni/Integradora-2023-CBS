@@ -1,14 +1,14 @@
-using Fictichos.Constructora.Dto;
-
 namespace Fictichos.Constructora.Repository
 {
-    public interface IRepositoryService<T, U, V, W>
-    where T : AbstractEntity<T, U, V, W>, new()
-    where W : DtoBase
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IRepositoryService<T, U>
+    where T : BaseEntity, new()
     {
         Task<List<T>> GetAllAsync();
         Task<T?> GetByIdAsync(string Id);
-        Task<T> CreateAsync(string newItem);
+        Task<T> CreateAsync(U newItem);
         Task UpdateAsync(T entity);
         Task DeleteAsync(string Id);
     }
