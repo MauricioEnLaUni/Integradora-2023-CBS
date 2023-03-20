@@ -3,10 +3,11 @@ using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class User : AbstractEntity<User, LoginSuccessDto, NewUserDto>
+    public class User : AbstractEntity<User, LoginSuccessDto, NewUserDto, UpdatedUserDto>
     {
         public string Name { get; init; } = string.Empty;
         private string _password = string.Empty;
@@ -17,7 +18,7 @@ namespace Fictichos.Constructora.Model
         }
         public byte[]? Avatar { get; private set; }
         public bool Active { get; private set; } = false;
-        public List<string> Email { get; private set; } = new();
+        public List<string> Email { get; set; } = new();
         public List<string> Roles { get; private set; } = new();
         // MAC?
         // AUTH
@@ -64,6 +65,22 @@ namespace Fictichos.Constructora.Model
         public override User Instantiate(NewUserDto dto)
         {
             return new(dto);
+        }
+
+        public override void Update(UpdatedUserDto data)
+        {
+            Avatar = data.Avatar ?? Avatar;
+            Password = data.Password ?? Password;
+            Active = data.Active ?? Active;
+            
+            if (data.Email is not null)
+            {
+                data.Email.ForEach(Email.UpdateWithIndex);
+            }
+            if (data.Roles is not null)
+            {
+                data.Roles.ForEach(Roles.UpdateWithIndex);
+            }
         }
     }
 }

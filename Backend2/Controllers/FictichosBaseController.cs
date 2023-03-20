@@ -6,7 +6,6 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
-using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Controllers
@@ -32,9 +31,9 @@ namespace Fictichos.Constructora.Controllers
     [ApiController]
     [Route("[controller]")]
     public abstract class FApiControllerBase<T, U, V, W, X> : ControllerBase
-    where T : AbstractEntity<T, U, V>, new()
+    where T : AbstractEntity<T, U, V, W>, new()
     where W : DtoBase
-    where X : BaseRepositoryService<T, U, V>
+    where X : BaseRepositoryService<T, U, V, W>
     {
         protected readonly string db = "cbs";
         protected readonly string col = "users";

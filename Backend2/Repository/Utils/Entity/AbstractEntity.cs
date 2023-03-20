@@ -1,6 +1,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Repository
@@ -12,9 +13,11 @@ namespace Fictichos.Constructora.Repository
     /// </summary>
     /// <typeparam name="T">Stores itself, useful for the Instantiate method.</typeparam>
     /// <typeparam name="U">Stores Dto type for Mapping.</typeparam>
-    /// <typeparam name="V">Dto used for instancing</typeparam>
-    public abstract class AbstractEntity<T, U, V> : BaseEntity, IRepositoryMask<T, U, V>
-    where T : AbstractEntity<T, U, V>, new()
+    /// <typeparam name="V">Dto for instancing</typeparam>
+    /// <typeparam name="W">Dto for Updates.</typeparam>
+    public abstract class AbstractEntity<T, U, V, W> : BaseEntity, IRepositoryMask<T, U, V, W>
+    where T : AbstractEntity<T, U, V, W>, new()
+    where W : DtoBase
     {
         /// <summary>
         /// Instantiates a new member from Json.
@@ -55,40 +58,6 @@ namespace Fictichos.Constructora.Repository
         /// <param name="data">New values for the class, also includes Id for
         /// the outer method to get the instance to be updated.</param>
         /// <param name="ActionsCache">Includes all of the updatable properties and is used to iterate over them.</param>
-        public void Update(UpdateObject<T> data)
-		{
-			foreach(var actions in data.ActionsCache)
-			{
-				if(data.Changes[actions.Key] is not null)
-				{
-					actions.Value((T)this, data.Changes[actions.Key]);
-				}
-			}
-		}
-
-        /// <summary>
-        /// Method that updates elements in a list. This method simply adds the
-        /// new elements or modifies the element at the specified index so for
-        /// objects' lists it is necessary for them to be instantiated before
-        /// this method is run.
-        /// </summary>
-        public void UpdateList(IUpdateList data)
-        {
-            if (data is null) return;
-            switch(data.Operation)
-            {
-                case 0 :
-                    data.props.Add(data.NewItem!);
-                    break;
-                case 1:
-                    data.props.RemoveAt(data.Key);
-                    break;
-                case 2:
-                    data.props[data.Key] = data;
-                    break;
-                default:
-                    break;
-            }
-        }
+        public abstract void Update(W data);
     }
 }

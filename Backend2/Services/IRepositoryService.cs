@@ -1,9 +1,10 @@
-using MongoDB.Bson;
+using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository
 {
-    public interface IRepositoryService<T, U, V>
-    where T : AbstractEntity<T, U, V>, new()
+    public interface IRepositoryService<T, U, V, W>
+    where T : AbstractEntity<T, U, V, W>, new()
+    where W : DtoBase
     {
         Task<List<T>> GetAllAsync();
         Task<T?> GetByIdAsync(string Id);

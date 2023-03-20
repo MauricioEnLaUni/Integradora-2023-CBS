@@ -1,4 +1,6 @@
 using System.Security.Claims;
+
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
@@ -18,6 +20,17 @@ namespace Fictichos.Constructora.Model
             Claims.Add(new Claim(ClaimTypes.Email, data.Email[0]));
 
             Identity = new ClaimsIdentity(Claims, Constants.COOKIENAME);
+        }
+
+        public void Update(UpdatedCredentialsDto data)
+        {
+            Identity = data.Identity ?? Identity;
+            if (data.Claims is not null)
+            {
+                data.Claims.ForEach(e => {
+                    
+                });
+            }
         }
     }
 

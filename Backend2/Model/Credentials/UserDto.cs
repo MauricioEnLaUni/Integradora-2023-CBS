@@ -35,9 +35,14 @@ namespace Fictichos.Constructora.Dto
         public string Email { get; set; } = string.Empty;
     }
 
-    public record UpdatedUserDto : IUpdateDto<User>
+    public record UpdatedUserDto : DtoBase
     {
-        public new Dictionary<string, dynamic> Changes { get; set; } = new();
+        public string? Password { get; set; } = string.Empty;
+        public bool? Active { get; set; }
+        public List<IUpdateList<string>>? Email { get; set; }
+        public List<IUpdateList<string>>? Roles { get; set; }
+        public UpdatedCredentialsDto? Credentials { get; set; }
+        public byte[]? Avatar { get; set; }
     }
 
     public record UserEmailDto : DtoBase
