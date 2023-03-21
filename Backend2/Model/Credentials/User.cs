@@ -8,9 +8,10 @@ using Fictichos.Constructora.Utilities;
 namespace Fictichos.Constructora.Model
 {
     public class User
-        : BaseEntity, IQueryMask<User, NewUserDto, UpdatedUserDto>
+        : BaseEntity, IQueryMask<User, NewUserDto, UpdatedUserDto, LoginSuccessDto>
     {
         public string Name { get; init; } = string.Empty;
+        public DateTime? Closed { get; set; }
         private string _password = string.Empty;
         public string Password
         {
@@ -43,7 +44,12 @@ namespace Fictichos.Constructora.Model
         {
             return new()
             {
+                Id = Id,
                 Name = Name,
+                CreatedAt = CreatedAt,
+                Roles = Roles,
+                Email = Email,
+                Avatar = Avatar
             };
         }
 
@@ -63,6 +69,7 @@ namespace Fictichos.Constructora.Model
             Avatar = data.Avatar ?? Avatar;
             Password = data.Password ?? Password;
             Active = data.Active ?? Active;
+            Closed = data.Closed ?? Closed;
             
             if (data.Email is not null)
             {

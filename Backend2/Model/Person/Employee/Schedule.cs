@@ -7,7 +7,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Schedule : BaseEntity,
-        IQueryMask<Schedule, NewScheduleDto, UpdatedScheduleDto>
+        IQueryMask<Schedule, NewScheduleDto, UpdatedScheduleDto, ScheduleDto>
     {
         public string Period { get; set; } = string.Empty;
         public Dictionary<TimeSpan, int> Hours { get; set; } = new();

@@ -21,11 +21,11 @@ namespace Fictichos.Constructora.Dto
     {
         public string Id { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public List<PaymentsDto> Payments { get; set; } = new();
+        public List<PaymentDto> Payments { get; set; } = new();
         public string Owner { get; set; } = string.Empty;
     }
 
-    public record PaymentsDto
+    public record PaymentDto
     {
         public string Id { get; set; } = string.Empty;
         public double Amount { get; set; }

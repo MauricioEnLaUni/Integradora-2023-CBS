@@ -5,7 +5,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Controllers
 {
     public class UserController
-        : FApiControllerBase<User, NewUserDto, UpdatedUserDto, UserService>
+        : FApiControllerBase<User, NewUserDto, UpdatedUserDto, LoginSuccessDto, UserService>
     {
         protected override UserService Repo { get; init; }
 

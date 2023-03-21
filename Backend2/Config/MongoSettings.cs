@@ -6,16 +6,6 @@ namespace Fictichos.Constructora.Utilities
     public class MongoSettings
     {
         public MongoClient Client;
-        private readonly List<string> Collections = new()
-        {
-            "testCollection",
-            "users",
-            "people",
-            "project",
-            "material",
-            "tasks",
-            "accounts"
-        };
         public MongoSettings()
         {
             //string User = Environment.GetEnvironmentVariable("DOCKER__MONGODB__USER")!;

@@ -24,14 +24,14 @@ namespace Fictichos.Constructora.Controllers
     /// <typeparam name="V">Update values.</typeparam>
     [ApiController]
     [Route("[controller]")]
-    public abstract class FApiControllerBase<T, U, V, W> : ControllerBase
-    where T : BaseEntity, IQueryMask<T, U, V>, new()
+    public abstract class FApiControllerBase<T, U, V, W, X> : ControllerBase
+    where T : BaseEntity, IQueryMask<T, U, V, W>, new()
     where V : DtoBase
-    where W : BaseRepositoryService<T, U, V>
+    where X : BaseRepositoryService<T, U, V, W>
     {
         protected readonly string db = "cbs";
         protected readonly string col = "users";
-        protected abstract W Repo { get; init; }
+        protected abstract X Repo { get; init; }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -43,19 +43,19 @@ namespace Fictichos.Constructora.Controllers
 
             return CreatedAtAction(
                 actionName: nameof(GetByIdAsync),
-                routeValues: JsonConvert.SerializeObject(new { id = data.Id }),
-                value: data.Serialize()
+                routeValues: new { id = data.Id },
+                value: data.ToDto()
             );
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<string>>> GetAllAsync()
+        public async Task<ActionResult<List<W>>> GetAllAsync()
         {
             List<T> rawData = await Repo.GetAllAsync();
-            List<string> data = new();
+            List<W> data = new();
             rawData.ForEach(e => {
-                data.Add(e.Serialize());
+                data.Add(e.ToDto());
             });
             return Ok(data);
         }
@@ -63,11 +63,11 @@ namespace Fictichos.Constructora.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<string?>> GetByIdAsync(string id)
+        public async Task<ActionResult<W?>> GetByIdAsync(string id)
         {
             T? result = await Repo.GetByIdAsync(id);
             if (result is null) return NotFound($"Document: ${id} does not exist in ${col} collection.");
-            return Ok(result.Serialize());
+            return Ok(result.ToDto());
         }
 
         [HttpPut]
@@ -80,7 +80,6 @@ namespace Fictichos.Constructora.Controllers
         {
             if (payload is null) return BadRequest();
             
-
             T? data = await Repo.GetByIdAsync(payload.Id);
             if (data is null) return NotFound();
 

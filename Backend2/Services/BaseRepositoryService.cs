@@ -8,8 +8,8 @@ using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository
 {
-    public class BaseRepositoryService<T, U, V>
-    where T : BaseEntity, IQueryMask<T, U, V>, new()
+    public class BaseRepositoryService<T, U, V, W>
+    where T : BaseEntity, IQueryMask<T, U, V, W>, new()
     where V : DtoBase
     {
         public Dictionary<string,
@@ -39,7 +39,7 @@ namespace Fictichos.Constructora.Repository
 
         public async Task DeleteAsync(string id)
         {
-            var filter = Builders<T>.Filter.Eq("_id", id);
+            var filter = Builders<T>.Filter.Eq(e => e.Id, id);
             await Collection.DeleteOneAsync(filter);
         }
 
@@ -58,7 +58,7 @@ namespace Fictichos.Constructora.Repository
 
         public async Task UpdateAsync(T data)
         {
-            var filter = filterBuilder.Eq(item => item.Id, data.Id);
+            FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, data.Id);
             await Collection.ReplaceOneAsync(filter, data);
         }
 

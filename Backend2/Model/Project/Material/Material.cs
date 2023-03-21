@@ -7,7 +7,7 @@ using Fictichos.Constructora.Utilities;
 namespace Fictichos.Constructora.Model
 {
     public class Material
-        : BaseEntity, IQueryMask<Material, NewMaterialDto, UpdatedMaterialDto>
+        : BaseEntity, IQueryMask<Material, NewMaterialDto, UpdatedMaterialDto, MaterialDto>
     {
         public string Name { get; set; } = string.Empty;
         public int Quantity { get; private set; }

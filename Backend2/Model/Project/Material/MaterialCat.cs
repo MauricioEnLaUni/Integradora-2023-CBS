@@ -7,7 +7,7 @@ using Fictichos.Constructora.Utilities;
 namespace Fictichos.Constructora.Model
 {
     public class MaterialCategory : BaseEntity,
-        IQueryMask<MaterialCategory, NewMaterialCategoryDto, UpdatedMatCategoryDto>
+        IQueryMask<MaterialCategory, NewMaterialCategoryDto, UpdatedMatCategoryDto, MaterialCategoryDto>
     {
         public string Name { get; set; } = string.Empty;
         public string? Parent { get; private set; }
@@ -47,7 +47,7 @@ namespace Fictichos.Constructora.Model
         {
             Name = data.Name ?? Name;
             Parent = data.Parent ?? null;
-
+            
             data.SubCategory?.ForEach(SubCategory.UpdateWithIndex);
             data.Children?.ForEach(Children.UpdateWithIndex);
         }

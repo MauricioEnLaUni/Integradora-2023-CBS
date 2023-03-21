@@ -18,6 +18,7 @@ namespace Fictichos.Constructora.Dto
     {
         public string Name { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public List<string> Roles { get; set; } = new();
         public List<string> Email { get; set; } = new();
         public byte[]? Avatar;
     }
@@ -31,7 +32,6 @@ namespace Fictichos.Constructora.Dto
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,64}$")]
         public string Password { get; set; } = string.Empty;
         [Required]
-        [RegularExpression(@"^[\\.-\\w]{1,25}@cbs.com$")]
         public string Email { get; set; } = string.Empty;
     }
 
@@ -43,6 +43,7 @@ namespace Fictichos.Constructora.Dto
         public List<UpdateList<string>>? Roles { get; set; }
         public UpdatedCredentialsDto? Credentials { get; set; }
         public byte[]? Avatar { get; set; }
+        public DateTime? Closed { get; set; }
     }
 
     public record UserEmailDto : DtoBase

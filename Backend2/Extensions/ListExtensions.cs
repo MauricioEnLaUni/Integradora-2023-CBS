@@ -39,11 +39,11 @@ namespace Fictichos.Constructora.Utilities
             }
         }
 
-        public static void UpdateObjectWithIndex<T, U, V>(
+        public static void UpdateObjectWithIndex<T, U, V, W>(
             this List<T> props,
             IndexedObjectUpdate<U, V> data
         )
-        where T : BaseEntity, IQueryMask<T, U, V>, new()
+        where T : BaseEntity, IQueryMask<T, U, V, W>, new()
         where V : DtoBase
         {
             if (data is null) return;

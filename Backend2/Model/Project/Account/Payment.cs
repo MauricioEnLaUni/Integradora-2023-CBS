@@ -7,7 +7,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Payment : BaseEntity,
-        IQueryMask<Payment, NewPaymentDto, UpdatedPaymentDto>
+        IQueryMask<Payment, NewPaymentDto, UpdatedPaymentDto, PaymentDto>
     {
         public string Concept { get; set; } = string.Empty;
         public double Amount { get; set; }
@@ -27,7 +27,7 @@ namespace Fictichos.Constructora.Model
             return new(data);
         }
 
-        public PaymentsDto ToDto()
+        public PaymentDto ToDto()
         {
             return new()
             {
@@ -40,7 +40,7 @@ namespace Fictichos.Constructora.Model
 
         public string Serialize()
         {
-            PaymentsDto data = ToDto();
+            PaymentDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
 

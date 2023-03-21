@@ -1,7 +1,10 @@
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Utilities.MongoDB;
 
 DotEnvManager env = new();
+
+EntityMapper.MapClasses();
 
 var builder = WebApplication.CreateBuilder(args);
 // var cs = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();

@@ -12,9 +12,7 @@ namespace Fictichos.Constructora.Repository
     [BsonIgnoreExtraElements]
     public class BaseEntity
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; } = string.Empty;
+        public string Id { get; } = ObjectId.GenerateNewId().ToString();
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime CreatedAt { get; init; } = DateTime.Now;
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]

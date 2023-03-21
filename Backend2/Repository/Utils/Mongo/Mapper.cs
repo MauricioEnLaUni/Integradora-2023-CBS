@@ -2,18 +2,20 @@ using MongoDB.Bson.Serialization;
 
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson;
 
 namespace Fictichos.Constructora.Utilities.MongoDB
 {
     /// <summary>
     /// Contains mapping methods to be called during Server initialization.
     /// </summary>
-    public class EntityMapper
+    public static class EntityMapper
     {
         /// <summary>
         /// Driver class for mapping all entities on the database.
         /// </summary>
-        public void MapClasses()
+        public static void MapClasses()
         {
             MapBaseEntity();
             MapProject();
@@ -35,19 +37,20 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             MapCoordinates();
         }
 
-        public void MapBaseEntity()
+        public static void MapBaseEntity()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(BaseEntity)))
             {
                 BsonClassMap.RegisterClassMap<BaseEntity>(classMap => {
-                    classMap.MapMember(p => p.Id).SetElementName("_id");
+                    classMap.MapIdProperty(p => p.Id)
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.CreatedAt).SetElementName("created");
                     classMap.MapMember(p => p.ModifiedAt).SetElementName("modified");
                 });
             }
         }
 
-        public void MapProject()
+        public static void MapProject()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Project)))
             {
@@ -61,7 +64,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapMaterial()
+        public static void MapMaterial()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Material)))
             {
@@ -79,7 +82,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapMaterialCategory()
+        public static void MapMaterialCategory()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(MaterialCategory)))
             {
@@ -92,7 +95,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapFTasks()
+        public static void MapFTasks()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(FTasks)))
             {
@@ -109,7 +112,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapAccount()
+        public static void MapAccount()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Account)))
             {
@@ -121,7 +124,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapPayment()
+        public static void MapPayment()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Payment)))
             {
@@ -135,7 +138,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapSalary()
+        public static void MapSalary()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Salary)))
             {
@@ -150,7 +153,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapPerson()
+        public static void MapPerson()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Person)))
             {
@@ -163,7 +166,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapJob()
+        public static void MapJob()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Job)))
             {
@@ -179,7 +182,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapEmployee()
+        public static void MapEmployee()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Employee)))
             {
@@ -196,7 +199,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapSchedule()
+        public static void MapSchedule()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Schedule)))
             {
@@ -208,7 +211,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapEducation()
+        public static void MapEducation()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Education)))
             {
@@ -219,7 +222,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapGrade()
+        public static void MapGrade()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Grade)))
             {
@@ -230,11 +233,12 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapUser()
+        public static void MapUser()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(User)))
             {
                 BsonClassMap.RegisterClassMap<User>(classMap => {
+                    classMap.MapMember(p => p.Closed).SetElementName("closed");
                     classMap.MapMember(p => p.Name).SetElementName("username");
                     classMap.MapMember(p => p.Password).SetElementName("password");
                     classMap.MapMember(p => p.Avatar).SetElementName("avatar");
@@ -245,7 +249,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapContact()
+        public static void MapContact()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Contact)))
             {
@@ -257,7 +261,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapAddress()
+        public static void MapAddress()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Address)))
             {
@@ -273,7 +277,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public void MapCoordinates()
+        public static void MapCoordinates()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(Coordinates)))
             {

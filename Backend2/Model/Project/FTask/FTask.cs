@@ -1,5 +1,3 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Dto;
@@ -9,7 +7,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class FTasks : BaseEntity,
-        IQueryMask<FTasks, NewFTaskDto, UpdatedFTaskDto>
+        IQueryMask<FTasks, NewFTaskDto, UpdatedFTaskDto, FTasksDto>
     {
         public string Name { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
@@ -74,7 +72,7 @@ namespace Fictichos.Constructora.Model
 
             data.Material?.ForEach(Material.UpdateWithIndex);
             data.EmployeesAssigned?.ForEach(EmployeesAssigned.UpdateWithIndex);
-            data.Subtasks?.ForEach(Subtasks.UpdateObjectWithIndex);
+            data.Subtasks?.ForEach(Subtasks.UpdateObjectWithIndex<FTasks, NewFTaskDto, UpdatedFTaskDto, FTasksDto>);
         }
     }
 }

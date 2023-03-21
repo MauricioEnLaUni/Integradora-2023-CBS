@@ -9,7 +9,7 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Job : BaseEntity, IQueryMask<Job, NewJobDto, UpdatedJobDto>
+    public class Job : BaseEntity, IQueryMask<Job, NewJobDto, UpdatedJobDto, JobDto>
     {
         public List<Salary> SalaryHistory { get; set; } = new();
         public string Role { get; set; } = string.Empty;

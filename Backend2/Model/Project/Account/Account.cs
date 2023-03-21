@@ -12,7 +12,7 @@ namespace Fictichos.Constructora.Model
     /// Represents monetary transaction in which the user is involved.
     /// </summary>
     public class Account : BaseEntity,
-        IQueryMask<Account, NewAccountDto, UpdatedAccountDto>
+        IQueryMask<Account, NewAccountDto, UpdatedAccountDto, AccountDto>
     {
         public string Name { get; set; } = string.Empty;
         public List<Payment> Payments { get; set; } = new();
@@ -31,7 +31,7 @@ namespace Fictichos.Constructora.Model
 
         public AccountDto ToDto()
         {
-            List<PaymentsDto> list = new();
+            List<PaymentDto> list = new();
             Payments.ForEach(e => {
                 list.Add(e.ToDto());
             });
@@ -56,7 +56,7 @@ namespace Fictichos.Constructora.Model
             Owner = data.Owner ?? Owner;
             if (data.Payments is not null)
             {
-                data.Payments.ForEach(Payments.UpdateObjectWithIndex);
+                data.Payments.ForEach(Payments.UpdateObjectWithIndex<Payment, NewPaymentDto, UpdatedPaymentDto, PaymentDto>);
             }
         }
     }
