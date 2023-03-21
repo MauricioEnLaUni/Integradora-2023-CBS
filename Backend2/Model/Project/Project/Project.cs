@@ -9,7 +9,7 @@ namespace Fictichos.Constructora.Model
     public class Project : Entity
     {
         [BsonElement("account")]
-        public Account? PayHistory { get; set; } = new("None", null);
+        public Account? PayHistory { get; set; } //= new("None", null);
         [BsonElement("tasks")]
         public List<FTasks> Tasks { get; set; } = new List<FTasks>();
 
