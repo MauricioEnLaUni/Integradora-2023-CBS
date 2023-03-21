@@ -1,3 +1,4 @@
+using Fictichos.Constructora.Utilities;
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,17 +19,17 @@ namespace Fictichos.Constructora.Dto
         [Required]
         public double BoughtFor { get; set; } = 0;
         [Required]
-        public ObjectId Provider { get; set; }
+        public string Provider { get; set; } = string.Empty;
         [Required]
-        public ObjectId Owner { get; set; }
+        public string Owner { get; set; } = string.Empty;
         [Required]
-        public ObjectId Handler { get; set; }
+        public string Handler { get; set; } = string.Empty;
         [Required]
         public double Depreciation { get; set; }
         [Required]
         public double Brand { get; set; }
         [Required]
-        public ObjectId Category { get; set; }
+        public string Category { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -44,11 +45,11 @@ namespace Fictichos.Constructora.Dto
         public int? Status { get; set; }
         public double? BoughtFor { get; set; }
         public DateTime? Closed { get; set; }
-        public ObjectId? Provider { get; set; }
-        public ObjectId? Owner { get; set; }
-        public ObjectId? Handler { get; set; }
+        public string? Provider { get; set; } = string.Empty;
+        public string? Owner { get; set; } = string.Empty;
+        public string? Handler { get; set; } = string.Empty;
         public double? Depreciation { get; set; }
-        public string? Location { get; set; }
+        public NewAddressDto? Location { get; set; }
         public string? Category { get; set; }
     }
 
@@ -60,7 +61,7 @@ namespace Fictichos.Constructora.Dto
     /// </returns>
     public record MaterialMaintenanceDto
     {
-        public ObjectId Id { get; set; } = new();
+        public string Id { get; set; } = string.Empty;
         public int Status { get; set; }
     }
 
@@ -73,9 +74,9 @@ namespace Fictichos.Constructora.Dto
     /// </remarks>
     public record CurrentInventoryDto
     {
-        public ObjectId Id { get; set;}
+        public string Id { get; set;} = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public ObjectId Brand { get; set; }
+        public string Brand { get; set; } = string.Empty;
         public int Quantity { get; set; } = 0;
     }
     
@@ -89,31 +90,33 @@ namespace Fictichos.Constructora.Dto
 
     public record MaterialDto
     {
-        public ObjectId Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public ObjectId Owner { get; set; }
-        public ObjectId Brand { get; set; }
+        public string Owner { get; set; } = string.Empty;
+        public string Brand { get; set; } = string.Empty;
         public int Quantity { get; set; } = 0;
     }
 
     public record NewMaterialCategoryDto
     {
         public string Name { get; set; } = string.Empty;
-        public ObjectId? Parent { get; set; }
+        public string? Parent { get; set; }
     }
 
     public record MaterialCategoryDto
     {
-        public ObjectId Id { get; set; } = new();
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public ObjectId? Parent { get; set; }
-        public List<MaterialCategoryDto>? SubCategory { get; set; } = new();
-        public List<MaterialDto>? Children { get; set; } = new();
+        public string? Parent { get; set; }
+        public List<string>? SubCategory { get; set; } = new();
+        public List<string>? Children { get; set; } = new();
     }
 
     public record UpdatedMatCategoryDto : DtoBase
     {
         public string? Name { get; set; }
-        public ObjectId? Parent { get; set; }
+        public string? Parent { get; set; }
+        public List<UpdateList<string>>? SubCategory { get; set; }
+        public List<UpdateList<string>>? Children { get; set; }
     }
 }

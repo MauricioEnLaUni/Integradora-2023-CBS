@@ -8,13 +8,15 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Account : Entity,
-        IQueryMask<Account, AccountDto, UpdatedAccountDto>
+    /// <summary>
+    /// Represents monetary transaction in which the user is involved.
+    /// </summary>
+    public class Account : BaseEntity,
+        IQueryMask<Account, NewAccountDto, UpdatedAccountDto>
     {
-        [BsonElement("payments")]
+        public string Name { get; set; } = string.Empty;
         public List<Payment> Payments { get; set; } = new();
-        [BsonElement("owner")]
-        public ObjectId Owner { get; set; }
+        public string Owner { get; set; } = string.Empty;
         
         public Account() { }
         public Account(NewAccountDto data)
@@ -22,20 +24,9 @@ namespace Fictichos.Constructora.Model
             Owner = data.Owner;
         }
 
-        public Account FakeConstructor(string dto)
+        public Account Instantiate(NewAccountDto data)
         {
-            try
-            {
-                return new Account(JsonConvert
-                    .DeserializeObject<NewAccountDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public AccountDto ToDto()
@@ -53,7 +44,7 @@ namespace Fictichos.Constructora.Model
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             AccountDto data = ToDto();
             return JsonConvert.SerializeObject(data);
@@ -63,6 +54,10 @@ namespace Fictichos.Constructora.Model
         {
             Name = data.Name ?? Name;
             Owner = data.Owner ?? Owner;
+            if (data.Payments is not null)
+            {
+                data.Payments.ForEach(Payments.UpdateObjectWithIndex);
+            }
         }
     }
 }

@@ -1,5 +1,3 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Dto;
@@ -8,36 +6,25 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Payment : Entity,
-        IQueryMask<Payment, PaymentsDto, UpdatedPaymentDto>
+    public class Payment : BaseEntity,
+        IQueryMask<Payment, NewPaymentDto, UpdatedPaymentDto>
     {
-        [BsonElement("amount")]
+        public string Concept { get; set; } = string.Empty;
         public double Amount { get; set; }
-        [BsonElement("complete")]
         public bool Complete { get; set; }
-        // in out
+        public bool Direction { get; set; }
+        public DateTime Due { get; set; }
 
         public Payment() { }
         public Payment(NewPaymentDto data)
         {
-            Closed = data.Due;
+            Due = data.Due;
             Amount = data.Amount;
         }
 
-        public Payment FakeConstructor(string dto)
+        public Payment Instantiate(NewPaymentDto data)
         {
-            try
-            {
-                return new Payment(JsonConvert
-                    .DeserializeObject<NewPaymentDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public PaymentsDto ToDto()
@@ -45,13 +32,13 @@ namespace Fictichos.Constructora.Model
             return new()
             {
                 Id = Id,
-                Name = Name,
+                Concept = Concept,
                 Amount = Amount,
-                Due = (DateTime)Closed!
+                Due = Due
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             PaymentsDto data = ToDto();
             return JsonConvert.SerializeObject(data);
@@ -59,7 +46,11 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedPaymentDto data)
         {
-
+            Concept = data.Concept ?? Concept;
+            Amount = data.Amount ?? Amount;
+            Complete = data.Complete ?? Complete;
+            Direction = data.Direction ?? Direction;
+            Due = data.Due ?? Due;
         }
     }
 }

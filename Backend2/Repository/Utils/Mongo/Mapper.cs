@@ -94,7 +94,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             {
                 BsonClassMap.RegisterClassMap<FTasks>(classMap => {
                     classMap.MapMember(p => p.StartDate).SetElementName("starts");
-                    classMap.MapMember(p => p.Closed).SetElementName("closed");
+                    classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
                     classMap.MapMember(p => p.Subtasks).SetElementName("subtasks");
                     classMap.MapMember(p => p.EmployeesAssigned).SetElementName("employees");
@@ -131,10 +131,12 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(Salary)))
             {
                 BsonClassMap.RegisterClassMap<Salary>(classMap => {
+                    classMap.MapMember(p => p.Period).SetElementName("period");
+                    classMap.MapMember(p => p.Due).SetElementName("due");
                     classMap.MapMember(p => p.Reductions).SetElementName("reductions");
-                    classMap.MapMember(p => p.Rate).SetElementName("rate");
-                    classMap.MapMember(p => p.PayPeriod).SetElementName("payPeriod");
-                    classMap.MapMember(p => p.HoursWeek).SetElementName("hoursWeek");
+                    classMap.MapMember(p => p.HourlyRate).SetElementName("rate");
+                    classMap.MapMember(p => p.HoursWeeklyCap).SetElementName("hoursWeek");
+                    classMap.MapMember(p => p.Closed).SetElementName("closed");
                 });
             }
         }

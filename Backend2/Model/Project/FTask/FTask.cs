@@ -8,46 +8,32 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class FTasks : Entity, IQueryMask<FTasks, FTasksDto, UpdatedFTaskDto>
+    public class FTasks : BaseEntity,
+        IQueryMask<FTasks, NewFTaskDto, UpdatedFTaskDto>
     {
-        [BsonElement("starts")]
+        public string Name { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
-        public new DateTime Closed { get; set; }
-        [BsonElement("parent")]
-        public ObjectId? Parent { get; set; }
-        [BsonElement("subtasks")]
+        public DateTime Ends { get; set; }
+        public string? Parent { get; set; }
         public List<FTasks> Subtasks { get; set; } = new();
-        [BsonElement("employees")]
-        public List<ObjectId> EmployeesAssigned { get; set; } = new();
-        [BsonElement("material")]
-        public List<ObjectId> Material { get; set; } = new();
-        [BsonElement("address")]
+        public List<string> EmployeesAssigned { get; set; } = new();
+        public List<string> Material { get; set; } = new();
         public Address? Address { get; set; }
 
         public FTasks() { }
         public FTasks(NewFTaskDto newTask)
         {
+            Name = newTask.Name;
             StartDate = newTask.StartDate;
-            Closed = newTask.Closed;
+            Ends = newTask.Ends;
             EmployeesAssigned = newTask.Assignees;
             if (newTask.Address is not null) Address = newTask.Address;
             if (newTask.Parent is not null) Parent = newTask.Parent;
         }
 
-        public FTasks FakeConstructor(string dto)
+        public FTasks Instantiate(NewFTaskDto data)
         {
-            try
-            {
-                return new FTasks(JsonConvert
-                    .DeserializeObject<NewFTaskDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public FTasksDto ToDto()
@@ -63,7 +49,7 @@ namespace Fictichos.Constructora.Model
             {
                 Id = Id,
                 StartDate = StartDate,
-                Closed = Closed!,
+                Ends = Ends!,
                 Parent = Parent,
                 Subtasks = list,
                 EmployeesAssigned = EmployeesAssigned,
@@ -72,7 +58,7 @@ namespace Fictichos.Constructora.Model
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             FTasksDto data = ToDto();
             return JsonConvert.SerializeObject(data);
@@ -80,51 +66,15 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedFTaskDto data)
         {
-            if (data.Name is not null) Name = data.Name;
-            if (data.StartDate is not null) StartDate = (DateTime)data.StartDate;
-            data.Subtasks?.ForEach(UpdateSub);
-            data.Material?.ForEach(e => {
-                UpdateEmbedded(false, e);
-            });
-            data.EmployeesAssigned?.ForEach(e => {
-                UpdateEmbedded(true, e);
-            });
-            if (data.Address is not null) Address = data.Address;
-            if (data.Closed is not null) Closed = (DateTime)data.Closed!;
-        }
+            Name = data.Name ?? Name;
+            StartDate = data.StartDate ?? StartDate;
+            Address = data.Address ?? Address;
+            Ends = data.Ends ?? Ends;
+            Parent = data.Parent ?? Parent;
 
-        public void UpdateSub(UpdatedSubtaskDto data)
-        {
-            switch(data.Operation)
-            {
-                case 0:
-                    Subtasks.Add(new(data.NewTask!));
-                    break;
-                case 1:
-                    Subtasks.RemoveAt(data.Key);
-                    break;
-                case 2:
-                    Subtasks[data.Key].Update(data.Task!);
-                    break;
-                default:
-                    throw new Exception("Empty data.");
-            }
-        }
-
-        public void UpdateEmbedded(bool flag, UpdateEmbeddedDto data)
-        {
-            List<ObjectId> list = flag ? EmployeesAssigned : Material;
-            switch(data.Operation)
-            {
-                case 0:
-                    list.Add(data.Data);
-                    break;
-                case 1:
-                    list.Remove(data.Data);
-                    break;
-                default:
-                    break;
-            }
+            data.Material?.ForEach(Material.UpdateWithIndex);
+            data.EmployeesAssigned?.ForEach(EmployeesAssigned.UpdateWithIndex);
+            data.Subtasks?.ForEach(Subtasks.UpdateObjectWithIndex);
         }
     }
 }

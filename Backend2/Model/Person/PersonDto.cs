@@ -19,7 +19,7 @@ namespace Fictichos.Constructora.Dto
 
     public record PersonDto
     {
-        public ObjectId Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public ContactDto Contact { get; set; } = new();
         public EmployeeDto? Employee { get; set; }

@@ -9,21 +9,15 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Job : Entity, IQueryMask<Job, JobDto, UpdatedJobDto>
+    public class Job : BaseEntity, IQueryMask<Job, NewJobDto, UpdatedJobDto>
     {
-        [BsonElement("salaryHistory")]
+        public string Name { get; set; } = string.Empty;
         public List<Salary> SalaryHistory { get; set; } = new();
-        [BsonElement("role")]
         public string Role { get; set; } = string.Empty;
-        [BsonElement("area")]
         public ObjectId Area { get; set; }
-        [BsonElement("responsible")]// Jefe inmediato
         public ObjectId Responsible { get; set; }
-        [BsonElement("material")]
         public List<ObjectId> Material { get; set; } = new();
-        [BsonElement("parent")]
         public ObjectId Parent { get; set; }
-        [BsonElement("responsibilities")]
         public List<string> Responsibilities { get;  set; } = new();
 
         public Job(NewJobDto data)
@@ -48,26 +42,15 @@ namespace Fictichos.Constructora.Model
                 Role = Role
             };
         }
-        public string SerializeDto()
+        public string Serialize()
         {
             JobDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
 
-        public Job FakeConstructor(string dto)
+        public Job Instantiate(NewJobDto data)
         {
-            try
-            {
-                return new Job(JsonConvert
-                    .DeserializeObject<NewJobDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public void Update(UpdatedJobDto data)

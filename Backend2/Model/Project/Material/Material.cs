@@ -1,6 +1,4 @@
-using MongoDB.Bson;
 using Newtonsoft.Json;
-using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
@@ -9,31 +7,24 @@ using Fictichos.Constructora.Utilities;
 namespace Fictichos.Constructora.Model
 {
     public class Material
-        : Entity, IQueryMask<Material, MaterialDto, UpdatedMaterialDto>
+        : BaseEntity, IQueryMask<Material, NewMaterialDto, UpdatedMaterialDto>
     {
-        [BsonElement("qty")]
+        public string Name { get; set; } = string.Empty;
         public int Quantity { get; private set; }
-        [BsonElement("owner")]
-        public ObjectId Owner { get; private set; }
-        [BsonElement("handler")]
-        public ObjectId Handler { get; private set; }
-        [BsonElement("location")]
+        public string Owner { get; private set; } = string.Empty;
+        public string Handler { get; private set; } = string.Empty;
         public Address Location { get; private set; } = new();
-        [BsonElement("status")]
         public int? Status { get; private set; }
-        [BsonElement("price")]
         public double BoughtFor { get; private set; }
-        [BsonElement("currentPrice")]
         public double Depreciation { get; private set; }
-        [BsonElement("provider")]
-        public ObjectId Provider { get; private set; }
+        public string Provider { get; private set; } = string.Empty;
 
         public Material() { }
         private Material(NewMaterialDto data)
         {
             Name = data.Name;
             Quantity = data.Quantity;
-            Location = new Address().FakeConstructor(data.Location);
+            Location = new Address();
             if (data.Status is not null) Status = data.Status;
             BoughtFor = data.BoughtFor;
             Provider = data.Provider;
@@ -41,13 +32,9 @@ namespace Fictichos.Constructora.Model
             Handler = data.Handler;
             Depreciation = data.Depreciation;
         }
-        public Material FakeConstructor(string dto)
+        public Material Instantiate(NewMaterialDto data)
         {
-            return new Material(JsonConvert
-                .DeserializeObject<NewMaterialDto>(dto, new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Error
-            })!);
+            return new(data);
         }
 
         public void Update(UpdatedMaterialDto data)
@@ -59,8 +46,9 @@ namespace Fictichos.Constructora.Model
             Owner = data.Owner ?? Handler;
             Handler = data.Handler ?? Handler;
             Depreciation = data.Depreciation ?? Depreciation;
-            Location = data.Location is null ?
-                Location : new Address().FakeConstructor(data.Location);
+
+            Location = data.Location is null ? Location :
+                new Address(data.Location);
         }
 
         public MaterialDto ToDto()
@@ -74,7 +62,7 @@ namespace Fictichos.Constructora.Model
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             MaterialDto data = ToDto();
             return JsonConvert.SerializeObject(data);

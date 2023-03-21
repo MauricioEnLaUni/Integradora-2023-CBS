@@ -50,18 +50,9 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedContactDto data)
         {
-            if (data.Addresses is not null)
-            {
-                data.Addresses.ForEach(Addresses.UpdateObjectWithIndex);
-            }
-            if (data.Phones is not null)
-            {
-                data.Phones.ForEach(Phones.UpdateWithIndex);
-            }
-            if (data.Emails is not null)
-            {
-                data.Emails.ForEach(Emails.UpdateWithIndex);
-            }
+            data.Addresses?.ForEach(Addresses.UpdateObjectWithIndex);
+            data.Phones?.ForEach(Phones.UpdateWithIndex);
+            data.Emails?.ForEach(Emails.UpdateWithIndex);
         }
 
         public string Serialize()

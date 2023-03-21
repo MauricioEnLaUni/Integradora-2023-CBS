@@ -1,6 +1,3 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Dto;
@@ -9,55 +6,45 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Salary : Entity,
-        IQueryMask<Salary, SalaryDto, UpdatedSalaryDto>
+    public class Salary : BaseEntity,
+        IQueryMask<Salary, NewSalaryDto, UpdatedSalaryDto>
     {
-        [BsonElement("reductions")]
+        public string Period { get; set; } = string.Empty;
+        public string Due { get; set; } = string.Empty;
         public Dictionary<string, double> Reductions { get; set; } = new();
-        [BsonElement("rate")]
-        public double Rate { get; set; }
-        [BsonElement("payPeriod")]
-        public int PayPeriod { get; set; } 
-        [BsonElement("hoursWeek")]
-        public int? HoursWeek { get; set; }
+        public double HourlyRate { get; set; }
+        public int? HoursWeeklyCap { get; set; }
+        public DateTime? Closed { get; set; }
 
         public Salary() { }
         
         public Salary(NewSalaryDto data)
         {
+            Period = data.Period;
+            Due = data.Due;
             Reductions = data.Reductions;
-            Rate = data.Rate;
-            PayPeriod = data.PayPeriod;
-            HoursWeek = data.HoursWeek ?? null;
+            HourlyRate = data.HourlyRate;
+            HoursWeeklyCap = data.HoursWeeklyCap ?? null;
         }
 
-        public Salary FakeConstructor(string dto)
+        public Salary Instantiate(NewSalaryDto data)
         {
-            try
-            {
-                return new Salary(JsonConvert
-                    .DeserializeObject<NewSalaryDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
         public SalaryDto ToDto()
         {
             return new()
             {
                 Id = Id,
+                Period = Period,
+                Due = Due,
                 Reductions = Reductions,
-                Rate = Rate,
-                HoursWeek = HoursWeek
+                HourlyRate = HourlyRate,
+                HoursWeeklyCap = HoursWeeklyCap
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             SalaryDto data = ToDto();
             return JsonConvert.SerializeObject(data);
@@ -65,11 +52,12 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedSalaryDto data)
         {
-            Closed = data.Closed ?? Closed;
+            Period = data.Period ?? Period;
+            Due = data.Due ?? Due;
             Reductions = data.Reductions ?? Reductions;
-            PayPeriod = data.PayPeriod ?? PayPeriod;
-            HoursWeek = data.HoursWeek ?? HoursWeek;
-            Rate = data.Rate ?? Rate;
+            HoursWeeklyCap = data.HoursWeeklyCap ?? HoursWeeklyCap;
+            HourlyRate = data.HourlyRate ?? HourlyRate;
+            Closed = data.Closed ?? Closed;
         }
     }
 }

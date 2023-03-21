@@ -5,7 +5,7 @@ namespace Fictichos.Constructora.Dto
 {
     public record UpdatedCredentialsDto
     {
-        public List<IUpdateObjectList<Claim>>? Claims { get; set; }
+        public List<Claim>? Claims { get; set; }
         public ClaimsIdentity? Identity { get; set; }
     }
 }

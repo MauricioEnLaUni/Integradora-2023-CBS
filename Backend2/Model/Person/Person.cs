@@ -8,14 +8,12 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Person : Entity,
-        IQueryMask<Person, PersonDto, UpdatedPersonDto>
+    public class Person : BaseEntity,
+        IQueryMask<Person, NewPersonDto, UpdatedPersonDto>
     {
-        [BsonElement("lastName")]
+        public string Name { get; set; } = string.Empty;
         public string LastName { get;  set; } = string.Empty;
-        [BsonElement("contact")]
         public Contact Contacts { get; set; } = new();
-        [BsonElement("isEmployed")]
         public Employee? Employed { get;  set; } = new();
 
         public Person() { }
@@ -29,20 +27,9 @@ namespace Fictichos.Constructora.Model
             if (data.IsEmployee is not null) Employed = new(data.IsEmployee);
         }
 
-        public Person FakeConstructor(string dto)
+        public Person Instantiate(NewPersonDto data)
         {
-            try
-            {
-                return new Person (JsonConvert
-                    .DeserializeObject<NewPersonDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public PersonDto ToDto()
@@ -56,7 +43,7 @@ namespace Fictichos.Constructora.Model
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             PersonDto data = ToDto();
             return JsonConvert.SerializeObject(data);
@@ -67,11 +54,10 @@ namespace Fictichos.Constructora.Model
             Name = data.Name ?? Name;
             LastName = data.LastName ?? LastName;
             if (data.Contacts is not null) Contacts.Update(data.Contacts);
-            if (data.Employed is not null)
-            {
-                Employed ??= new();
-                Employed.Update(data.Employed);
-            }
+
+            if (data.Employed is null) return;
+            Employed ??= new();
+            Employed.Update(data.Employed);
         }
     }
 }

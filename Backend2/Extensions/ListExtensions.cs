@@ -51,14 +51,17 @@ namespace Fictichos.Constructora.Utilities
             {
                 case 0 :
                     if (data.NewItem is null) return;
+                    if (props is null) props = new();
                     T newItem = new T().Instantiate(data.NewItem);
                     props.Add(newItem);
                     break;
                 case 1:
+                    if (props is null) return;
                     props.RemoveAt(data.Key);
                     break;
                 case 2:
                     if (data.UpdateItem is null) return;
+                    if (props is null) return;
                     props[data.Key].Update(data.UpdateItem);
                     break;
                 default:

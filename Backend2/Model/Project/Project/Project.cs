@@ -1,6 +1,4 @@
-using MongoDB.Bson;
 using Newtonsoft.Json;
-using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
@@ -9,34 +7,22 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Project
-        : Entity, IQueryMask<Project, ProjectDto, UpdatedProjectDto>
+        : BaseEntity, IQueryMask<Project, string, UpdatedProjectDto>
     {
-        [BsonElement("responsible")]
-        public ObjectId Responsible { get; private set; }
-        [BsonElement("account")]
-        public Account? PayHistory { get; private set; }
-        [BsonElement("tasks")]
+        public string Name { get; set; } = string.Empty;
+        public string Responsible { get; private set; } = string.Empty;
+        public DateTime Ends { get; private set; }
+        public Account PayHistory { get; private set; } = new();
         public List<FTasks> Tasks { get; private set; } = new();
 
         public Project() { }
-        public Project(NewProjectDto data)
+        public Project(string data)
         {
-            Name = data.Name;
+            Name = data;
         }
-        public Project FakeConstructor(string dto)
+        public Project Instantiate(string data)
         {
-            try
-            {
-                return new Project(JsonConvert
-                    .DeserializeObject<NewProjectDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public ProjectDto ToDto()
@@ -48,19 +34,19 @@ namespace Fictichos.Constructora.Model
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             ProjectDto data = ToDto();
             return JsonConvert.SerializeObject(data);
         }
 
-
         public void Update(UpdatedProjectDto data)
         {
-            if (data.Name is not null) Name = data.Name;
-            if (data.Tasks is not null) Tasks = data.Tasks;
-            if (Closed is not null) Closed = data.Closed;
-            if (PayHistory is not null) PayHistory = data.PayHistory;
+            Name = data.Name ?? Name;
+            Ends = data.Ends ?? Ends;
+            Responsible = data.Responsible ?? Responsible;
+            data.Tasks?.ForEach(Tasks.UpdateObjectWithIndex);
+            if (data.PayHistory is not null) PayHistory.Update(data.PayHistory);
         }
     }
 }

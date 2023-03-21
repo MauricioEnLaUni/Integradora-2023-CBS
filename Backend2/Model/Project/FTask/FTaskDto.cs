@@ -1,6 +1,7 @@
 using MongoDB.Bson;
 
 using Fictichos.Constructora.Model;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Dto
 {
@@ -8,10 +9,10 @@ namespace Fictichos.Constructora.Dto
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public ObjectId? Parent { get; set; }
+        public string? Parent { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime Closed { get; set; }
-        public List<ObjectId> Assignees { get; set; } = new();
+        public DateTime Ends { get; set; }
+        public List<string> Assignees { get; set; } = new();
         public Address? Address { get; set; }
     }
 
@@ -19,22 +20,24 @@ namespace Fictichos.Constructora.Dto
     {
         public string? Name { get; set; }
         public DateTime? StartDate { get; set; }
-        public List<UpdatedSubtaskDto>? Subtasks { get; set; }
-        public List<UpdateEmbeddedDto>? Material { get; set; }
-        public List<UpdateEmbeddedDto>? EmployeesAssigned { get; set; }
+        public string? Parent { get; set; }
+        public List<IndexedObjectUpdate<NewFTaskDto, UpdatedFTaskDto>>? Subtasks
+            { get; set; }
+        public List<UpdateList<string>>? Material { get; set; }
+        public List<UpdateList<string>>? EmployeesAssigned { get; set; }
         public Address? Address { get; set; }
-        public DateTime? Closed { get; set; }
+        public DateTime? Ends { get; set; }
     }
 
     public record FTasksDto
     {
-        public ObjectId Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
-        public DateTime Closed { get; set; }
-        public ObjectId? Parent { get; set; }
+        public DateTime Ends { get; set; }
+        public string? Parent { get; set; }
         public List<FTasksDto> Subtasks { get; set; } = new();
-        public List<ObjectId> EmployeesAssigned { get; set; } = new();
-        public List<ObjectId> Material { get; set; } = new();
+        public List<string> EmployeesAssigned { get; set; } = new();
+        public List<string> Material { get; set; } = new();
         public Address? Address { get; set; }
     }
 
@@ -44,11 +47,5 @@ namespace Fictichos.Constructora.Dto
         public int Key { get; set; }
         public NewFTaskDto? NewTask { get; set; }
         public UpdatedFTaskDto? Task { get; set; }
-    }
-
-    public record UpdateEmbeddedDto
-    {
-        public int Operation { get; set; }
-        public ObjectId Data { get; set; } = new();
     }
 }

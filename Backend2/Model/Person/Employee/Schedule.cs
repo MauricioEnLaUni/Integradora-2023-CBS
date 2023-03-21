@@ -8,38 +8,26 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Schedule : Entity,
-        IQueryMask<Schedule, ScheduleDto, UpdatedScheduleDto>
+    public class Schedule : BaseEntity,
+        IQueryMask<Schedule, NewScheduleDto, UpdatedScheduleDto>
     {
-        [BsonElement("hours")]
+        public string Period { get; set; } = string.Empty;
         public Dictionary<TimeSpan, int> Hours { get; set; } = new();
-        [BsonElement("location")]
         public Address? Location { get; set; }
 
         public Schedule(NewScheduleDto data)
         {
-            Name = data.Name;
+            Period = data.Period;
             Hours = data.Hours;
             if (data.Location is not null)
             {
-                Location = new Address().FakeConstructor(data.Location);
+                Location = new Address().Instantiate(data.Location);
             }
         }
         public Schedule() { }
-        public Schedule FakeConstructor(string dto)
+        public Schedule Instantiate(NewScheduleDto data)
         {
-            try
-            {
-                return new Schedule(JsonConvert
-                    .DeserializeObject<NewScheduleDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
         public ScheduleDto ToDto()
         {
@@ -48,12 +36,12 @@ namespace Fictichos.Constructora.Model
             return new()
             {
                 Id = Id,
-                Name = Name,
+                Period = Period,
                 Hours = Hours,
                 Location = loc
             };
         }
-        public string SerializeDto()
+        public string Serialize()
         {
             ScheduleDto data = ToDto();
             return  JsonConvert.SerializeObject(data);
@@ -61,14 +49,12 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedScheduleDto data)
         {
-            Name = data.Name ?? Name;
-            if (data.Location is not null)
-            {
-
-                Location ??= new();
-                Location.Update(data.Location);
-            }
+            Period = data.Period ?? Period;
             Hours = data.Hours ?? Hours;
+            
+            if (data.Location is null) return;
+            Location ??= new();
+            Location.Update(data.Location);
         }
     }
 }

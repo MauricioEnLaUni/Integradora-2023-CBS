@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-using MongoDB.Bson;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Dto
 {
@@ -21,7 +21,7 @@ namespace Fictichos.Constructora.Dto
     }
     public record EmployeeDto
     {
-        public ObjectId Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public DateOnly DOB { get; set; }
         public string CURP { get; set; } = string.Empty;
@@ -36,25 +36,11 @@ namespace Fictichos.Constructora.Dto
         public DateOnly? DOB { get; set; }
         public string? CURP { get; set; }
         public string? RFC { get; set; }
-        public List<ListUpdatedChargesDto>? Charges { get; set; }
-        public List<ListUpdatedScheduleDto>? ScheduleHistory { get; set; }
+        public List<IndexedObjectUpdate<NewJobDto, UpdatedJobDto>>?
+            Charges { get; set; }
+        public List<IndexedObjectUpdate<NewScheduleDto, UpdatedScheduleDto>>?
+            ScheduleHistory { get; set; }
         public DateTime? Closed { get; set; }
         public bool? Active { get; set; }
-    }
-
-    public record ListUpdatedChargesDto
-    {
-        public int Operation { get; set; }
-        public int Key { get; set; }
-        public NewJobDto? NewData { get; set; } = new();
-        public UpdatedJobDto? UpdatedData { get; set; } = new();
-    }
-
-    public record ListUpdatedScheduleDto
-    {
-        public int Operation { get; set; }
-        public int Key { get; set; }
-        public NewScheduleDto? NewData { get; set; } = new();
-        public UpdatedScheduleDto? UpdatedData { get; set; } = new();
     }
 }

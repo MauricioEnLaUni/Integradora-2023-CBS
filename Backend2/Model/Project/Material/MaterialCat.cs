@@ -1,6 +1,4 @@
-using MongoDB.Bson;
 using Newtonsoft.Json;
-using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
@@ -8,15 +6,13 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class MaterialCategory : Entity,
-        IQueryMask<MaterialCategory, MaterialCategoryDto, UpdatedMatCategoryDto>
+    public class MaterialCategory : BaseEntity,
+        IQueryMask<MaterialCategory, NewMaterialCategoryDto, UpdatedMatCategoryDto>
     {
-        [BsonElement("parent")]
-        public ObjectId? Parent { get; private set; }
-        [BsonElement("subcategory")]
-        public List<MaterialCategory>? SubCategory { get; private set; }
-        [BsonElement("children")]
-        public List<Material>? Children { get; private set; } = new();
+        public string Name { get; set; } = string.Empty;
+        public string? Parent { get; private set; }
+        public List<string>? SubCategory { get; private set; }
+        public List<string>? Children { get; private set; } = new();
 
         public MaterialCategory() { }
         private MaterialCategory(NewMaterialCategoryDto data)
@@ -24,51 +20,24 @@ namespace Fictichos.Constructora.Model
             Name = data.Name;
             Parent = data.Parent ?? null;
         }
-        public MaterialCategory FakeConstructor(string dto)
+        public MaterialCategory Instantiate(NewMaterialCategoryDto data)
         {
-            try
-            {
-                return new MaterialCategory(JsonConvert
-                    .DeserializeObject<NewMaterialCategoryDto>(dto, new JsonSerializerSettings
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error
-                })!);
-            }
-            catch
-            {
-                throw new JsonSerializationException();
-            }
+            return new(data);
         }
 
         public MaterialCategoryDto ToDto()
         {
-            List<MaterialCategoryDto>? cats = null;
-            List<MaterialDto>? mats = null;
-            if (SubCategory is not null)
-            {
-                cats = new();
-                SubCategory.ForEach(e => {
-                    cats.Add(e.ToDto());
-                });
-            }
-            if (Children is not null)
-            {
-                mats = new();
-                Children.ForEach(e => {
-                    mats.Add(e.ToDto());
-                });
-            }
             return new()
             {
                 Id = Id,
                 Name = Name,
                 Parent = Parent,
-                SubCategory = cats,
-                Children = mats
+                SubCategory = SubCategory,
+                Children = Children
             };
         }
 
-        public string SerializeDto()
+        public string Serialize()
         {
             MaterialCategoryDto temp = ToDto();
             return JsonConvert.SerializeObject(temp);
@@ -78,6 +47,9 @@ namespace Fictichos.Constructora.Model
         {
             Name = data.Name ?? Name;
             Parent = data.Parent ?? null;
+
+            data.SubCategory?.ForEach(SubCategory.UpdateWithIndex);
+            data.Children?.ForEach(Children.UpdateWithIndex);
         }
     }
 }
