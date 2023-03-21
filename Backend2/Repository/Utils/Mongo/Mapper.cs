@@ -293,7 +293,9 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(EmailContainer)))
             {
                 BsonClassMap.RegisterClassMap<EmailContainer>(classMap => {
-                    classMap.MapMember(p => p.Value).SetElementName("value");
+                    classMap.MapMember(p => p.owner).SetElementName("owner")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                    classMap.MapMember(p => p.value).SetElementName("value");
                 });
             }
         }

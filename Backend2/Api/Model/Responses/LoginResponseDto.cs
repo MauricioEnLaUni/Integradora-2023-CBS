@@ -9,6 +9,7 @@ public class LoginResponseDto
     public string name = string.Empty;
     public DateTime createdAt = DateTime.Now;
     public List<string> roles = new();
+    public List<string> emails = new();
     public byte[]? avatar = Array.Empty<byte>();
 
     public LoginResponseDto(User data, string Token)
@@ -19,5 +20,6 @@ public class LoginResponseDto
         createdAt = data.CreatedAt;
         roles = data.Roles;
         avatar = data.Avatar;
+        emails = data.Email;
     }
 }

@@ -37,6 +37,7 @@ namespace Fictichos.Constructora.Dto
 
     public record UpdatedUserDto : DtoBase
     {
+        public string token = string.Empty;
         public string? Password { get; set; } = string.Empty;
         public bool? Active { get; set; }
         public List<UpdateList<string>>? Email { get; set; }

@@ -7,6 +7,7 @@ using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Abstraction;
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Middleware;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -39,14 +40,14 @@ public class UserController : ControllerBase
         if (nameIsTaken) return Conflict();
 
         string newEmail = payload.Email;
-        var emailFilter = Builders<EmailContainer>.Filter.Eq(e => e.Value, newEmail);
+        var emailFilter = Builders<EmailContainer>.Filter.Eq(e => e.value, newEmail);
         bool emailIsTaken = await EmailCollection.Find(emailFilter)
             .SingleOrDefaultAsync() is not null;
         if (emailIsTaken) return Conflict();
 
         User raw = await Repo.CreateAsync(payload);
 
-        EmailContainer email = new(newEmail);
+        EmailContainer email = new(raw.Id, newEmail);
         await EmailCollection.InsertOneAsync(email);
         
         LoginSuccessDto data = raw.ToDto();
@@ -80,20 +81,35 @@ public class UserController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("u")]
-
+    [HttpPatch]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUser(
-        [FromBody] LoginDto payload)
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UpdateUser([FromBody] UserUpdateGUIDto request)
     {
-        var filter = Builders<User>.Filter.Eq(e => e.Name, payload.Name);
-        User? raw = await Repo.GetOneByFilterAsync(filter);
-        if (raw is null) return NotFound();
-        if (raw.ValidatePassword(payload.Password)) return BadRequest();
+        await Task.Delay(1);
+        var test = TokenValidator.GetClaims(request.token);
+        return Ok(test);
+    }
 
-        LoginSuccessDto data = raw.ToDto();
-        return Ok(data);
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetEmails(string id)
+    {
+        User? test = await Repo.GetByIdAsync(id);
+
+        var filter = Builders<EmailContainer>
+            .Filter.Eq(e => e.owner, id);
+        List<EmailContainer> result = await EmailCollection.Find(filter)
+            .ToListAsync();
+
+        List<string> output = new();
+        
+        result?.ForEach(e => {
+            output.Add(e.value);
+        });
+
+        return Ok(output);
     }
 }
