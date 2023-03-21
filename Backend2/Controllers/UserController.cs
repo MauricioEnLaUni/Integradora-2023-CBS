@@ -68,6 +68,8 @@ namespace Fictichos.Constructora.Controllers
             User? raw = await Repo.GetOneByFilterAsync(filter);
             if (raw is null) return NotFound();
 
+            if (raw.ValidatePassword(payload.Password)) return BadRequest();
+
             if (!raw.Active) return Forbid();
 
             LoginSuccessDto data = raw.ToDto();
@@ -75,14 +77,21 @@ namespace Fictichos.Constructora.Controllers
             return Ok(token);
         }
 
-        [HttpGet("u")]
+        [HttpPost("u")]
+        
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUser()
+        public async Task<IActionResult> GetUser(
+            [FromBody] LoginDto payload)
         {
-            
-            return Ok();
+            var filter = Builders<User>.Filter.Eq(e => e.Name, payload.Name);
+            User? raw = await Repo.GetOneByFilterAsync(filter);
+            if (raw is null) return NotFound();
+            if (raw.ValidatePassword(payload.Password)) return BadRequest();
+
+            LoginSuccessDto data = raw.ToDto();
+            return Ok(data);
         }
     }
 }
