@@ -4,10 +4,12 @@ namespace Fictichos.Constructora.Model;
 
 public class EmailContainer : BaseEntity
 {
-    public string Value { get; set; } = string.Empty;
+    public string owner = string.Empty;
+    public string value = string.Empty;
 
-    public EmailContainer(string data)
+    public EmailContainer(string parent, string data)
     {
-        Value = data;
+        owner = parent;
+        value = data;
     }
 }
