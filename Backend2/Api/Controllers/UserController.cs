@@ -112,4 +112,11 @@ public class UserController : ControllerBase
 
         return Ok(output);
     }
+
+    [HttpDelete("collection")]
+    public async Task<IActionResult> DeleteCollection()
+    {
+        await Repo.Collection.DeleteManyAsync(_ => true);
+        return NoContent();
+    }
 }
