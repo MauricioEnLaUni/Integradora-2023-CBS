@@ -6,6 +6,7 @@ using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Abstraction;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Controllers
 {
@@ -13,11 +14,14 @@ namespace Fictichos.Constructora.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
+        private IMongoCollection<EmailContainer> EmailCollection { get; init; }
         private readonly IJwtProvider _jwtProvider;
         protected UserService Repo { get; init; }
 
-        public UserController(UserService repo, IJwtProvider jwtProvider)
+        public UserController(UserService repo, IJwtProvider jwtProvider, MongoSettings container)
         {
+            EmailCollection =
+                container.Client.GetDatabase("cbs").GetCollection<EmailContainer>("emails");
             Repo = repo;
             _jwtProvider = jwtProvider;
         }
@@ -31,15 +35,20 @@ namespace Fictichos.Constructora.Controllers
         {
             var filter = Builders<User>.Filter.Eq(e => e.Name, payload.Name);
             var projection = Builders<User>.Projection.Include(e => e.Name);
-            bool nameIsTaken = await Repo.GetOneByFilterAsync(filter) is null ?
-                false : true;
+            bool nameIsTaken = await Repo.GetOneByFilterAsync(filter) is not null;
             if (nameIsTaken) return Conflict();
 
-            bool emailIsTaken = await Repo.GetOneByFilterAsync(filter) is null ?
-                false : true;
+            string newEmail = payload.Email;
+            var emailFilter = Builders<EmailContainer>.Filter.Eq(e => e.Value, newEmail);
+            bool emailIsTaken = await EmailCollection.Find(emailFilter)
+                .SingleOrDefaultAsync() is not null;
             if (emailIsTaken) return Conflict();
 
             User raw = await Repo.CreateAsync(payload);
+
+            EmailContainer email = new(newEmail);
+            await EmailCollection.InsertOneAsync(email);
+            
             LoginSuccessDto data = raw.ToDto();
 
             return new ObjectResult(data)
@@ -64,6 +73,16 @@ namespace Fictichos.Constructora.Controllers
             LoginSuccessDto data = raw.ToDto();
             string token = _jwtProvider.Generate(data);
             return Ok(token);
+        }
+
+        [HttpGet("u")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUser()
+        {
+            
+            return Ok();
         }
     }
 }

@@ -71,14 +71,8 @@ namespace Fictichos.Constructora.Model
             Active = data.Active ?? Active;
             Closed = data.Closed ?? Closed;
             
-            if (data.Email is not null)
-            {
-                data.Email.ForEach(Email.UpdateWithIndex);
-            }
-            if (data.Roles is not null)
-            {
-                data.Roles.ForEach(Roles.UpdateWithIndex);
-            }
+            data.Email?.ForEach(Email.UpdateWithIndex);
+            data.Roles?.ForEach(Roles.UpdateWithIndex);
         }
     }
 }
