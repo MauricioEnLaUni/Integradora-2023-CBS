@@ -25,12 +25,9 @@ namespace Fictichos.Constructora.Model
         public void Update(UpdatedCredentialsDto data)
         {
             Identity = data.Identity ?? Identity;
-            if (data.Claims is not null)
-            {
-                data.Claims.ForEach(e => {
+            data.Claims?.ForEach(e => {
                     
                 });
-            }
         }
     }
 

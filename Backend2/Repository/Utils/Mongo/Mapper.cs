@@ -287,5 +287,15 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                 });
             }
         }
+
+        public static void MapEmail()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(EmailContainer)))
+            {
+                BsonClassMap.RegisterClassMap<EmailContainer>(classMap => {
+                    classMap.MapMember(p => p.Value).SetElementName("value");
+                });
+            }
+        }
     }
 }
