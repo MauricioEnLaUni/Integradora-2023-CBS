@@ -68,7 +68,8 @@ namespace Fictichos.Constructora.Controllers
             User? raw = await Repo.GetOneByFilterAsync(filter);
             if (raw is null) return NotFound();
 
-            if (raw.ValidatePassword(payload.Password)) return BadRequest();
+            bool passwordMatches = raw.ValidatePassword(payload.Password);
+            if (passwordMatches is false) return BadRequest();
 
             if (!raw.Active) return Forbid();
 
@@ -78,7 +79,7 @@ namespace Fictichos.Constructora.Controllers
         }
 
         [HttpPost("u")]
-        
+
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
