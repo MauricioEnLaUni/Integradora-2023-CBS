@@ -11,19 +11,23 @@ namespace Fictichos.Constructora.Model
 {
     public class Job : BaseEntity, IQueryMask<Job, NewJobDto, UpdatedJobDto>
     {
-        public string Name { get; set; } = string.Empty;
         public List<Salary> SalaryHistory { get; set; } = new();
         public string Role { get; set; } = string.Empty;
-        public ObjectId Area { get; set; }
-        public ObjectId Responsible { get; set; }
-        public List<ObjectId> Material { get; set; } = new();
-        public ObjectId Parent { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Area { get; set; } = string.Empty;
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Responsible { get; set; } = string.Empty;
+        public List<string> Material { get; set; } = new();
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Parent { get; set; } = string.Empty;
         public List<string> Responsibilities { get;  set; } = new();
 
         public Job(NewJobDto data)
         {
+            SalaryHistory.Add(new (data.SalaryHistory));
             Role = data.Role;
             Area = data.Area;
+            Parent = Parent;
             Responsibilities = data.Responsibilities;
         }
         public Job() { }
@@ -37,7 +41,6 @@ namespace Fictichos.Constructora.Model
             return new()
             {
                 Id = Id,
-                Name = Name,
                 SalaryHistory = list,
                 Role = Role
             };
@@ -55,7 +58,12 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedJobDto data)
         {
-
+            Role = data.Role ?? Role;
+            Area = data.Area ?? Area;
+            Responsible = data.Responsible ?? Responsible;
+            Parent = data.Parent ?? Parent;
+            data.Responsibilities?.ForEach(Responsibilities.UpdateWithIndex);
+            data.Material?.ForEach(Material.UpdateWithIndex);
         }
     }
 }

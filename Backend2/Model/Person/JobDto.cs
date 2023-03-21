@@ -1,19 +1,17 @@
 using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Dto
 {
     public record NewJobDto
     {
         [Required]
-        public string Name { get; set; } = string.Empty;
-        [Required]
         public NewSalaryDto SalaryHistory { get; set; } = new();
         [Required]
         public string Role { get; set; } = string.Empty;
         [Required]
-        public ObjectId Area { get; set; }
+        public string Area { get; set; } = string.Empty;
+        public string Parent { get; set; } = string.Empty;
         [Required]
         public List<string> Responsibilities { get; set; } = new();
     }
@@ -28,8 +26,11 @@ namespace Fictichos.Constructora.Dto
 
     public record UpdatedJobDto : DtoBase
     {
-        public string Name { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        
+        public string? Role { get; set; }
+        public string? Area { get; set; }
+        public string? Responsible { get; set; }
+        public string? Parent { get; set; }
+        public List<UpdateList<string>>? Responsibilities { get; set; }
+        public List<UpdateList<string>>? Material { get; set; }
     }
 }

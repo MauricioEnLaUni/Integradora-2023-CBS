@@ -52,7 +52,9 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(Project)))
             {
                 BsonClassMap.RegisterClassMap<Project>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.Responsible).SetElementName("responsible");
+                    classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.PayHistory).SetElementName("payments");
                     classMap.MapMember(p => p.Tasks).SetElementName("tasks");
                 });
@@ -64,6 +66,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(Material)))
             {
                 BsonClassMap.RegisterClassMap<Material>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.Quantity).SetElementName("qty");
                     classMap.MapMember(p => p.Owner).SetElementName("owner");
                     classMap.MapMember(p => p.Handler).SetElementName("handler");
@@ -81,6 +84,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(MaterialCategory)))
             {
                 BsonClassMap.RegisterClassMap<MaterialCategory>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
                     classMap.MapMember(p => p.SubCategory).SetElementName("subcategory");
                     classMap.MapMember(p => p.Children).SetElementName("children");
@@ -93,6 +97,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(FTasks)))
             {
                 BsonClassMap.RegisterClassMap<FTasks>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.StartDate).SetElementName("starts");
                     classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
@@ -109,6 +114,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(Account)))
             {
                 BsonClassMap.RegisterClassMap<Account>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.Payments).SetElementName("payments");
                     classMap.MapMember(p => p.Owner).SetElementName("owner");
                 });
@@ -120,8 +126,11 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(Payment)))
             {
                 BsonClassMap.RegisterClassMap<Payment>(classMap => {
+                    classMap.MapMember(p => p.Concept).SetElementName("concept");
                     classMap.MapMember(p => p.Amount).SetElementName("amount");
                     classMap.MapMember(p => p.Complete).SetElementName("complete");
+                    classMap.MapMember(p => p.Direction).SetElementName("direction");
+                    classMap.MapMember(p => p.Due).SetElementName("due");
                 });
             }
         }
@@ -146,6 +155,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(Person)))
             {
                 BsonClassMap.RegisterClassMap<Person>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.LastName).SetElementName("lastName");
                     classMap.MapMember(p => p.Contacts).SetElementName("contacts");
                     classMap.MapMember(p => p.Employed).SetElementName("employed");
@@ -192,6 +202,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             {
                 BsonClassMap.RegisterClassMap<Schedule>(classMap => {
                     classMap.MapMember(p => p.Hours).SetElementName("hours");
+                    classMap.MapMember(p => p.Period).SetElementName("period");
                     classMap.MapMember(p => p.Location).SetElementName("location");
                 });
             }
@@ -203,7 +214,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             {
                 BsonClassMap.RegisterClassMap<Education>(classMap => {
                     classMap.MapMember(p => p.Grades).SetElementName("grades");
-                    classMap.MapMember(p => p.Certifications).SetElementName("Certifications");
+                    classMap.MapMember(p => p.Certifications).SetElementName("certifications");
                 });
             }
         }
@@ -224,6 +235,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             if (!BsonClassMap.IsClassMapRegistered(typeof(User)))
             {
                 BsonClassMap.RegisterClassMap<User>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("username");
                     classMap.MapMember(p => p.Password).SetElementName("password");
                     classMap.MapMember(p => p.Avatar).SetElementName("avatar");
                     classMap.MapMember(p => p.Active).SetElementName("active");

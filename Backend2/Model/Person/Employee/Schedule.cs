@@ -1,6 +1,4 @@
-using MongoDB.Bson;
 using Newtonsoft.Json;
-using MongoDB.Bson.Serialization.Attributes;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
