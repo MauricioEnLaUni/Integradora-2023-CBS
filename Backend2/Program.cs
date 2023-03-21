@@ -1,6 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Utilities.MongoDB;
+using Fictichos.Constructora.Options;
+using Fictichos.Constructora.Auth;
+using Fictichos.Constructora.Abstraction;
 
 DotEnvManager env = new();
 
@@ -15,6 +20,7 @@ builder.Services.AddSingleton(serviceProvider =>
     return new MongoSettings();
 });
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 
 var AllowOrigins = "_allowOrigins";
 builder.Services.AddCors(options => 
@@ -26,10 +32,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddAuthentication(Constants.COOKIENAME).AddCookie(Constants.COOKIENAME, options =>
-{
-    options.Cookie.Name = Constants.COOKIENAME;
-});
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
@@ -49,6 +55,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(AllowOrigins);
+
 app.UseAuthentication();
 
 app.UseAuthorization();

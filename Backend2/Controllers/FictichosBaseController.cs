@@ -1,8 +1,6 @@
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 
-using Newtonsoft.Json;
-
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
@@ -29,8 +27,6 @@ namespace Fictichos.Constructora.Controllers
     where V : DtoBase
     where X : BaseRepositoryService<T, U, V, W>
     {
-        protected readonly string db = "cbs";
-        protected readonly string col = "users";
         protected abstract X Repo { get; init; }
 
         [HttpPost]
@@ -66,7 +62,7 @@ namespace Fictichos.Constructora.Controllers
         public async Task<ActionResult<W?>> GetByIdAsync(string id)
         {
             T? result = await Repo.GetByIdAsync(id);
-            if (result is null) return NotFound($"Document: ${id} does not exist in ${col} collection.");
+            if (result is null) return NotFound($"Document: {id} does not exist in collection.");
             return Ok(result.ToDto());
         }
 
