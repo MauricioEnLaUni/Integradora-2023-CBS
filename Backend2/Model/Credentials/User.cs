@@ -12,12 +12,7 @@ namespace Fictichos.Constructora.Model
     {
         public string Name { get; init; } = string.Empty;
         public DateTime? Closed { get; set; }
-        private string _password = string.Empty;
-        public string Password
-        {
-            get => _password;
-            private set => _password = Argon2.Hash(value);
-        }
+        public string Password { get; set; } = string.Empty;
         public byte[]? Avatar { get; private set; }
         public bool Active { get; private set; } = false;
         public List<string> Email { get; set; } = new();
@@ -31,7 +26,7 @@ namespace Fictichos.Constructora.Model
         public User(NewUserDto data)
         {
             Name = data.Name;
-            Password = data.Password;
+            Password = Argon2.Hash(data.Password);
             Email.Add(data.Email);
         }
 
@@ -67,7 +62,7 @@ namespace Fictichos.Constructora.Model
         public void Update(UpdatedUserDto data)
         {
             Avatar = data.Avatar ?? Avatar;
-            Password = data.Password ?? Password;
+            Password = data.Password is null ? Password : Argon2.Hash(data.Password);
             Active = data.Active ?? Active;
             Closed = data.Closed ?? Closed;
             
