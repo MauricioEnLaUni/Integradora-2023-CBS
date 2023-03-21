@@ -19,12 +19,12 @@ namespace Fictichos.Constructora.Auth
             _options = options.Value;
         }
 
-        public string Generate(LoginSuccessDto usr)
+        public string Generate(LoginResponseDto usr)
         {
             List<Claim> claims = new()
             {
-                new(JwtRegisteredClaimNames.Sub, usr.Id.ToString()),
-                new(JwtRegisteredClaimNames.UniqueName, usr.Name.ToString())
+                new(JwtRegisteredClaimNames.Sub, usr.id.ToString()),
+                new(JwtRegisteredClaimNames.UniqueName, usr.name.ToString())
             };
 
             var signingCredentials = new SigningCredentials(

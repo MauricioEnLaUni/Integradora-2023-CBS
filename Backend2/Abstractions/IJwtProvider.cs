@@ -4,6 +4,6 @@ namespace Fictichos.Constructora.Abstraction
 {
     public interface IJwtProvider
     {
-        public string Generate(LoginSuccessDto usr);
+        public string Generate(LoginResponseDto usr);
     }
 }
