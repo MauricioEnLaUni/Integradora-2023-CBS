@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:front_end/src/wigets/large_screen.dart';
 import '../../constants.dart';
 
 class project_page extends StatelessWidget {
@@ -15,14 +15,20 @@ class projectLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "a",
       home: Scaffold(
-          appBar: AppBar(
-            title: const Text("login"),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.orange,
+          title: const Text(
+            "login",
+            style: TextStyle(
+                fontSize: 32,
+                color: Colors.black,
+                backgroundColor: Colors.green),
           ),
-          body: Row(
-            children: [const Text("Proyectos"), Container()],
-          )),
+        ),
+        body: LargeScreen(),
+      ),
     );
   }
 }
