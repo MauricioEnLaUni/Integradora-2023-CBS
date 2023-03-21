@@ -1,10 +1,10 @@
 ---
-sidebar_position: 1.0
+sidebar_position: 2.0
 ---
 
 # PostLoginUsuario!
 
-**Tipo:** Insercion
+**Tipo:** Consulta
 
 **Fecha:** 08/03/2023  **Numero de test:** 1.0
 
