@@ -8,6 +8,7 @@ using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Abstraction;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Middleware;
+using System.Security.Claims;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -83,22 +84,42 @@ public class UserController : ControllerBase
         return Ok(response);
     }
     
-    [HttpPatch("gui")]
+    [HttpPatch("self")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GUIUpdate(
-        [FromBody] UserUpdateGUIDto data)
+        [FromBody] UserSelfUpdateDto data)
     {
-        await Task.Delay(1);
-        return Ok();
+        IEnumerable<Claim> claims = TokenValidator.GetClaims(data.token);
+        string? name = claims.Where(x => x.Type == "unique_name")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (name is null) return BadRequest();
+
+        var filter = Builders<User>.Filter.Eq(x => x.Name, name);
+        User? usr = await Repo.GetOneByFilterAsync(filter);
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        data.email?.ForEach(e => {
+            if (e.Operation == 0 || e.Operation == 2)
+            {
+                if (e.NewItem == string.Empty) data.email.Remove(e);
+            }
+        });
+
+        usr.UserSelfUpdate(data);
+        await Repo.UpdateAsync(usr);
+        
+        return NoContent();
     }
 
     [HttpPatch("admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> UpdateUser([FromBody] UserUpdateGUIDto request)
+    public async Task<IActionResult> UpdateUser([FromBody] UserAdminUpdateDto request)
     {
         await Task.Delay(1);
         var test = TokenValidator.GetClaims(request.token);

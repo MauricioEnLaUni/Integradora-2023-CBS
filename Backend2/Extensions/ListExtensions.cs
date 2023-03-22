@@ -26,6 +26,7 @@ namespace Fictichos.Constructora.Utilities
             switch(data.Operation)
             {
                 case 0 :
+                    if (data.NewItem == null) return;
                     props.Add(data.NewItem!);
                     break;
                 case 1:
