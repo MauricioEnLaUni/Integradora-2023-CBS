@@ -38,8 +38,10 @@ public class UserController : ControllerBase
         var projection = Builders<User>.Projection.Include(e => e.Name);
         bool nameIsTaken = await Repo.GetOneByFilterAsync(filter) is not null;
         if (nameIsTaken) return Conflict();
-
+        
         string newEmail = payload.Email;
+        if (!newEmail.IsEmailFormatted()) return BadRequest();
+
         var emailFilter = Builders<EmailContainer>.Filter.Eq(e => e.value, newEmail);
         bool emailIsTaken = await EmailCollection.Find(emailFilter)
             .SingleOrDefaultAsync() is not null;
@@ -70,7 +72,7 @@ public class UserController : ControllerBase
         if (raw is null) return NotFound();
 
         bool passwordMatches = raw.ValidatePassword(payload.Password);
-        if (passwordMatches is false) return BadRequest();
+        if (!passwordMatches) return BadRequest();
 
         if (!raw.Active) return Forbid();
         
@@ -80,8 +82,19 @@ public class UserController : ControllerBase
 
         return Ok(response);
     }
+    
+    [HttpPatch("gui")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GUIUpdate(
+        [FromBody] UserUpdateGUIDto data)
+    {
+        await Task.Delay(1);
+        return Ok();
+    }
 
-    [HttpPatch]
+    [HttpPatch("admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
