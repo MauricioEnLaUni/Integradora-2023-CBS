@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/src/wigets/large_screen.dart';
+import 'package:front_end/src/wigets/small_screen.dart';
 import '../../constants.dart';
 
 class project_page extends StatelessWidget {
@@ -27,7 +28,7 @@ class projectLayout extends StatelessWidget {
                 backgroundColor: Colors.green),
           ),
         ),
-        body: LargeScreen(),
+        body: SmallScreen(),
       ),
     );
   }
