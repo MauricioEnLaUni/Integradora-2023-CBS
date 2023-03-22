@@ -13,6 +13,7 @@ public record UserSelfUpdateDto
 
 public record UserAdminUpdateDto
 {
+    public string name = string.Empty;
     public UserSelfUpdateDto basicFields = new();
     public List<UpdateList<string>>? roles;
     public UpdatedCredentialsDto? credentials;

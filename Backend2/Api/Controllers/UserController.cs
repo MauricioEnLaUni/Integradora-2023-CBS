@@ -88,7 +88,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GUIUpdate(
+    public async Task<IActionResult> SelfUpdate(
         [FromBody] UserSelfUpdateDto data)
     {
         IEnumerable<Claim> claims = TokenValidator.GetClaims(data.token);
@@ -102,12 +102,7 @@ public class UserController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        data.email?.ForEach(e => {
-            if (e.Operation == 0 || e.Operation == 2)
-            {
-                if (e.NewItem == string.Empty) data.email.Remove(e);
-            }
-        });
+        if (data.email is not null) ValidateEmail(data.email, usr);
 
         usr.UserSelfUpdate(data);
         await Repo.UpdateAsync(usr);
@@ -119,11 +114,20 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> UpdateUser([FromBody] UserAdminUpdateDto request)
+    public async Task<IActionResult> UpdateUser([FromBody] UserAdminUpdateDto data)
     {
-        await Task.Delay(1);
-        var test = TokenValidator.GetClaims(request.token);
-        return Ok(test);
+        var filter = Builders<User>.Filter
+            .Eq(x => x.Name, data.name);
+        User? usr = await Repo.GetOneByFilterAsync(filter);
+        if (usr is null) return NotFound();
+
+        if (data.basicFields.email is not null)
+        {
+            ValidateEmail(data.basicFields.email, usr);
+        }
+
+        usr.Update(data);
+        return NoContent();
     }
 
     [HttpGet]
@@ -147,10 +151,48 @@ public class UserController : ControllerBase
         return Ok(output);
     }
 
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetUser(string name)
+    {
+        var filter = Builders<User>.Filter.Eq(x => x.Name, name);
+        User? info = await Repo.GetOneByFilterAsync(name);
+        return Ok(info);
+    }
+
     [HttpDelete("collection")]
     public async Task<IActionResult> DeleteCollection()
     {
         await Repo.Collection.DeleteManyAsync(_ => true);
         return NoContent();
+    }
+
+    public async void ValidateEmail(
+        List<UpdateList<string>> data,
+        User usr)
+    {
+        foreach (var email in data)
+        {
+            if (email.Operation == 1)
+            {
+                if (email.Key >= usr.Email.Count) data.Remove(email);
+            }
+            else
+            {
+                if (email.NewItem is null ||
+                    email.NewItem == string.Empty ||
+                    !email.NewItem.IsEmailFormatted())
+                {
+                    data.Remove(email);
+                    continue;
+                }
+                var emailFilter = Builders<EmailContainer>.Filter
+                    .Eq(x => x.value, email.NewItem);
+                bool emailIsTaken = await EmailCollection.Find(emailFilter)
+                    .SingleOrDefaultAsync() is null ? false : true;
+                if (emailIsTaken) data.Remove(email);
+            }
+        }
     }
 }
