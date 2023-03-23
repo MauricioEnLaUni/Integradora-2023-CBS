@@ -23,9 +23,9 @@ namespace Fictichos.Constructora.Controllers
     [ApiController]
     [Route("[controller]")]
     public abstract class FApiControllerBase<T, U, V, W, X> : ControllerBase
-    where T : BaseEntity, IQueryMask<T, U, V, W>, new()
+    where T : BaseEntity, IQueryMask<T, U, V>, new()
     where V : DtoBase
-    where X : BaseRepositoryService<T, U, V, W>
+    where X : BaseRepositoryService<T, U, V>
     {
         protected abstract X Repo { get; init; }
 
@@ -40,7 +40,7 @@ namespace Fictichos.Constructora.Controllers
             return CreatedAtAction(
                 actionName: nameof(GetByIdAsync),
                 routeValues: new { id = data.Id },
-                value: data.ToDto()
+                value: data
             );
         }
 
@@ -49,11 +49,8 @@ namespace Fictichos.Constructora.Controllers
         public async Task<ActionResult<List<W>>> GetAllAsync()
         {
             List<T> rawData = await Repo.GetAllAsync();
-            List<W> data = new();
-            rawData.ForEach(e => {
-                data.Add(e.ToDto());
-            });
-            return Ok(data);
+            
+            return Ok(rawData);
         }
 
         [HttpGet("{id}")]
@@ -63,7 +60,7 @@ namespace Fictichos.Constructora.Controllers
         {
             T? result = await Repo.GetByIdAsync(id);
             if (result is null) return NotFound($"Document: {id} does not exist in collection.");
-            return Ok(result.ToDto());
+            return Ok(result);
         }
 
         [HttpPut]

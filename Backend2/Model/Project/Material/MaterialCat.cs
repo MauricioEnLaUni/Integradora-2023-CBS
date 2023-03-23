@@ -7,12 +7,12 @@ using Fictichos.Constructora.Utilities;
 namespace Fictichos.Constructora.Model
 {
     public class MaterialCategory : BaseEntity,
-        IQueryMask<MaterialCategory, NewMaterialCategoryDto, UpdatedMatCategoryDto, MaterialCategoryDto>
+        IQueryMask<MaterialCategory, NewMaterialCategoryDto, UpdatedMatCategoryDto>
     {
         public string Name { get; set; } = string.Empty;
         public string? Parent { get; private set; }
-        public List<string>? SubCategory { get; private set; }
-        public List<string>? Children { get; private set; } = new();
+        public List<string> SubCategory { get; private set; } = new();
+        public List<string> Children { get; private set; } = new();
 
         public MaterialCategory() { }
         private MaterialCategory(NewMaterialCategoryDto data)
@@ -25,7 +25,7 @@ namespace Fictichos.Constructora.Model
             return new(data);
         }
 
-        public MaterialCategoryDto ToDto()
+        public MaterialCategoryDto To()
         {
             return new()
             {
@@ -39,7 +39,7 @@ namespace Fictichos.Constructora.Model
 
         public string Serialize()
         {
-            MaterialCategoryDto temp = ToDto();
+            MaterialCategoryDto temp = To();
             return JsonConvert.SerializeObject(temp);
         }
 

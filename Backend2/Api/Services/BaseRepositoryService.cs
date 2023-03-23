@@ -2,15 +2,13 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository
 {
-    public class BaseRepositoryService<T, U, V, W>
-    where T : BaseEntity, IQueryMask<T, U, V, W>, new()
-    where V : DtoBase
+    public class BaseRepositoryService<T, U, V>
+    where T : BaseEntity, IQueryMask<T, U, V>, new()
     {
         public Dictionary<string,
             Func<string, BsonValue, FilterDefinition<T>>> Filters { get; init; }

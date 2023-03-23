@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace Fictichos.Constructora.Model
 {
     public class User
-        : BaseEntity, IQueryMask<User, NewUserDto, UpdatedUserDto, LoginSuccessDto>
+        : BaseEntity, IQueryMask<User, NewUserDto, UpdatedUserDto>
     {
         public string Name { get; init; } = string.Empty;
         public DateTime? Closed { get; set; }

@@ -30,8 +30,8 @@ public class UserController : ControllerBase
 
     [HttpPost("new")]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateAsync(
         [FromBody] NewUserDto payload)
     {
