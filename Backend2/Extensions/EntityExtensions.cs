@@ -2,19 +2,20 @@ namespace Fictichos.Constructora.Repository;
 
 internal static class EntityExtensions
 {
-    public static TDto To<TModel, TDto>(
+    public static TDto To<TDto>(
         this TModel model)
     {
         var dto = Activator.CreateInstance<TDto>();
-        var modelProperties = typeof(TModel).GetProperties();
-        var dtoProperties = typeof(TDto).GetProperties();
+        var modelProps = typeof(TModel).GetProperties();
+        var dtoProps = typeof(TDto).GetProperties();
 
-        foreach (var dtoProperty in dtoProperties)
+        foreach (var dtoProp in dtoProps)
         {
-            var modelProperty = modelProperties.FirstOrDefault(x => x.Name == dtoProperty.Name);
-            if (modelProperty != null && modelProperty.PropertyType == dtoProperty.PropertyType)
+            var modelProp = modelProps
+                .FirstOrDefault(x => x.Name == dtoProp.Name);
+            if (modelProp != null && modelProp.PropType == dtoProp.PropType)
             {
-                dtoProperty.SetValue(dto, modelProperty.GetValue(model));
+                dtoProp.SetValue(dto, modelProp.GetValue(model));
             }
         }
 
