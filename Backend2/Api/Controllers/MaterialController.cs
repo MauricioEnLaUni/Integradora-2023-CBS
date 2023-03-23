@@ -55,6 +55,19 @@ public class MaterialController : ControllerBase
         [FromBody] NewMaterialCategoryDto data)
     {
         if (data.Parent is null) return BadRequest();
+        var filter = Builders<MaterialCategory>.Filter
+            .Eq(x => x.Id, data.Parent);
+        MaterialCategory? parent = await CategoryCollection.Find(filter)
+            .SingleOrDefaultAsync();
+
+        filter = Builders<MaterialCategory>.Filter
+            .Eq(x => x.Parent, data.Parent);
+            
+        List<MaterialCategory> peers = await CategoryCollection.Find(filter)
+            .ToListAsync();
+        if (peers.Any(x => x.Name == data.Name)) return Conflict();
+
+        CategoryCollection.
 
         
         return new ObjectResult()

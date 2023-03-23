@@ -1,5 +1,4 @@
 using MongoDB.Driver;
-using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository;
 
@@ -29,7 +28,7 @@ public static class RepositoryExtensions
         this IMongoCollection<T> collection,
         FilterDefinition<T> filter)
     {
-        return await collection.Find(filter).ToListAsync<T>();
+        return await collection.Find(filter).ToListAsync();
     }
 
     public static async Task<T?> GetOneByFilterAsync<T>(
