@@ -9,7 +9,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Employee : BaseEntity,
-        IQueryMask<Employee, NewEmployeeDto, UpdatedEmployeeDto, EmployeeDto>
+        IQueryMask<Employee, NewEmployeeDto, UpdatedEmployeeDto>
     {
         public bool Active { get; private set; } = false;
         public DateOnly DOB { get; private set; }
@@ -70,8 +70,8 @@ namespace Fictichos.Constructora.Model
             DOB = data.DOB ?? DOB;
             CURP = data.CURP ?? CURP;
             RFC = data.RFC ?? RFC;
-            data.Charges?.ForEach(Charges.UpdateObjectWithIndex<Job, NewJobDto, UpdatedJobDto, JobDto>);
-            data.ScheduleHistory?.ForEach(ScheduleHistory.UpdateObjectWithIndex<Schedule, NewScheduleDto, UpdatedScheduleDto, ScheduleDto>);
+            data.Charges?.ForEach(Charges.UpdateObjectWithIndex<Job, NewJobDto, UpdatedJobDto>);
+            data.ScheduleHistory?.ForEach(ScheduleHistory.UpdateObjectWithIndex<Schedule, NewScheduleDto, UpdatedScheduleDto>);
         }
     }
 }

@@ -7,7 +7,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Person : BaseEntity,
-        IQueryMask<Person, NewPersonDto, UpdatedPersonDto, PersonDto>
+        IQueryMask<Person, NewPersonDto, UpdatedPersonDto>
     {
         public string Name { get; set; } = string.Empty;
         public string LastName { get;  set; } = string.Empty;

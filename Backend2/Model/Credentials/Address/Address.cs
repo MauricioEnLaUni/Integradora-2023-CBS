@@ -10,7 +10,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Address : BaseEntity,
-        IQueryMask<Address, NewAddressDto, NewAddressDto, AddressDto>
+        IQueryMask<Address, NewAddressDto, NewAddressDto>
     {
         [BsonElement("street")]
         public string? Street { get; set; }

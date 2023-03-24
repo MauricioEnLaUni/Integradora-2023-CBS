@@ -4,95 +4,95 @@ using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 
-namespace Fictichos.Constructora.Model
+namespace Fictichos.Constructora.Model;
+
+public class Material
+    : BaseEntity, IQueryMask<Material, NewMaterialDto, UpdatedMaterialDto>
 {
-    public class Material
-        : BaseEntity, IQueryMask<Material, NewMaterialDto, UpdatedMaterialDto>
+    public string Name { get; set; } = string.Empty;
+    public int Quantity { get; private set; }
+    public string Owner { get; private set; } = string.Empty;
+    public string Handler { get; private set; } = string.Empty;
+    public string Parent { get; private set; } = string.Empty;
+    public Address Location { get; private set; } = new();
+    public int? Status { get; private set; }
+    public double BoughtFor { get; private set; }
+    public double Depreciation { get; private set; }
+    public string Provider { get; private set; } = string.Empty;
+
+    public Material() { }
+    private Material(NewMaterialDto data)
     {
-        public string Name { get; set; } = string.Empty;
-        public int Quantity { get; private set; }
-        public string Owner { get; private set; } = string.Empty;
-        public string Handler { get; private set; } = string.Empty;
-        public Address Location { get; private set; } = new();
-        public int? Status { get; private set; }
-        public double BoughtFor { get; private set; }
-        public double Depreciation { get; private set; }
-        public string Provider { get; private set; } = string.Empty;
+        Name = data.Name;
+        Quantity = data.Quantity;
+        Location = new Address();
+        if (data.Status is not null) Status = data.Status;
+        BoughtFor = data.BoughtFor;
+        Provider = data.Provider;
+        Owner = data.Owner;
+        Handler = data.Handler;
+        Depreciation = data.Depreciation;
+    }
+    public Material Instantiate(NewMaterialDto data)
+    {
+        return new(data);
+    }
 
-        public Material() { }
-        private Material(NewMaterialDto data)
-        {
-            Name = data.Name;
-            Quantity = data.Quantity;
-            Location = new Address();
-            if (data.Status is not null) Status = data.Status;
-            BoughtFor = data.BoughtFor;
-            Provider = data.Provider;
-            Owner = data.Owner;
-            Handler = data.Handler;
-            Depreciation = data.Depreciation;
-        }
-        public Material Instantiate(NewMaterialDto data)
-        {
-            return new(data);
-        }
+    public void Update(UpdatedMaterialDto data)
+    {
+        Quantity = data.Quantity ?? Quantity;
+        Status = data.Status ?? Status;
+        BoughtFor = data.BoughtFor ?? BoughtFor;
+        Provider = data.Provider ?? Provider;
+        Owner = data.Owner ?? Handler;
+        Handler = data.Handler ?? Handler;
+        Depreciation = data.Depreciation ?? Depreciation;
 
-        public void Update(UpdatedMaterialDto data)
-        {
-            Quantity = data.Quantity ?? Quantity;
-            Status = data.Status ?? Status;
-            BoughtFor = data.BoughtFor ?? BoughtFor;
-            Provider = data.Provider ?? Provider;
-            Owner = data.Owner ?? Handler;
-            Handler = data.Handler ?? Handler;
-            Depreciation = data.Depreciation ?? Depreciation;
+        Location = data.Location is null ? Location :
+            new Address(data.Location);
+    }
 
-            Location = data.Location is null ? Location :
-                new Address(data.Location);
-        }
-
-        public MaterialDto ToDto()
+    public MaterialDto ToDto()
+    {
+        return new()
         {
-            return new()
-            {
-                Id = Id,
-                Name = Name,
-                Quantity = Quantity,
-                Owner = Owner
-            };
-        }
+            Id = Id,
+            Name = Name,
+            Quantity = Quantity,
+            Owner = Owner
+        };
+    }
 
-        public string Serialize()
-        {
-            MaterialDto data = ToDto();
-            return JsonConvert.SerializeObject(data);
-        }
+    public string Serialize()
+    {
+        MaterialDto data = ToDto();
+        return JsonConvert.SerializeObject(data);
+    }
 
-        public string AsInventory()
+    public string AsInventory()
+    {
+        CurrentInventoryDto data = new()
         {
-            CurrentInventoryDto data = new()
-            {
-                Id = Id,
-                Name = Name,
-                Quantity = Quantity
-            };
-            return JsonConvert.SerializeObject(data);
-        }
+            Id = Id,
+            Name = Name,
+            Quantity = Quantity
+        };
+        return JsonConvert.SerializeObject(data);
+    }
 
-        public string AsMaintenance()
+    public string AsMaintenance()
+    {
+        MaterialMaintenanceDto data = new()
         {
-            MaterialMaintenanceDto data = new()
-            {
-                Id = Id,
-                Status = Status ?? 0
-            };
-            return JsonConvert.SerializeObject(data);
-        }
+            Id = Id,
+            Status = Status ?? 0
+        };
+        return JsonConvert.SerializeObject(data);
+    }
 
-        public string AsOverview()
-        {
-            MaterialDto data = ToDto();
-            return JsonConvert.SerializeObject(data);
-        }
+    public string AsOverview()
+    {
+        MaterialDto data = ToDto();
+        return JsonConvert.SerializeObject(data);
     }
 }

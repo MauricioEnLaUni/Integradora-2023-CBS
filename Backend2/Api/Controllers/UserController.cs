@@ -22,8 +22,7 @@ public class UserController : ControllerBase
 
     public UserController(UserService repo, IJwtProvider jwtProvider, MongoSettings container)
     {
-        EmailCollection =
-            container.Client.GetDatabase("cbs").GetCollection<EmailContainer>("emails");
+        EmailCollection = repo.EmailCollection;
         Repo = repo;
         _jwtProvider = jwtProvider;
     }
@@ -102,7 +101,7 @@ public class UserController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        if (data.email is not null) ValidateEmail(data.email, usr);
+        if (data.email is not null) Repo.ValidateEmail(data.email, usr);
 
         usr.UserSelfUpdate(data);
         await Repo.UpdateAsync(usr);
@@ -123,14 +122,14 @@ public class UserController : ControllerBase
 
         if (data.basicFields.email is not null)
         {
-            ValidateEmail(data.basicFields.email, usr);
+            Repo.ValidateEmail(data.basicFields.email, usr);
         }
 
         usr.Update(data);
         return NoContent();
     }
 
-    [HttpGet]
+    [HttpGet("emails")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetEmails(string id)
@@ -151,7 +150,7 @@ public class UserController : ControllerBase
         return Ok(output);
     }
 
-    [HttpGet]
+    [HttpGet("userInfo")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUser(string name)
@@ -166,33 +165,5 @@ public class UserController : ControllerBase
     {
         await Repo.Collection.DeleteManyAsync(_ => true);
         return NoContent();
-    }
-
-    public async void ValidateEmail(
-        List<UpdateList<string>> data,
-        User usr)
-    {
-        foreach (var email in data)
-        {
-            if (email.Operation == 1)
-            {
-                if (email.Key >= usr.Email.Count) data.Remove(email);
-            }
-            else
-            {
-                if (email.NewItem is null ||
-                    email.NewItem == string.Empty ||
-                    !email.NewItem.IsEmailFormatted())
-                {
-                    data.Remove(email);
-                    continue;
-                }
-                var emailFilter = Builders<EmailContainer>.Filter
-                    .Eq(x => x.value, email.NewItem);
-                bool emailIsTaken = await EmailCollection.Find(emailFilter)
-                    .SingleOrDefaultAsync() is null ? false : true;
-                if (emailIsTaken) data.Remove(email);
-            }
-        }
     }
 }

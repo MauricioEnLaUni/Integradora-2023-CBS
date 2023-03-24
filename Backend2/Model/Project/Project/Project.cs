@@ -7,7 +7,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Project
-        : BaseEntity, IQueryMask<Project, string, UpdatedProjectDto, ProjectDto>
+        : BaseEntity, IQueryMask<Project, string, UpdatedProjectDto>
     {
         public string Name { get; set; } = string.Empty;
         public string Responsible { get; private set; } = string.Empty;
@@ -45,7 +45,7 @@ namespace Fictichos.Constructora.Model
             Name = data.Name ?? Name;
             Ends = data.Ends ?? Ends;
             Responsible = data.Responsible ?? Responsible;
-            data.Tasks?.ForEach(Tasks.UpdateObjectWithIndex<FTasks, NewFTaskDto, UpdatedFTaskDto, FTasksDto>);
+            data.Tasks?.ForEach(Tasks.UpdateObjectWithIndex<FTasks, NewFTaskDto, UpdatedFTaskDto>);
             if (data.PayHistory is not null) PayHistory.Update(data.PayHistory);
         }
     }

@@ -7,7 +7,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Payment : BaseEntity,
-        IQueryMask<Payment, NewPaymentDto, UpdatedPaymentDto, PaymentDto>
+        IQueryMask<Payment, NewPaymentDto, UpdatedPaymentDto>
     {
         public string Concept { get; set; } = string.Empty;
         public double Amount { get; set; }

@@ -7,7 +7,7 @@ using Fictichos.Constructora.Utilities;
 namespace Fictichos.Constructora.Model
 {
     public class Salary : BaseEntity,
-        IQueryMask<Salary, NewSalaryDto, UpdatedSalaryDto, SalaryDto>
+        IQueryMask<Salary, NewSalaryDto, UpdatedSalaryDto>
     {
         public string Period { get; set; } = string.Empty;
         public string Due { get; set; } = string.Empty;

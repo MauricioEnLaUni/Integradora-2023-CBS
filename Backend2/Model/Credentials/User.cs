@@ -5,7 +5,6 @@ using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
 
 namespace Fictichos.Constructora.Model
 {

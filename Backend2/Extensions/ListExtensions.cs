@@ -44,7 +44,6 @@ namespace Fictichos.Constructora.Utilities
             this List<T> props,
             IndexedObjectUpdate<U, V> data)
         where T : BaseEntity, IQueryMask<T, U, V>, new()
-        where V : DtoBase
         {
             if (data is null) return;
             switch(data.Operation)

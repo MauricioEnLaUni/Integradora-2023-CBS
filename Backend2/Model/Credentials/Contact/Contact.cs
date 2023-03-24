@@ -9,7 +9,7 @@ using Fictichos.Constructora.Repository;
 namespace Fictichos.Constructora.Model
 {
     public class Contact : BaseEntity,
-        IQueryMask<Contact, NewContactDto, UpdatedContactDto, ContactDto>
+        IQueryMask<Contact, NewContactDto, UpdatedContactDto>
     {
         [BsonElement("addresses")]
         public List<Address> Addresses { get; private set; } = new List<Address>();
@@ -50,7 +50,7 @@ namespace Fictichos.Constructora.Model
 
         public void Update(UpdatedContactDto data)
         {
-            data.Addresses?.ForEach(Addresses.UpdateObjectWithIndex<Address, NewAddressDto, NewAddressDto, AddressDto>);
+            data.Addresses?.ForEach(Addresses.UpdateObjectWithIndex<Address, NewAddressDto, NewAddressDto>);
             data.Phones?.ForEach(Phones.UpdateWithIndex);
             data.Emails?.ForEach(Emails.UpdateWithIndex);
         }

@@ -2,7 +2,7 @@ namespace Fictichos.Constructora.Repository;
 
 internal static class EntityExtensions
 {
-    public static TDto To<TDto>(
+    public static TDto To<TModel, TDto>(
         this TModel model)
     {
         var dto = Activator.CreateInstance<TDto>();
@@ -13,7 +13,7 @@ internal static class EntityExtensions
         {
             var modelProp = modelProps
                 .FirstOrDefault(x => x.Name == dtoProp.Name);
-            if (modelProp != null && modelProp.PropType == dtoProp.PropType)
+            if (modelProp != null && modelProp.PropertyType == dtoProp.PropertyType)
             {
                 dtoProp.SetValue(dto, modelProp.GetValue(model));
             }
