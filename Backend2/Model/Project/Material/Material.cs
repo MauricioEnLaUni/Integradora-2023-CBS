@@ -1,64 +1,98 @@
-using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
-using Fitichos.Constructora.Repository;
-using Fitichos.Constructora.Dto;
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Utilities;
 
-namespace Fictichos.Constructora.Model
+namespace Fictichos.Constructora.Model;
+
+public class Material
+    : BaseEntity, IQueryMask<Material, NewMaterialDto, UpdatedMaterialDto>
 {
-    public class Material : Entity
+    public string Name { get; set; } = string.Empty;
+    public int Quantity { get; private set; }
+    public string Owner { get; private set; } = string.Empty;
+    public string Handler { get; private set; } = string.Empty;
+    public string Parent { get; private set; } = string.Empty;
+    public Address Location { get; private set; } = new();
+    public int? Status { get; private set; }
+    public double BoughtFor { get; private set; }
+    public double Depreciation { get; private set; }
+    public string Provider { get; private set; } = string.Empty;
+
+    public Material() { }
+    private Material(NewMaterialDto data)
     {
-        [BsonElement("qty")]
-        public int Quantity { get; set; }
-        [BsonElement("owner")]
-        public string Owner { get; set; }
-        [BsonElement("empResponsible")]
-        public string EmpResponsible { get; set; }
-        [BsonElement("brand")]
-        public string Brand { get; set; }
-        [BsonElement("location")]
-        public Address Location { get; set; }
-        [BsonElement("status")]
-        public int? Status { get; set; }
-        [BsonElement("price")]
-        public double BoughtFor { get; set; }
-        [BsonElement("currentPrice")]
-        public double CurrentPrice { get; set; }
-        [BsonElement("provider")]
-        public string Provider { get; set; }
+        Name = data.Name;
+        Quantity = data.Quantity;
+        Location = new Address();
+        if (data.Status is not null) Status = data.Status;
+        BoughtFor = data.BoughtFor;
+        Provider = data.Provider;
+        Owner = data.Owner;
+        Handler = data.Handler;
+        Depreciation = data.Depreciation;
+    }
+    public Material Instantiate(NewMaterialDto data)
+    {
+        return new(data);
+    }
 
-        public Material(NewMaterialDto data) : base(data.Name, null)
-        {
-            Quantity = data.Quantity;
-            Location = new(data.Location);
-            if (data.Status is not null) Status = data.Status;
-            BoughtFor = data.BoughtFor;
-            Brand = data.Brand;
-            Provider = data.Provider;
-            Owner = data.Owner;
-            EmpResponsible = data.EmpResponsible;
-            CurrentPrice = data.CurrentPrice;
-        }
+    public void Update(UpdatedMaterialDto data)
+    {
+        Quantity = data.Quantity ?? Quantity;
+        Status = data.Status ?? Status;
+        BoughtFor = data.BoughtFor ?? BoughtFor;
+        Provider = data.Provider ?? Provider;
+        Owner = data.Owner ?? Handler;
+        Handler = data.Handler ?? Handler;
+        Depreciation = data.Depreciation ?? Depreciation;
 
-        public void Update(UpdatedMaterialDto data)
+        Location = data.Location is null ? Location :
+            new Address(data.Location);
+    }
+
+    public MaterialDto ToDto()
+    {
+        return new()
         {
-            Quantity = data.Quantity ?? Quantity;
-            Status = data.Status ?? Status;
-            BoughtFor = data.BoughtFor ?? BoughtFor;
-            Closed = data.Closed ?? Closed;
-            Brand = data.Brand ?? Brand;
-            Provider = data.Provider ?? Provider;
-            Owner = data.Owner ?? Owner;
-            EmpResponsible = data.EmpResponsible ?? EmpResponsible;
-            CurrentPrice = data.CurrentPrice ?? CurrentPrice;
-            /*
-            if (data.Quantity is not null) Quantity = (int)data.Quantity;
-            if (data.Status is not null) Status = data.Status;
-            if (data.BoughtFor is not null) BoughtFor = (double)data.BoughtFor;
-            if (data.Closed is not null) Closed = data.Closed;
-            if (data.Brand is not null) Brand = data.Brand;
-            if (data.Provider is not null) Provider = data.Provider;
-            if (data.Owner is not null) Owner = data.Owner;
-            */
-        }
+            Id = Id,
+            Name = Name,
+            Quantity = Quantity,
+            Owner = Owner
+        };
+    }
+
+    public string Serialize()
+    {
+        MaterialDto data = ToDto();
+        return JsonConvert.SerializeObject(data);
+    }
+
+    public string AsInventory()
+    {
+        CurrentInventoryDto data = new()
+        {
+            Id = Id,
+            Name = Name,
+            Quantity = Quantity
+        };
+        return JsonConvert.SerializeObject(data);
+    }
+
+    public string AsMaintenance()
+    {
+        MaterialMaintenanceDto data = new()
+        {
+            Id = Id,
+            Status = Status ?? 0
+        };
+        return JsonConvert.SerializeObject(data);
+    }
+
+    public string AsOverview()
+    {
+        MaterialDto data = ToDto();
+        return JsonConvert.SerializeObject(data);
     }
 }

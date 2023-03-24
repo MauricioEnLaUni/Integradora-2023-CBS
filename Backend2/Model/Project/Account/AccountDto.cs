@@ -1,6 +1,7 @@
-using Fictichos.Constructora.Model;
+using Fictichos.Constructora.Utilities;
+using MongoDB.Bson;
 
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
     public record NewAccountDto
     {
@@ -8,43 +9,45 @@ namespace Fitichos.Constructora.Dto
         public string Owner { get; set; } = string.Empty;
     }
 
-    public record UpdateAccountDto
+    public record UpdatedAccountDto : DtoBase
     {
         public string? Name { get; set; } = string.Empty;
-        public string? Owner { get; set; } = string.Empty;
+        public string? Owner { get; set; }
+        public List<IndexedObjectUpdate<NewPaymentDto, UpdatedPaymentDto>>?
+            Payments { get; set; }
     }
 
     public record AccountDto
     {
-        public List<PaymentsDto> Payments { get; set; } = new();
+        public string Id { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public List<PaymentDto> Payments { get; set; } = new();
+        public string Owner { get; set; } = string.Empty;
     }
 
-    public record PaymentsDto
+    public record PaymentDto
     {
+        public string Id { get; set; } = string.Empty;
         public double Amount { get; set; }
+        public string Concept { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public bool Complete { get; set; }
-
-        public PaymentsDto(Payment data)
-        {
-            Amount = data.Amount;
-            CreatedAt = data.CreatedAt;
-            Complete = data.Complete;
-        }
+        public DateTime Due { get; set; }
+        public bool Complete { get; set; } = false;
     }
 
     public record NewPaymentDto
     {
-        public string Name { get; set; } = string.Empty;
+        public string Concept { get; set; } = string.Empty;
         public double Amount { get; set; }
         public DateTime Due { get; set; }
     }
 
-    public record UpdatePaymentDto
+    public record UpdatedPaymentDto : DtoBase
     {
-        public string Id { get; set; } = string.Empty;
-        public string? Name;
+        public string? Concept;
         public DateTime? Due;
         public double? Amount;
+        public bool? Complete;
+        public bool? Direction;
     }
 }

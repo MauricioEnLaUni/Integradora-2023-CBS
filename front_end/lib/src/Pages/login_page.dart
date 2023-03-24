@@ -111,9 +111,10 @@ Widget usernameField(UserManagement mng) {
     builder: (context, snapshot) {
       return TextField(
         decoration: const InputDecoration(
-          hintText: 'Username',
+          hintText: '',
           enabledBorder: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(),
+          labelText: 'Username',
         ),
         onChanged: mng.changeUsername,
       );
@@ -131,6 +132,7 @@ Widget passwordField(UserManagement mng) {
           enabledBorder: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(),
         ),
+        obscureText: true,
         onChanged: (newValue) {
           mng.changePassword(newValue);
         },

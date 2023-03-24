@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using Fictichos.Constructora.Utilities;
 
-using Fitichos.Constructora.Model;
-
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
     public record LoginDto
     {
         [Required]
-        [RegularExpression(@"^[a-zA-Z][a-zA-Z0-9-_]{3,27}$")]
+        [RegularExpression(@"^[a-zA-Z][a-zA-Z0-9-_]{2,27}$")]
         public string Name { get; set; } = string.Empty;
         [Required]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,64}$")]
@@ -17,20 +16,10 @@ namespace Fitichos.Constructora.Dto
     public record LoginSuccessDto : DtoBase
     {
         public string Name { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public string[] Email { get; set; }
+        public List<string> Roles { get; set; } = new();
+        public List<string> Email { get; set; } = new();
         public byte[]? Avatar;
-
-        public LoginSuccessDto(User usr)
-        {
-            Id = usr.Id.ToString();
-            Name = usr.Name;
-            Password = usr.Password;
-            CreatedAt = usr.CreatedAt;
-            Email = usr.Email.ToArray<string>();
-            if (usr.Avatar is not null) Avatar = usr.Avatar;
-        }
     }
 
     public record NewUserDto
@@ -42,22 +31,19 @@ namespace Fitichos.Constructora.Dto
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,64}$")]
         public string Password { get; set; } = string.Empty;
         [Required]
-        [RegularExpression(@"^[\\.-\\w]{1,25}@cbs.com$")]
         public string Email { get; set; } = string.Empty;
     }
 
-    public record UserChangesDto : DtoBase
+    public record UpdatedUserDto : DtoBase
     {
+        public string token = string.Empty;
         public string? Password { get; set; } = string.Empty;
-        public List<string>? Email { get; set; }
+        public bool? Active { get; set; }
+        public List<UpdateList<string>>? Email { get; set; }
+        public List<UpdateList<string>>? Roles { get; set; }
+        public UpdatedCredentialsDto? Credentials { get; set; }
         public byte[]? Avatar { get; set; }
-
-        public UserChangesDto(User usr)
-        {
-            Password = usr.Password;
-            Email = usr.Email;
-            Avatar = usr.Avatar;
-        }
+        public DateTime? Closed { get; set; }
     }
 
     public record UserEmailDto : DtoBase

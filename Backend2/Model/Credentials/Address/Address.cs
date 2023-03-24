@@ -1,13 +1,16 @@
-using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-using Fitichos.Constructora.Dto;
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Address
+    public class Address : BaseEntity,
+        IQueryMask<Address, NewAddressDto, NewAddressDto>
     {
         [BsonElement("street")]
         public string? Street { get; set; }
@@ -26,6 +29,7 @@ namespace Fictichos.Constructora.Model
         [BsonElement("coor")]
         public Coordinates? Coordinates { get; set; }
 
+        public Address() { }
         public Address(NewAddressDto data)
         {
             Street = data.Street ?? null;
@@ -37,14 +41,40 @@ namespace Fictichos.Constructora.Model
             Country = data.Country ?? null;
             Coordinates = data.Coordinates ?? null;
         }
-    }
-    public class Coordinates
-    {
-        [BsonElement("latitude")]
-        [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
-        public string Latitude { get; set; } = string.Empty;
-        [BsonElement("longitude")]
-        [RegularExpression(@"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$")]
-        public string Longitude { get; set; } = string.Empty;
+
+        public Address Instantiate(NewAddressDto data)
+        {
+            return new Address(data);
+        }
+
+        public void Update(NewAddressDto data)
+        {
+            ModifiedAt = DateTime.Now;
+            Street = data.Street ?? null;
+            Number = data.Number ?? null;
+            Colony = data.Colony ?? null;
+            PostalCode = data.PostalCode ?? null;
+            City = data.City ?? null;
+            State = data.State ?? null;
+            Country = data.Country ?? null;
+            Coordinates = data.Coordinates ?? null;
+        }
+
+        public AddressDto ToDto()
+        {
+            return new(this);
+        }
+
+        public string Serialize()
+        {
+            AddressDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
+        }
+
+        public string ToSlimDto()
+        {
+            SlimAddressDto data = new(this);
+            return JsonConvert.SerializeObject(data);
+        }
     }
 }

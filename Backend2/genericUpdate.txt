@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+
+namespace Test
+{
+	public class Program
+	{
+		public static void Main()
+		{
+			Iterable test = new()
+			{
+				_id = new("Ac002"),
+				Name = "Testor",
+				Quantity = 1001
+			};
+			
+			string exitString = $"Id: {test.Id.id}\nName: {test.Name}\nQuantity: {test.Quantity}";
+			Console.WriteLine(exitString);
+			
+			UpdatedIterable updates = new();
+			test.Update(new UpdatedIterable());
+			
+			exitString = $"Id: {test.Id.id}\nName: {test.Name}\nQuantity: {test.Quantity}";
+			Console.WriteLine(exitString);
+		}
+	}
+	
+	public class Iterable
+	{
+		public IdObject _id;
+		public IdObject Id
+		{
+			get => _id;
+			set => _id.Update(value);
+		} 
+		public string Name { get; set; }
+		public int Quantity { get; set; }
+		public Dictionary<string, Action<Iterable, dynamic>> ActionsCache { get; } = new()
+		{
+			{ "Id", typeof(Iterable).GetProperty("Id").SetValue },
+			{ "Name", typeof(Iterable).GetProperty("Name").SetValue },
+			{ "Quantity", typeof(Iterable).GetProperty("Quantity").SetValue }
+		};
+		
+		public void Update(UpdatedIterable data)
+		{
+			foreach(var actions in ActionsCache)
+			{
+				if(data.Changes[actions.Key] is not null)
+				{
+					actions.Value(this, data.Changes[actions.Key]);
+				}
+			}
+		}
+	}
+	
+	public class UpdatedIterable
+	{
+		public Dictionary<string, dynamic> Changes { get; set; }= new()
+		{
+			{ "Id", new IdObject("B003") },
+			{ "Name", null },
+			{ "Quantity", 1000 }
+		};
+	}
+	
+	public class IdObject
+	{
+		public string id;
+		
+		public void Update(IdObject data)
+		{
+			id = data.id;
+		}
+		
+		public IdObject(string data)
+		{
+			id = data;
+		}
+	}
+}

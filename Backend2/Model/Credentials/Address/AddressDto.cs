@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Fictichos.Constructora.Model;
 
-namespace Fitichos.Constructora.Dto
+namespace Fictichos.Constructora.Dto
 {
-    public record NewAddressDto
+    public record NewAddressDto : DtoBase
     {
         [StringLength(32)]
         public string? Street { get; set; }
@@ -18,7 +18,7 @@ namespace Fitichos.Constructora.Dto
         public Coordinates? Coordinates { get; set; }
     }
 
-    public record AddressDto
+    public record AddressDto : DtoBase
     {
         public string? Street { get; set; }
         public string? Number { get; set; }
@@ -38,6 +38,7 @@ namespace Fitichos.Constructora.Dto
             State = data.State;
             Country = data.Country;
         }
+        public AddressDto() { }
     }
 
     public record SlimAddressDto

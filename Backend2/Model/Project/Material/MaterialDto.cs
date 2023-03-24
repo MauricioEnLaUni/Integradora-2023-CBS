@@ -1,121 +1,120 @@
-using MongoDB.Bson;
+using Fictichos.Constructora.Utilities;
 using System.ComponentModel.DataAnnotations;
 
-using Fictichos.Constructora.Model;
+namespace Fictichos.Constructora.Dto;
 
-namespace Fitichos.Constructora.Dto
+/// <summary>
+/// Payload for a constructor.
+/// </summary>
+public record NewMaterialDto
 {
-    /// <summary>
-    /// Payload for a constructor.
-    /// </summary>
-    public record NewMaterialDto
+    [Required]
+    public string Name { get; set; } = string.Empty;
+    [Required]
+    public int Quantity { get; set; } = 0;
+    [Required]
+    public string Location { get; set; } = string.Empty;
+    public int? Status { get; set; } = 0;
+    [Required]
+    public double BoughtFor { get; set; } = 0;
+    [Required]
+    public string Provider { get; set; } = string.Empty;
+    [Required]
+    public string Owner { get; set; } = string.Empty;
+    [Required]
+    public string Handler { get; set; } = string.Empty;
+    [Required]
+    public double Depreciation { get; set; }
+    [Required]
+    public double Brand { get; set; }
+    [Required]
+    public string Category { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Update payload.
+/// </summary>
+/// <remarks>
+/// Contains all editable class members as nulls, if a field isn't 
+/// null the adopts it as the updated value.
+/// </remarks>
+public record UpdatedMaterialDto : DtoBase
+{
+    public int? Quantity { get; set; }
+    public int? Status { get; set; }
+    public double? BoughtFor { get; set; }
+    public DateTime? Closed { get; set; }
+    public string? Provider { get; set; } = string.Empty;
+    public string? Owner { get; set; } = string.Empty;
+    public string? Handler { get; set; } = string.Empty;
+    public double? Depreciation { get; set; }
+    public NewAddressDto? Location { get; set; }
+    public string? Category { get; set; }
+}
+
+/// <summary>
+/// Result of searching for Item condition.
+/// </summary>
+/// <returns>
+/// Object containing Id and Status of a Material Input.
+/// </returns>
+public record MaterialMaintenanceDto
+{
+    public string Id { get; set; } = string.Empty;
+    public int Status { get; set; }
+}
+
+/// <summary>
+/// Material Overview for listing existences.
+/// </summary>
+/// <remarks>
+/// Creates an object to give an overview of a project or a location
+/// current material's stores.
+/// </remarks>
+public record CurrentInventoryDto
+{
+    public string Id { get; set;} = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Brand { get; set; } = string.Empty;
+    public int Quantity { get; set; } = 0;
+}
+
+public record OwnerMaterialDto
+{
+    public Dictionary<string, List<string>> Materials { get; set; } = new()
     {
-        [Required]
-        public string Name { get; set; } = string.Empty;
-        [Required]
-        public int Quantity { get; set; } = 0;
-        [Required]
-        public NewAddressDto Location { get; set; } = new();
-        public int? Status { get; set; } = 0;
-        [Required]
-        public double BoughtFor { get; set; } = 0;
-        [Required]
-        public string Brand { get; set; } = string.Empty;
-        [Required]
-        public string Provider { get; set; } = string.Empty;
-        [Required]
-        public string Owner { get; set; } = string.Empty;
-        [Required]
-        public string EmpResponsible { get; set; } = string.Empty;
-        [Required]
-        public double CurrentPrice { get; set; }
-    }
+        { "", new() }
+    };
+}
 
-    /// <summary>
-    /// Update payload.
-    /// </summary>
-    /// <remarks>
-    /// Contains all editable class members as nulls, if a field isn't 
-    /// null the adopts it as the updated value.
-    /// </remarks>
-    public record UpdatedMaterialDto
-    {
-        [Required]
-        public string Id { get; set; } = string.Empty;
-        public int? Quantity { get; set; }
-        public int? Status { get; set; }
-        public double? BoughtFor { get; set; }
-        public DateTime? Closed { get; set; }
-        public string? Provider { get; set; }
-        public string? Owner { get; set; }
-        public string? Brand { get; set; }
-        public string? EmpResponsible { get; set; }
-        public double? CurrentPrice { get; set; }
-    }
+public record MaterialDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Owner { get; set; } = string.Empty;
+    public string Brand { get; set; } = string.Empty;
+    public int Quantity { get; set; } = 0;
+}
 
-    /// <summary>
-    /// Result of searching for Item condition.
-    /// </summary>
-    /// <returns>
-    /// Object containing Id and Status of a Material Input.
-    /// </returns>
-    public record MaterialMaintenanceDto
-    {
-        public ObjectId Id { get; set; }
-        public int Status { get; set; }
+public record NewMaterialCategoryDto
+{
+    public string Name { get; set; } = string.Empty;
+    public string? Parent { get; set; }
+}
 
-        public MaterialMaintenanceDto(Material data)
-        {
-            Id = data.Id;
-            Status = data.Status ?? 0;
-        }
-    }
+public record MaterialCategoryDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string? Parent { get; set; }
+    public List<string>? SubCategory { get; set; } = new();
+    public List<string>? Children { get; set; } = new();
+}
 
-    /// <summary>
-    /// Material Overview for listing existences.
-    /// </summary>
-    /// <remarks>
-    /// Creates an object to give an overview of a project or a location
-    /// current material's stores.
-    /// </remarks>
-    public record CurrentInventoryDto
-    {
-        public ObjectId Id { get; set;}
-        public string Name { get; set; }
-        public string Brand { get; set; }
-        public int Quantity { get; set; }
-
-        public CurrentInventoryDto(Material data)
-        {
-            Id = data.Id;
-            Name = data.Name;
-            Quantity = data.Quantity;
-            Brand = data.Brand;
-        }
-    }
-    
-    public record OwnerMaterialDto
-    {
-        public Dictionary<string, List<string>> Materials { get; set; } = new()
-        {
-            { "", new() }
-        };
-    }
-
-    public record MaterialDto
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Owner { get; set; }
-        public string Brand { get; set; }
-        public int Quantity { get; set; }
-
-        public MaterialDto(Material data)
-        {
-            Id = data.Id.ToString();
-            Name = data.Name;
-            Owner = data.Owner;
-            Brand = data.Brand;
-        }
-    }
+public record UpdatedMatCategoryDto : DtoBase
+{
+    public string? Name { get; set; }
+    public string? Parent { get; set; }
+    public List<UpdateList<string>>? SubCategory { get; set; }
+    public List<UpdateList<string>>? Children { get; set; }
 }

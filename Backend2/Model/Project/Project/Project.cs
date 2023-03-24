@@ -1,27 +1,52 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
-using Fitichos.Constructora.Dto;
-using Fitichos.Constructora.Repository;
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Project : Entity
+    public class Project
+        : BaseEntity, IQueryMask<Project, string, UpdatedProjectDto>
     {
-        // Jefe de proyecto 1 * 
-        [BsonElement("account")]
-        public Account? PayHistory { get; set; }
-        [BsonElement("tasks")]
-        public List<FTasks> Tasks { get; set; } = new List<FTasks>();
+        public string Name { get; set; } = string.Empty;
+        public string Responsible { get; private set; } = string.Empty;
+        public DateTime Ends { get; private set; }
+        public Account PayHistory { get; private set; } = new();
+        public List<FTasks> Tasks { get; private set; } = new();
 
-        public Project(NewProjectDto newProject) : base(newProject.Name, null) { }
-
-        public void Change(ProjectChangesDto chg)
+        public Project() { }
+        public Project(string data)
         {
-            if (chg.Name is not null) Name = chg.Name;
-            if (chg.Tasks is not null) Tasks = chg.Tasks;
-            if (Closed is not null) Closed = chg.Closed;
-            if (PayHistory is not null) PayHistory = chg.PayHistory;
+            Name = data;
+        }
+        public Project Instantiate(string data)
+        {
+            return new(data);
+        }
+
+        public ProjectDto ToDto()
+        {
+            return new()
+            {
+                Id = Id,
+                Name = Name
+            };
+        }
+
+        public string Serialize()
+        {
+            ProjectDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
+        }
+
+        public void Update(UpdatedProjectDto data)
+        {
+            Name = data.Name ?? Name;
+            Ends = data.Ends ?? Ends;
+            Responsible = data.Responsible ?? Responsible;
+            data.Tasks?.ForEach(Tasks.UpdateObjectWithIndex<FTasks, NewFTaskDto, UpdatedFTaskDto>);
+            if (data.PayHistory is not null) PayHistory.Update(data.PayHistory);
         }
     }
 }

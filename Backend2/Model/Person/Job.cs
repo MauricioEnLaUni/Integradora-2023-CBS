@@ -1,52 +1,69 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-using Fitichos.Constructora.Dto;
-using Fitichos.Constructora.Repository;
+using Newtonsoft.Json;
+
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Model
 {
-    public class Job : Entity
+    public class Job : BaseEntity, IQueryMask<Job, NewJobDto, UpdatedJobDto>
     {
-        // Clave interna
-        [BsonElement("salaryHistory")]
         public List<Salary> SalaryHistory { get; set; } = new();
-        [BsonElement("role")]
-        public string Role { get; set; }
-        [BsonElement("area")]
-        public string Area { get; set; }
-        // Jefe inmediato
-        // herramientas, maquinaria, autos
-        // departamento
-        // expediente > sanciones - bonos - permisos - faltas
-        [BsonElement("responsibilities")]
+        public string Role { get; set; } = string.Empty;
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Area { get; set; } = string.Empty;
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Responsible { get; set; } = string.Empty;
+        public List<string> Material { get; set; } = new();
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Parent { get; set; } = string.Empty;
         public List<string> Responsibilities { get;  set; } = new();
 
-        public Job(NewJobDto data) : base(data.Name, null)
+        public Job(NewJobDto data)
         {
+            SalaryHistory.Add(new (data.SalaryHistory));
             Role = data.Role;
             Area = data.Area;
+            Parent = Parent;
             Responsibilities = data.Responsibilities;
         }
-
-
-        public class Salary
+        public Job() { }
+        
+        public JobDto ToDto()
         {
-            public string Id { get; set; } = "";
-            public DateTime Created { get; set; } = DateTime.Now;
-            [BsonElement("reductions")]
-            public Dictionary<string, double> Reductions { get; set; } = new();
-            [BsonElement("rate")]
-            public double Rate { get; set; }
-            // weekly, biweekly, monthly
-            [BsonElement("hoursWeek")]
-            public int? HoursWeek { get; set; }
-            
-            public Salary(double hourly, int? hoursWeek)
+            List<SalaryDto> list = new();
+            SalaryHistory.ForEach(e => {
+                list.Add(e.ToDto());
+            });
+            return new()
             {
-                Rate = hourly;
-                if (hoursWeek is not null) HoursWeek = hoursWeek;
-            }
+                Id = Id,
+                SalaryHistory = list,
+                Role = Role
+            };
+        }
+        public string Serialize()
+        {
+            JobDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
+        }
+
+        public Job Instantiate(NewJobDto data)
+        {
+            return new(data);
+        }
+
+        public void Update(UpdatedJobDto data)
+        {
+            Role = data.Role ?? Role;
+            Area = data.Area ?? Area;
+            Responsible = data.Responsible ?? Responsible;
+            Parent = data.Parent ?? Parent;
+            data.Responsibilities?.ForEach(Responsibilities.UpdateWithIndex);
+            data.Material?.ForEach(Material.UpdateWithIndex);
         }
     }
 }

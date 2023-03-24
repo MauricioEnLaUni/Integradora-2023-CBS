@@ -1,29 +1,31 @@
-using MongoDB.Bson.Serialization.Attributes;
 using Isopoh.Cryptography.Argon2;
+using Newtonsoft.Json;
 
-using Fitichos.Constructora.Repository;
-using Fitichos.Constructora.Dto;
+using Fictichos.Constructora.Repository;
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
+using System.Text.RegularExpressions;
 
-namespace Fitichos.Constructora.Model
+namespace Fictichos.Constructora.Model
 {
-    public class User : Entity
+    public class User
+        : BaseEntity, IQueryMask<User, NewUserDto, UpdatedUserDto>
     {
-        [BsonElement("password")]
-        public string Password { get; set; }
-        [BsonElement("avatar")]
-        public byte[]? Avatar { get; set; }
-        [BsonElement("active")]
-        public bool Active { get; set; } = false;
-        [BsonElement("email")]
+        public string Name { get; init; } = string.Empty;
+        public DateTime? Closed { get; set; }
+        public string Password { get; set; } = string.Empty;
+        public byte[]? Avatar { get; private set; }
+        public bool Active { get; private set; } = false;
         public List<string> Email { get; set; } = new();
-        // MAC?
-        // AUTH
-        // ROLES = EMPLEADO, ADMIN DE PROYECTO, ADMIN GENERAL
-        
-        public User(NewUserDto usr) : base(usr.Name, null)
+        public List<string> Roles { get; private set; } = new();
+        public List<ICredentials> Credentials { get; private set; } = new();
+
+        public User() { }
+        public User(NewUserDto data)
         {
-            Password = usr.Password;
-            Email.Add(usr.Email);
+            Name = data.Name;
+            Password = Argon2.Hash(data.Password);
+            Email.Add(data.Email);
         }
 
         public bool ValidatePassword(string pwd)
@@ -31,11 +33,84 @@ namespace Fitichos.Constructora.Model
             return Argon2.Verify(Password, pwd);
         }
 
-        public void Change(UserChangesDto changes)
+        public LoginSuccessDto ToDto()
         {
-            if (changes.Avatar is not null) Avatar = changes.Avatar;
-            if (changes.Email is not null) Email = changes.Email;
-            if (changes.Password is not null) Password = changes.Password;
+            return new()
+            {
+                Id = Id,
+                Name = Name,
+                CreatedAt = CreatedAt,
+                Roles = Roles,
+                Email = Email,
+                Avatar = Avatar
+            };
+        }
+
+        public string Serialize()
+        {
+            LoginSuccessDto data = ToDto();
+            return JsonConvert.SerializeObject(data);
+        }
+
+        public User Instantiate(NewUserDto dto)
+        {
+            return new(dto);
+        }
+
+        public List<(int, int)> SetPassword(string data)
+        {
+            if (data.Length < 8) return new List<(int, int)>{ (1, 1) };
+            if (data.Length > 64) return new List<(int, int)> { (1, 2) };
+            string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,64}$";
+            if (!Regex.IsMatch(data, pattern)) return new
+                List<(int, int)>{ (1, 3) };
+            Password = Argon2.Hash(data);
+            return new List<(int, int)>{ (1, 0) };
+        }
+
+        public List<(int, int)> SetAvatar(byte[] data)
+        {
+            Avatar = data;
+            return new List<(int, int)>{ (2, 0) };
+        }
+
+        public List<(int, int)> KillOwnAccount()
+        {
+            Active = false;
+            Closed = DateTime.Now;
+            return new List<(int, int)>{ (0, 0) };
+        }
+
+        public List<(int, int)> UserSelfUpdate(UserSelfUpdateDto data)
+        {
+            List<(int, int)> results = new();
+
+            if (data.killAccount is not null)
+            {
+                results.AddRange(KillOwnAccount());
+            }
+            if (data.password is not null)
+            {
+                results.AddRange(SetPassword(data.password));
+            }
+            if (data.avatar is not null)
+            {
+                results.AddRange(SetAvatar(data.avatar));
+            }
+            data.email?.ForEach(Email.UpdateWithIndex);
+
+            return results;
+        }
+
+        public void Update(UpdatedUserDto data)
+        {
+            
+        }
+
+        public void Update(UserAdminUpdateDto data)
+        {
+            UserSelfUpdate(data.basicFields);
+            data.roles?.ForEach(Roles.UpdateWithIndex);
         }
     }
 }

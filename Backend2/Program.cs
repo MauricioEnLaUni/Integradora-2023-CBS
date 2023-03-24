@@ -1,6 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Utilities.MongoDB;
+using Fictichos.Constructora.Options;
+using Fictichos.Constructora.Auth;
+using Fictichos.Constructora.Abstraction;
 
 DotEnvManager env = new();
+
+EntityMapper.MapClasses();
 
 var builder = WebApplication.CreateBuilder(args);
 // var cs = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();
@@ -8,11 +17,28 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton(serviceProvider => 
 {
-    Console.WriteLine();
     return new MongoSettings();
 });
+builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 
-builder.Services.AddControllers();
+var AllowOrigins = "_allowOrigins";
+builder.Services.AddCors(options => 
+{
+    options.AddPolicy(name: AllowOrigins,
+    policy => 
+    {
+        policy.WithOrigins("*");
+    });
+});
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,6 +53,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseHttpsRedirection();
 }
+
+app.UseCors(AllowOrigins);
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
