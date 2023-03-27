@@ -7,9 +7,8 @@ namespace Fictichos.Constructora.Dto
 {
     public record NewFTaskDto
     {
-        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string? Parent { get; set; }
+        public string Parent { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime Ends { get; set; }
         public List<string> Assignees { get; set; } = new();
@@ -18,15 +17,20 @@ namespace Fictichos.Constructora.Dto
 
     public record UpdatedFTaskDto : DtoBase
     {
+        public string Parent { get; set; } = string.Empty;
         public string? Name { get; set; }
         public DateTime? StartDate { get; set; }
-        public string? Parent { get; set; }
         public List<IndexedObjectUpdate<NewFTaskDto, UpdatedFTaskDto>>? Subtasks
             { get; set; }
         public List<UpdateList<string>>? Material { get; set; }
         public List<UpdateList<string>>? EmployeesAssigned { get; set; }
         public Address? Address { get; set; }
         public DateTime? Ends { get; set; }
+    }
+
+    public record FTaskUpdateExternalDto
+    {
+        public List<UpdateList<string>> changes = new();
     }
 
     public record FTasksDto
@@ -47,5 +51,11 @@ namespace Fictichos.Constructora.Dto
         public int Key { get; set; }
         public NewFTaskDto? NewTask { get; set; }
         public UpdatedFTaskDto? Task { get; set; }
+    }
+
+    public record TaskProjectDto
+    {
+        public FTasks task = new();
+        public Project project = new();
     }
 }

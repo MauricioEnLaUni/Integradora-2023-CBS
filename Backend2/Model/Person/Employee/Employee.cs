@@ -16,13 +16,11 @@ namespace Fictichos.Constructora.Model
         public string RFC { get; private set; } = string.Empty;
         public string CURP { get; private set; } = string.Empty;
         public List<byte[]> Documents { get; private set; } = new();
-        // visa pass w.e.
-        // INE
-        // Fotos de documentos => se vera
-        // expediente > sanciones - bonos - permisos - faltas
         public string InternalKey { get; private set; } = string.Empty;
         public List<Job> Charges { get; private set; } = new List<Job>();
         public List<Schedule> ScheduleHistory { get; private set; } = new List<Schedule>();
+        public List<string> Oversees { get; private set; } = new();
+        public List<Record> Historial { get; private set; } = new();
 
         public Employee() { }
         public Employee(NewEmployeeDto data)
@@ -70,6 +68,7 @@ namespace Fictichos.Constructora.Model
             DOB = data.DOB ?? DOB;
             CURP = data.CURP ?? CURP;
             RFC = data.RFC ?? RFC;
+            data.Oversees?.ForEach(Oversees.UpdateWithIndex);
             data.Charges?.ForEach(Charges.UpdateObjectWithIndex<Job, NewJobDto, UpdatedJobDto>);
             data.ScheduleHistory?.ForEach(ScheduleHistory.UpdateObjectWithIndex<Schedule, NewScheduleDto, UpdatedScheduleDto>);
         }
