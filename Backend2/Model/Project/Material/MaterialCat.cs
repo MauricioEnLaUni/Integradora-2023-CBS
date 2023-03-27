@@ -46,7 +46,7 @@ public class MaterialCategory : BaseEntity,
     public void Update(UpdatedMatCategoryDto data)
     {
         Name = data.Name ?? Name;
-        Parent = data.Parent ?? null;
+        Parent = data.Parent ?? Parent;
         
         data.SubCategory?.ForEach(SubCategory.UpdateWithIndex);
         data.Children?.ForEach(Children.UpdateWithIndex);

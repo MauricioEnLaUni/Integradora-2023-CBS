@@ -14,17 +14,17 @@ namespace Fictichos.Constructora.Controllers;
 [Route("[controller]")]
 public class MaterialController : ControllerBase
 {
-    private readonly MongoSettings Container;
+    private readonly MaterialService repo;
+    private readonly MongoClient client;
     private IMongoCollection<MaterialCategory> CategoryCollection { get; init; }
     private IMongoCollection<Material> MaterialCollection { get; init; }
 
-    public MaterialController(MongoSettings container)
+    public MaterialController(MaterialService materialService, MongoSettings container)
     {
-        Container = container;
-        MaterialCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<Material>("material");
-        CategoryCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<MaterialCategory>("materialCategory");
+        client = container.Client;
+        repo = materialService;
+        MaterialCollection = repo.MaterialCollection;
+        CategoryCollection = repo.CategoryCollection;
     }
 
     [HttpPost("cats")]
@@ -77,7 +77,7 @@ public class MaterialController : ControllerBase
                 .Push(x => x.SubCategory,
                     newItem.Id);
 
-        using (var session = Container.Client.StartSession())
+        using (var session = client.StartSession())
         {
             var cancellationToken = CancellationToken.None;
             var results = session.WithTransaction(
@@ -86,7 +86,7 @@ public class MaterialController : ControllerBase
                     await CategoryCollection
                         .InsertOneAsync(newItem, cancellationToken: ct);
                     await CategoryCollection
-                        .FindOneAndUpdateAsync(filter, update);
+                        .FindOneAndUpdateAsync(filter, update, cancellationToken: ct);
                     return true;
                 }
             );
@@ -129,17 +129,12 @@ public class MaterialController : ControllerBase
             .Filter.Eq(x => x.Parent, data);
 
         List<Material> rawMaterial = await MaterialCollection
-            .GeyByFilterAsync<Material>(materialFilter);
+            .GeyByFilterAsync(materialFilter);
         
-        List<MaterialCategoryDto> catResult = new();
-        rawCategories.ForEach(e => {
-            catResult.Add(e.To<MaterialCategory, MaterialCategoryDto>());
-        });
+        List<MaterialCategoryDto> catResult = 
+            repo.ToDtoList<MaterialCategory, MaterialCategoryDto>(rawCategories);
 
-        List<MaterialDto> matResult = new();
-        rawMaterial.ForEach(e => {
-            matResult.Add(e.To<Material, MaterialDto>());
-        });
+        List<MaterialDto> matResult = repo.ToDtoList<Material, MaterialDto>(rawMaterial);
 
         return Ok(new MaterialChildren {
             categories = catResult,
@@ -147,7 +142,7 @@ public class MaterialController : ControllerBase
         });
     }
 
-    [HttpGet("project")]
+    [HttpGet("{project}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -158,11 +153,40 @@ public class MaterialController : ControllerBase
         List<Material> rawData = await MaterialCollection
             .GeyByFilterAsync(filter);
 
-        List<MaterialDto> result = new();
-        rawData.ForEach(e => {
-            result.Add(e.To<Material, MaterialDto>());
-        });
+        List<MaterialDto> result = repo
+            .ToDtoList<Material, MaterialDto>(rawData);
+
         return Ok();
+    }
+
+    [HttpGet("{handler}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetByHandler(string id)
+    {
+        FilterDefinition<Material> filter = Builders<Material>.Filter
+            .Eq(x => x.Handler, id);
+        List<Material>? rawData = await MaterialCollection.Find(filter)
+            .ToListAsync();
+        List<MaterialDto> result = repo
+            .ToDtoList<Material, MaterialDto>(rawData);
+        
+        return Ok(result);
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UpdateOne(
+        [FromBody] UpdatedMatCategoryDto data)
+    {
+        FilterDefinition<MaterialCategory> filter =
+            Builders<MaterialCategory>.Filter.Eq(x => x.Id, data.Id);
+        MaterialCategory? raw = await CategoryCollection.Find(filter)
+            .SingleOrDefaultAsync();
+        if (raw is null) return NotFound();
+
+        raw.Update(data);
+        return NoContent();
     }
 
     [HttpDelete("collection")]
@@ -186,5 +210,4 @@ public class MaterialController : ControllerBase
         await CategoryCollection.DeleteAsync(data);
         return NoContent();
     }
-
 }

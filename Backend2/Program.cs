@@ -20,6 +20,7 @@ builder.Services.AddSingleton(serviceProvider =>
     return new MongoSettings();
 });
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<MaterialService>();
 builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 
 var AllowOrigins = "_allowOrigins";
