@@ -12,6 +12,7 @@ public class ProjectService
 {
     public readonly IMongoCollection<Project> projectCollection;
     public readonly IMongoCollection<Person> personCollection;
+    private readonly IMongoCollection<Material> materialCollection;
 
     public ProjectService(MongoSettings container)
     {
@@ -19,6 +20,8 @@ public class ProjectService
             .GetCollection<Project>("projects");
         personCollection = container.Client.GetDatabase("cbs")
             .GetCollection<Person>("person");
+        materialCollection = container.Client.GetDatabase("cbs")
+            .GetCollection<Material>("material");
     }
 
     public async Task<bool> NameIsUnique(string data)
@@ -26,7 +29,7 @@ public class ProjectService
         FilterDefinition<Project> filter = Builders<Project>.Filter
             .Eq(x => x.Name, data);
         return await projectCollection.Find(filter)
-            .SingleOrDefaultAsync() is null ? true : false;
+            .SingleOrDefaultAsync() is null;
         
     }
 
@@ -36,8 +39,7 @@ public class ProjectService
             .Where(x => !x.Complete)
             .OrderBy(x => x.Ends)
             .SingleOrDefault();
-        FTasksDto? lastTask = last is not null
-            ? last.To<FTasks, FTasksDto>() : null;
+        FTasksDto? lastTask = last?.To<FTasks, FTasksDto>();
         
         return new()
         {
@@ -180,13 +182,51 @@ public class ProjectService
     #endregion
 
     #region FTask Validation
-    private UpdatedFTaskDto? ValidateFTask(UpdatedFTaskDto data)
+    
+    private static NewFTaskDto? ValidateNewFTask(NewFTaskDto? data)
     {
         if (data is null) return null;
 
-        UpdatedFTaskDto result = data;
-        data.Ends = ValidateDueDate(data.Ends);
+        NewFTaskDto validated = data;
+        if (validated.Ends < DateTime.Now) return null;
+
+        return validated;
     }
 
+    private async Task<UpdatedFTaskDto?> ValidateFTask(UpdatedFTaskDto? data)
+    {
+        if (data is null) return null;
+
+        FTasks? original = await GetTask(data);
+        if (original is null) return null;
+
+        UpdatedFTaskDto result = data;
+        result.Ends = ValidateDueDate(data.Ends);
+        
+        result.Subtasks?.ForEach(async (e) => {
+            if (e.Operation == 2) e.UpdateItem = await ValidateFTask(e.UpdateItem);
+            if (e.Operation == 0) e.NewItem = ValidateNewFTask(e.NewItem);
+            if (e.Operation != 0 && e.NewItem is null && e.UpdateItem is null)
+                result.Subtasks.Remove(e);
+        });
+
+        return result;
+    }
+
+    private async Task<FTasks?> GetTask(UpdatedFTaskDto data)
+    {
+        if (data is null) return null;
+        FilterDefinition<Project> filter = Builders<Project>.Filter
+            .Eq(x => x.Id, data.Parent);
+        Project? project = await projectCollection.GetOneByFilterAsync(filter);
+        if (project is null) return null;
+
+        FTasks? original = project.Tasks
+            .Where(x => x.Id == data.Id)
+            .SingleOrDefault();
+        if (original is null) return null;
+
+        return original;
+    }
     #endregion
 }

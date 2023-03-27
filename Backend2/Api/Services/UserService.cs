@@ -38,7 +38,7 @@ namespace Fictichos.Constructora.Repository
                     var emailFilter = Builders<EmailContainer>.Filter
                         .Eq(x => x.value, email.NewItem);
                     bool emailIsTaken = await EmailCollection.Find(emailFilter)
-                        .SingleOrDefaultAsync() is null ? false : true;
+                        .SingleOrDefaultAsync() is not null;
                     if (emailIsTaken) data.Remove(email);
                 }
             }

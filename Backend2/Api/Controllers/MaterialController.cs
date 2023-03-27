@@ -79,7 +79,7 @@ public class MaterialController : ControllerBase
                         await CategoryCollection
                             .InsertOneAsync(result, cancellationToken: ct);
                         await CategoryCollection
-                            .FindOneAndUpdateAsync(filter, update);
+                            .FindOneAndUpdateAsync(filter, update, cancellationToken: ct);
                         return true;
                     }
                 );
