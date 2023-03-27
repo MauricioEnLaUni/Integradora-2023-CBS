@@ -42,5 +42,6 @@ namespace Fictichos.Constructora.Dto
             ScheduleHistory { get; set; }
         public DateTime? Closed { get; set; }
         public bool? Active { get; set; }
+        public List<UpdateList<string>> Oversees { get; set; } = new();
     }
 }

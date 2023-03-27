@@ -48,6 +48,5 @@ namespace Fictichos.Constructora.Dto
         public DateTime? Due;
         public double? Amount;
         public bool? Complete;
-        public bool? Direction;
     }
 }

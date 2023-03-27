@@ -12,7 +12,8 @@ namespace Fictichos.Constructora.Model
         public string Name { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime Ends { get; set; }
-        public string? Parent { get; set; }
+        public bool Complete { get; set; }
+        public string Parent { get; } = string.Empty;
         public List<FTasks> Subtasks { get; set; } = new();
         public List<string> EmployeesAssigned { get; set; } = new();
         public List<string> Material { get; set; } = new();
@@ -24,6 +25,7 @@ namespace Fictichos.Constructora.Model
             Name = newTask.Name;
             StartDate = newTask.StartDate;
             Ends = newTask.Ends;
+            Parent = newTask.Parent;
             EmployeesAssigned = newTask.Assignees;
             if (newTask.Address is not null) Address = newTask.Address;
             if (newTask.Parent is not null) Parent = newTask.Parent;
@@ -47,8 +49,7 @@ namespace Fictichos.Constructora.Model
             {
                 Id = Id,
                 StartDate = StartDate,
-                Ends = Ends!,
-                Parent = Parent,
+                Ends = Ends,
                 Subtasks = list,
                 EmployeesAssigned = EmployeesAssigned,
                 Material = Material,
@@ -68,7 +69,6 @@ namespace Fictichos.Constructora.Model
             StartDate = data.StartDate ?? StartDate;
             Address = data.Address ?? Address;
             Ends = data.Ends ?? Ends;
-            Parent = data.Parent ?? Parent;
 
             data.Material?.ForEach(Material.UpdateWithIndex);
             data.EmployeesAssigned?.ForEach(EmployeesAssigned.UpdateWithIndex);

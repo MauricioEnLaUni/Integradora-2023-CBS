@@ -35,65 +35,58 @@ public class MaterialController : ControllerBase
     public async Task<IActionResult> CreateMaterialCatAsync(
         [FromBody] NewMaterialCategoryDto data)
     {
-        var filter = Builders<MaterialCategory>.Filter
+        if (data is null) return BadRequest();
+        MaterialCategory result = new();
+        if (data.Parent is null)
+        {
+            var filter = Builders<MaterialCategory>.Filter
             .Eq(x => x.Name, data.Name);
         MaterialCategory? cat = await CategoryCollection.Find(filter)
             .SingleOrDefaultAsync();
         if (cat is not null) return Conflict();
 
-        MaterialCategory result = await CategoryCollection
-            .CreateAsync<MaterialCategory, NewMaterialCategoryDto, UpdatedMatCategoryDto>(data);
-        
-        return new ObjectResult(result.Serialize())
-            { StatusCode = StatusCodes.Status201Created };
-    }
-
-    [HttpPost("subCat")]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> CreateSubcategory(
-        [FromBody] NewMaterialCategoryDto data)
-    {
-        if (data is null || data.Parent is null) return BadRequest();
-
-        var filter = Builders<MaterialCategory>.Filter
-            .Eq(x => x.Id, data.Parent);
-        MaterialCategory? parent = await CategoryCollection.Find(filter)
-            .SingleOrDefaultAsync();
-
-        filter = Builders<MaterialCategory>.Filter
-            .Eq(x => x.Parent, data.Parent);
-            
-        List<MaterialCategory> peers = await CategoryCollection.Find(filter)
-            .ToListAsync();
-        if (peers.Any(x => x.Name == data.Name)) return Conflict();
-
-        MaterialCategory newItem = new MaterialCategory().Instantiate(data);
-
-        UpdateDefinition<MaterialCategory> update =
-            Builders<MaterialCategory>.Update
-                .Push(x => x.SubCategory,
-                    newItem.Id);
-
-        using (var session = Container.Client.StartSession())
+        result = await CategoryCollection
+            .CreateAsync<MaterialCategory, NewMaterialCategoryDto,
+                UpdatedMatCategoryDto>(data);
+        }
+        else
         {
-            var cancellationToken = CancellationToken.None;
-            var results = session.WithTransaction(
-                async (s, ct) => 
-                {
-                    await CategoryCollection
-                        .InsertOneAsync(newItem, cancellationToken: ct);
-                    await CategoryCollection
-                        .FindOneAndUpdateAsync(filter, update);
-                    return true;
-                }
-            );
+            var filter = Builders<MaterialCategory>.Filter
+            .Eq(x => x.Id, data.Parent);
+            MaterialCategory? parent = await CategoryCollection.Find(filter)
+                .SingleOrDefaultAsync();
+
+            filter = Builders<MaterialCategory>.Filter
+                .Eq(x => x.Parent, data.Parent);
+                
+            List<MaterialCategory> peers = await CategoryCollection.Find(filter)
+                .ToListAsync();
+            if (peers.Any(x => x.Name == data.Name)) return Conflict();
+
+            result = new MaterialCategory().Instantiate(data);
+
+            UpdateDefinition<MaterialCategory> update =
+                Builders<MaterialCategory>.Update
+                    .Push(x => x.SubCategory,
+                        result.Id);
+
+            using (var session = Container.Client.StartSession())
+            {
+                var cancellationToken = CancellationToken.None;
+                var results = session.WithTransaction(
+                    async (s, ct) => 
+                    {
+                        await CategoryCollection
+                            .InsertOneAsync(result, cancellationToken: ct);
+                        await CategoryCollection
+                            .FindOneAndUpdateAsync(filter, update);
+                        return true;
+                    }
+                );
+            }
         }
         
-        return new ObjectResult(
-            newItem.To<MaterialCategory, MaterialCategoryDto>())
+        return new ObjectResult(result.Serialize())
             { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -165,6 +158,26 @@ public class MaterialController : ControllerBase
         return Ok();
     }
 
+    [HttpPatch]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> UpdateOne(
+        [FromBody] UpdatedMatCategoryDto data)
+    {
+        FilterDefinition<MaterialCategory> filter =
+            Builders<MaterialCategory>.Filter.Eq(x => x.Id, data.Id);
+        MaterialCategory? raw = await CategoryCollection.Find(filter)
+            .SingleOrDefaultAsync();
+        if (raw is null) return BadRequest();
+
+        raw.Update(data);
+        raw.ModifiedAt = DateTime.Now;
+        await CategoryCollection.ReplaceOneAsync(filter, raw);
+        return NoContent();
+    }
+
     [HttpDelete("collection")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -178,7 +191,7 @@ public class MaterialController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(string data)

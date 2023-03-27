@@ -57,6 +57,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                 BsonClassMap.RegisterClassMap<Project>(classMap => {
                     classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.Responsible).SetElementName("responsible");
+                    classMap.MapMember(p => p.Starts).SetElementName("starts");
                     classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.PayHistory).SetElementName("payments");
                     classMap.MapMember(p => p.Tasks).SetElementName("tasks");
@@ -103,6 +104,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.StartDate).SetElementName("starts");
                     classMap.MapMember(p => p.Ends).SetElementName("ends");
+                    classMap.MapMember(p => p.Complete).SetElementName("complete");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
                     classMap.MapMember(p => p.Subtasks).SetElementName("subtasks");
                     classMap.MapMember(p => p.EmployeesAssigned).SetElementName("employees");
@@ -132,7 +134,6 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Concept).SetElementName("concept");
                     classMap.MapMember(p => p.Amount).SetElementName("amount");
                     classMap.MapMember(p => p.Complete).SetElementName("complete");
-                    classMap.MapMember(p => p.Direction).SetElementName("direction");
                     classMap.MapMember(p => p.Due).SetElementName("due");
                 });
             }
@@ -192,6 +193,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.RFC).SetElementName("RFC");
                     classMap.MapMember(p => p.CURP).SetElementName("CURP");
                     classMap.MapMember(p => p.Documents).SetElementName("docs");
+                    classMap.MapMember(p => p.Oversees).SetElementName("oversees");
                     classMap.MapMember(p => p.InternalKey).SetElementName("key");
                     classMap.MapMember(p => p.Charges).SetElementName("charges");
                     classMap.MapMember(p => p.ScheduleHistory).SetElementName("scheduleHistory");

@@ -19,29 +19,29 @@ namespace Fictichos.Constructora.Repository
         public async void ValidateEmail(
         List<UpdateList<string>> data,
         User usr)
-    {
-        foreach (var email in data)
         {
-            if (email.Operation == 1)
+            foreach (var email in data)
             {
-                if (email.Key >= usr.Email.Count) data.Remove(email);
-            }
-            else
-            {
-                if (email.NewItem is null ||
-                    email.NewItem == string.Empty ||
-                    !email.NewItem.IsEmailFormatted())
+                if (email.Operation == 1)
                 {
-                    data.Remove(email);
-                    continue;
+                    if (email.Key >= usr.Email.Count) data.Remove(email);
                 }
-                var emailFilter = Builders<EmailContainer>.Filter
-                    .Eq(x => x.value, email.NewItem);
-                bool emailIsTaken = await EmailCollection.Find(emailFilter)
-                    .SingleOrDefaultAsync() is null ? false : true;
-                if (emailIsTaken) data.Remove(email);
+                else
+                {
+                    if (email.NewItem is null ||
+                        email.NewItem == string.Empty ||
+                        !email.NewItem.IsEmailFormatted())
+                    {
+                        data.Remove(email);
+                        continue;
+                    }
+                    var emailFilter = Builders<EmailContainer>.Filter
+                        .Eq(x => x.value, email.NewItem);
+                    bool emailIsTaken = await EmailCollection.Find(emailFilter)
+                        .SingleOrDefaultAsync() is null ? false : true;
+                    if (emailIsTaken) data.Remove(email);
+                }
             }
         }
-    }
     }
 }
