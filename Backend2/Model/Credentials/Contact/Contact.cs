@@ -11,12 +11,11 @@ namespace Fictichos.Constructora.Model
     public class Contact : BaseEntity,
         IQueryMask<Contact, NewContactDto, UpdatedContactDto>
     {
-        [BsonElement("addresses")]
         public List<Address> Addresses { get; private set; } = new List<Address>();
-        [BsonElement("phones")]
         public List<string> Phones { get; private set; } = new List<string>();
-        [BsonElement("emails")]
         public List<string> Emails { get; private set; } = new List<string>();
+        public string? Username { get; private set; }
+
 
         public Contact() { }
         public Contact(NewContactDto data)

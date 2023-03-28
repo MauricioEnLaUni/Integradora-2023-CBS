@@ -6,42 +6,24 @@ using MongoDB.Driver;
 namespace Fictichos.Constructora.Repository
 {
     public class UserService
-        : BaseRepositoryService<User, NewUserDto, UpdatedUserDto>
     {
-        public IMongoCollection<EmailContainer> EmailCollection { get; }
+        private readonly IMongoCollection<User> _userCollection;
         public UserService(MongoSettings container)
-            : base(container, "cbs", "users")
         {
-            EmailCollection = container.Client.GetDatabase("cbs")
-                .GetCollection<EmailContainer>("emails");
+            _userCollection = container.Client.GetDatabase("cbs")
+                .GetCollection<User>("users");
         }
 
-        public async void ValidateEmail(
-        List<UpdateList<string>> data,
-        User usr)
+        public async Task<User?> GetUser(string data)
         {
-            foreach (var email in data)
-            {
-                if (email.Operation == 1)
-                {
-                    if (email.Key >= usr.Email.Count) data.Remove(email);
-                }
-                else
-                {
-                    if (email.NewItem is null ||
-                        email.NewItem == string.Empty ||
-                        !email.NewItem.IsEmailFormatted())
-                    {
-                        data.Remove(email);
-                        continue;
-                    }
-                    var emailFilter = Builders<EmailContainer>.Filter
-                        .Eq(x => x.value, email.NewItem);
-                    bool emailIsTaken = await EmailCollection.Find(emailFilter)
-                        .SingleOrDefaultAsync() is not null;
-                    if (emailIsTaken) data.Remove(email);
-                }
-            }
+            if (data is null) return null;
+
+            FilterDefinition<User> filter = Builders<User>.Filter
+                .Eq(x => x.Id, data);
+            User? result = await _userCollection.Find(filter)
+                .SingleOrDefaultAsync();
+                
+            return result;
         }
     }
 }

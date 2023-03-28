@@ -21,6 +21,7 @@ builder.Services.AddSingleton(serviceProvider =>
 });
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<ProjectService>();
+builder.Services.AddSingleton<EmailService>();
 builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 
 var AllowOrigins = "_allowOrigins";

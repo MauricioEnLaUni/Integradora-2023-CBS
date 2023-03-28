@@ -247,6 +247,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Active).SetElementName("active");
                     classMap.MapMember(p => p.Email).SetElementName("email");
                     classMap.MapMember(p => p.Credentials).SetElementName("credentials");
+                    classMap.MapMember(p => p.Credentials).SetElementName("credentials");
                 });
             }
         }
@@ -259,6 +260,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Addresses).SetElementName("addresses");
                     classMap.MapMember(p => p.Phones).SetElementName("phones");
                     classMap.MapMember(p => p.Emails).SetElementName("emails");
+                    classMap.MapMember(p => p.Username).SetElementName("username");
                 });
             }
         }

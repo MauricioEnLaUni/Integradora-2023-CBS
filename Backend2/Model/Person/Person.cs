@@ -18,6 +18,7 @@ namespace Fictichos.Constructora.Model
 
         public Person(NewPersonDto data)
         {
+            Name = data.Name;
             LastName = data.LastName;
             Contacts = new Contact();
             if (data.Email is not null) Contacts.Emails.Add(data.Email);
