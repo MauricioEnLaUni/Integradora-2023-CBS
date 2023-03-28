@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 
-class FTask{
+class FTask {
   final String title;
   final String description;
   final List<String> assigned;
   final DateTime starts;
   final DateTime ends;
 
-  FTask({
-    required this.title,
-    required this.assigned,
-    required this.starts,
-    required this.ends,
-    required this.description
-  });
+  FTask(
+      {required this.title,
+      required this.assigned,
+      required this.starts,
+      required this.ends,
+      required this.description});
 }
 
 class GanttDiagram extends StatefulWidget {
+  const GanttDiagram({super.key});
+
   @override
   _GanttDiagramState createState() => _GanttDiagramState();
 }
@@ -25,110 +26,95 @@ class GanttDiagram extends StatefulWidget {
 class _GanttDiagramState extends State<GanttDiagram> {
   final List<FTask> _tasks = [
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
     FTask(
-      title: "Testo",
-      description: "This is a test.",
-      assigned: ["16516489", "15616418"],
-      starts: DateTime.now(),
-      ends: DateTime(2023,4,1)
-    ),
+        title: "Testo",
+        description: "This is a test.",
+        assigned: ["16516489", "15616418"],
+        starts: DateTime.now(),
+        ends: DateTime(2023, 4, 1)),
   ];
 
   late ScrollController _scrollController;
@@ -148,24 +134,23 @@ class _GanttDiagramState extends State<GanttDiagram> {
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent
-      && !_scrollController.position.outOfRange) {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
       setState(() {
         _tasks.addAll([
           FTask(
-            title: "Testo",
-            description: "This is a test.",
-            assigned: ["16516489", "15616418"],
-            starts: DateTime.now(),
-            ends: DateTime(2023,4,1)
-          ),
+              title: "Testo",
+              description: "This is a test.",
+              assigned: ["16516489", "15616418"],
+              starts: DateTime.now(),
+              ends: DateTime(2023, 4, 1)),
           FTask(
-            title: "Testo",
-            description: "This is a test.",
-            assigned: ["16516489", "15616418"],
-            starts: DateTime.now(),
-            ends: DateTime(2023,4,1)
-          ),
+              title: "Testo",
+              description: "This is a test.",
+              assigned: ["16516489", "15616418"],
+              starts: DateTime.now(),
+              ends: DateTime(2023, 4, 1)),
         ]);
       });
     }
@@ -174,8 +159,8 @@ class _GanttDiagramState extends State<GanttDiagram> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-          body: ListView.builder(
+      home: Scaffold(
+        body: ListView.builder(
           controller: _scrollController,
           itemCount: _tasks.length,
           itemBuilder: (context, index) {
