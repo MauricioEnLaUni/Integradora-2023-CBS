@@ -8,7 +8,7 @@ sidebar_position: 1.3
 
 **Fecha:** 21/03/2023  **Numero de test:** 1.0
 
-**Descripcion:** Verificar que al ingresar una contraseña que no cunta con caracteres especiales nos da un error 400 y nos da un aviso de lo que puede faltar en nuestra contraseña.
+**Descripcion:** Verificar que al ingresar una contraseña que no cuenta con caracteres especiales nos da un error 400 y nos da un aviso de lo que puede faltar en nuestra contraseña.
 
 **Requerimientos:** 
 - name
