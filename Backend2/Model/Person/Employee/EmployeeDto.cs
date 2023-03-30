@@ -9,7 +9,7 @@ namespace Fictichos.Constructora.Dto
         [Required]
         public string Name { get; set;} = string.Empty;
         [Required]
-        public DateOnly DOB { get; set; }
+        public DateTime DOB { get; set; }
         [Required]
         [RegularExpression(@"([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$")]
         public string CURP { get; set; } = string.Empty;
@@ -23,7 +23,7 @@ namespace Fictichos.Constructora.Dto
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public DateOnly DOB { get; set; }
+        public DateTime DOB { get; set; }
         public string CURP { get; set; } = string.Empty;
         public string RFC { get; set; } = string.Empty;
         public List<JobDto> Charges { get; set; } = new();
@@ -33,7 +33,7 @@ namespace Fictichos.Constructora.Dto
     public record UpdatedEmployeeDto : DtoBase
     {
         public string? Name { get; set; }
-        public DateOnly? DOB { get; set; }
+        public DateTime? DOB { get; set; }
         public string? CURP { get; set; }
         public string? RFC { get; set; }
         public List<IndexedObjectUpdate<NewJobDto, UpdatedJobDto>>?

@@ -20,7 +20,7 @@ public class UserController : ControllerBase
     private readonly IJwtProvider _jwtProvider;
     protected UserService Repo { get; init; }
 
-    public UserController(UserService repo, IJwtProvider jwtProvider, MongoSettings container)
+    public UserController(UserService repo, IJwtProvider jwtProvider, MongoSettings container, EmailService email)
     {
         EmailCollection = repo.EmailCollection;
         Repo = repo;

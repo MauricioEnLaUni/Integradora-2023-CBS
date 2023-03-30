@@ -12,7 +12,7 @@ namespace Fictichos.Constructora.Model
         IQueryMask<Employee, NewEmployeeDto, UpdatedEmployeeDto>
     {
         public bool Active { get; private set; } = false;
-        public DateOnly DOB { get; private set; }
+        public DateTime DOB { get; private set; }
         public string RFC { get; private set; } = string.Empty;
         public string CURP { get; private set; } = string.Empty;
         public List<byte[]> Documents { get; private set; } = new();

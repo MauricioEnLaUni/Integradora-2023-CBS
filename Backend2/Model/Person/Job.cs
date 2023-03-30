@@ -16,7 +16,7 @@ namespace Fictichos.Constructora.Model
         [BsonRepresentation(BsonType.ObjectId)]
         public string Area { get; set; } = string.Empty;
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Responsible { get; set; } = string.Empty;
+        public List<string> Oversees { get; set; } = new();
         public List<string> Material { get; set; } = new();
         [BsonRepresentation(BsonType.ObjectId)]
         public string Parent { get; set; } = string.Empty;
@@ -60,8 +60,9 @@ namespace Fictichos.Constructora.Model
         {
             Role = data.Role ?? Role;
             Area = data.Area ?? Area;
-            Responsible = data.Responsible ?? Responsible;
             Parent = data.Parent ?? Parent;
+            
+            data.Oversees?.ForEach(Oversees.UpdateWithIndex);
             data.Responsibilities?.ForEach(Responsibilities.UpdateWithIndex);
             data.Material?.ForEach(Material.UpdateWithIndex);
         }

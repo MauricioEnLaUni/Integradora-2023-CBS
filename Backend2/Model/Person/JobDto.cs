@@ -28,7 +28,7 @@ namespace Fictichos.Constructora.Dto
     {
         public string? Role { get; set; }
         public string? Area { get; set; }
-        public string? Responsible { get; set; }
+        public List<UpdateList<string>>? Oversees { get; set; }
         public string? Parent { get; set; }
         public List<UpdateList<string>>? Responsibilities { get; set; }
         public List<UpdateList<string>>? Material { get; set; }
