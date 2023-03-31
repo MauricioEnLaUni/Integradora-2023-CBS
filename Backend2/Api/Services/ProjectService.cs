@@ -8,7 +8,7 @@ namespace Fictichos.Constructora.Repository;
 
 public class ProjectService
 {
-    public readonly IMongoCollection<Project> _projectCollection;
+    private readonly IMongoCollection<Project> _projectCollection;
 
     public ProjectService(MongoSettings container)
     {
@@ -49,10 +49,13 @@ public class ProjectService
     {
         if (UpdateIsEmpty(data)) return new() { Code = 400 };
 
-        UpdatedProjectDto output = new();
+        UpdatedProjectDto output = data;
         output.Name = await ValidateName(data.Name);
         output.Starts = ValidateStart(old, data.Starts);
         output.Ends = data.Ends;
+
+        output.PayHistory =
+            await ValidateAccount(old.PayHistory, output.PayHistory);
 
         return new() { Code = 200, Value = output };
     }
