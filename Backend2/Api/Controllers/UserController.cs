@@ -21,7 +21,6 @@ public class UserController : ControllerBase
     private readonly EmailService _emailService;
 
     public UserController(
-        MongoSettings container,
         UserService repo,
         EmailService email,
         IJwtProvider jwtProvider)
@@ -104,7 +103,7 @@ public class UserController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        if (data.email is not null) _emailService.ValidateEmailUpdate(data.email, usr);
+        if (data.email is not null) _emailService.ValidateEmailUpdate(data.email);
 
         usr.UserSelfUpdate(data);
         _userService.Update(filter, usr);
@@ -125,7 +124,7 @@ public class UserController : ControllerBase
 
         if (data.basicFields.email is not null)
         {
-            _emailService.ValidateEmailUpdate(data.basicFields.email, usr);
+            _emailService.ValidateEmailUpdate(data.basicFields.email);
         }
 
         usr.Update(data);

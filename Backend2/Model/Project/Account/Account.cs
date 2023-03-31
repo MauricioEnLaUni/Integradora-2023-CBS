@@ -54,10 +54,7 @@ namespace Fictichos.Constructora.Model
         {
             Name = data.Name ?? Name;
             Owner = data.Owner ?? Owner;
-            if (data.Payments is not null)
-            {
-                data.Payments.ForEach(Payments.UpdateObjectWithIndex<Payment, NewPaymentDto, UpdatedPaymentDto>);
-            }
+            data.Payments?.ForEach(Payments.UpdateObjectWithIndex<Payment, NewPaymentDto, UpdatedPaymentDto>);
         }
     }
 }

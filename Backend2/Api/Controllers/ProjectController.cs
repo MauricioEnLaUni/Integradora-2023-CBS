@@ -88,7 +88,7 @@ public class ProjectController : ControllerBase
             .Eq(x => x.Id, validated.Responsible);
         Person? responsible = await _personService
             .GetOneByFilterAsync(respFilter);
-        validated.Responsible = responsible is null ? null : responsible.Id;
+        validated.Responsible = responsible?.Id;
         
         return NoContent();
     }

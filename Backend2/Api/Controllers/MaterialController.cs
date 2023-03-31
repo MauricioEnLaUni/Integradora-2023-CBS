@@ -70,20 +70,18 @@ public class MaterialController : ControllerBase
                     .Push(x => x.SubCategory,
                         result.Id);
 
-            using (var session = Container.Client.StartSession())
-            {
-                var cancellationToken = CancellationToken.None;
-                var results = session.WithTransaction(
-                    async (s, ct) => 
-                    {
-                        await CategoryCollection
-                            .InsertOneAsync(result, cancellationToken: ct);
-                        await CategoryCollection
-                            .FindOneAndUpdateAsync(filter, update, cancellationToken: ct);
-                        return true;
-                    }
-                );
-            }
+            using var session = Container.Client.StartSession();
+            var cancellationToken = CancellationToken.None;
+            var results = session.WithTransaction(
+                async (s, ct) =>
+                {
+                    await CategoryCollection
+                        .InsertOneAsync(result, cancellationToken: ct);
+                    await CategoryCollection
+                        .FindOneAndUpdateAsync(filter, update, cancellationToken: ct);
+                    return true;
+                }
+            );
         }
         
         return new ObjectResult(result.Serialize())

@@ -16,9 +16,9 @@ public class Area : BaseEntity,
     public Area() { }
     private Area(NewAreaDto data)
     {
-        Name = Name;
-        Head = Head;
-        Collection = Collection;
+        Name = data.Name;
+        Head = data.Head;
+        Collection = data.Collection;
     }
 
     public Area Instantiate(NewAreaDto data)

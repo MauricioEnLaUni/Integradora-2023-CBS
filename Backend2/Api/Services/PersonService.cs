@@ -84,11 +84,33 @@ public class PersonService
         return sanitized;
     }
 
+    #region Queries
+    public List<Person> GetByFilter(FilterDefinition<Person> filter)
+    {
+        return _personCollection.Find(filter).ToList();
+    }
+
+    public async Task<List<Person>>
+        GetByFilterAsync(FilterDefinition<Person> filter)
+    {
+        return await _personCollection
+            .Find(filter)
+            .ToListAsync();
+    }
+
+    public Person? GetOneByFilter(FilterDefinition<Person> filter)
+    {
+        return _personCollection
+            .Find(filter)
+            .SingleOrDefault();
+    }
+
     public async Task<Person?> GetOneByFilterAsync(
-        FilterDefinition<Person> filter)
+            FilterDefinition<Person> filter)
     {
         return await _personCollection
             .Find(filter)
             .SingleOrDefaultAsync();
     }
+    #endregion
 }

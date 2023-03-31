@@ -222,6 +222,14 @@ public class ProjectService
         _projectCollection.DeleteMany(_ => true);
     }
 
+    public Project? GetOneByFilter(
+        FilterDefinition<Project> filter)
+    {
+        return _projectCollection
+            .Find(filter)
+            .SingleOrDefault();
+    }
+
     public async Task<Project?> GetOneByFilterAsync(
         FilterDefinition<Project> filter)
     {

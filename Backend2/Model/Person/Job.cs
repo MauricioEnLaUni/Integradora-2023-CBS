@@ -27,7 +27,7 @@ namespace Fictichos.Constructora.Model
             SalaryHistory.Add(new (data.SalaryHistory));
             Role = data.Role;
             Area = data.Area;
-            Parent = Parent;
+            Parent = data.Parent;
             Responsibilities = data.Responsibilities;
         }
         public Job() { }

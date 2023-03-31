@@ -9,7 +9,7 @@ public class EmailService
 {
     private readonly IMongoCollection<EmailContainer> _emailCollection;
 
-    public EmailService(MongoSettings container, UserService users)
+    public EmailService(MongoSettings container)
     {
         _emailCollection = container.Client.GetDatabase("cbs")
             .GetCollection<EmailContainer>("email");
@@ -38,8 +38,7 @@ public class EmailService
     }
 
     public async void ValidateEmailUpdate(
-        List<UpdateList<string>> data,
-        User usr)
+        List<UpdateList<string>> data)
     {
         foreach (var email in data)
         {

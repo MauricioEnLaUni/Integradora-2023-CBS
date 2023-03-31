@@ -161,6 +161,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                 BsonClassMap.RegisterClassMap<Person>(classMap => {
                     classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.LastName).SetElementName("lastName");
+                    classMap.MapMember(p => p.Relation).SetElementName("relation");
                     classMap.MapMember(p => p.Contacts).SetElementName("contacts");
                     classMap.MapMember(p => p.Employed).SetElementName("employed");
                 });
