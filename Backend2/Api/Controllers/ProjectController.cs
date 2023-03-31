@@ -11,13 +11,18 @@ namespace Fictichos.Constructora.Controllers;
 [Route("[controller]")]
 public class ProjectController : ControllerBase
 {
-    private readonly ProjectService projectService;
-    private readonly IMongoCollection<Project> projectCollection;
+    private readonly ProjectService _projectService;
+    private readonly PersonService _personService;
+    private readonly MaterialService _materialService;
 
-    public ProjectController(ProjectService container)
+    public ProjectController(
+        ProjectService container,
+        PersonService person,
+        MaterialService material)
     {
-        projectService = container;
-        projectCollection = container.projectCollection;
+        _projectService = container;
+        _materialService = material;
+        _personService = person;
     }
 
     [HttpGet]
@@ -25,8 +30,8 @@ public class ProjectController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         return Ok(
-            await projectCollection.Find(x => true)
-            .ToListAsync());
+            await _projectService.GetAllAsync()
+        );
     }
 
     [HttpGet("{id}")]
@@ -34,7 +39,7 @@ public class ProjectController : ControllerBase
     {
         FilterDefinition<Project> filter = Builders<Project>
             .Filter.Eq(x => x.Id, id);
-        Project? raw = await projectCollection.GetOneByFilterAsync(filter);
+        Project? raw = await _projectService.GetOneByFilterAsync(filter);
         if (raw is null) return NotFound();
 
         return Ok(raw.ToDto());
@@ -46,22 +51,52 @@ public class ProjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> NewProject([FromBody] string data)
     {
-        if (await projectService.NameIsUnique(data)) return Conflict();
+        if (await _projectService.NameIsUnique(data)) return Conflict();
 
-        Project? result = await projectCollection
-            .CreateAsync<Project, string, UpdatedProjectDto>(data);
+        Project result = await _projectService.InsertOneAsync(data);
+
         return CreatedAtAction(
             actionName: nameof(GetById),
             routeValues: new { id = result.Id },
-            value: projectService.To(result)
+            value: _projectService.To(result)
         );
     }
 
-    [HttpDelete("collection")]
-    public async Task<IActionResult> DeleteCollection()
+    [HttpPatch]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Update(
+        [FromBody] UpdatedProjectDto data)
     {
-        await projectCollection.DeleteManyAsync(_ => true);
+        FilterDefinition<Project> projectFilter = Builders<Project>
+            .Filter
+            .Eq(x => x.Id, data.Id);
+        Project? original = await _projectService
+            .GetOneByFilterAsync(projectFilter);
+        if (original is null) return NotFound();
+
+        HTTPResult<UpdatedProjectDto?> projectValidation =
+            await _projectService.ValidateUpdate(data, original);
+            
+        if (projectValidation.Code == 400) return BadRequest();
+
+        UpdatedProjectDto validated = projectValidation.Value!;
+        FilterDefinition<Person> respFilter = Builders<Person>
+            .Filter
+            .Eq(x => x.Id, validated.Responsible);
+        Person? responsible = await _personService
+            .GetOneByFilterAsync(respFilter);
+        validated.Responsible = responsible is null ? null : responsible.Id;
+        
         return NoContent();
     }
-    
+
+    [HttpDelete("collection")]
+    public IActionResult DeleteCollection()
+    {
+        _projectService.Clear();
+        return NoContent();
+    }
 }

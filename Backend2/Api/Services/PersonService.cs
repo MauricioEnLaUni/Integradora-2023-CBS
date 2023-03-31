@@ -9,14 +9,14 @@ namespace Fictichos.Constructora.Repository;
 
 public class PersonService
 {
-    public readonly IMongoCollection<Person> personCollection;
+    public readonly IMongoCollection<Person> _personCollection;
     private readonly TimeTrackerService timeService;
     private readonly EmailService emailService;
 
     public PersonService(MongoSettings container, EmailService email, TimeTrackerService time)
     {
         timeService = time;
-        personCollection = container.Client.GetDatabase("cbs")
+        _personCollection = container.Client.GetDatabase("cbs")
             .GetCollection<Person>("people");
         emailService = email;
     }
@@ -59,7 +59,7 @@ public class PersonService
             .Eq(x => x.Id, data.Parent);
         ProjectionDefinition<Person> projection = Builders<Person>.Projection
             .Include(x => x.Employed);
-        BsonDocument? parent = await personCollection.Find(filter)
+        BsonDocument? parent = await _personCollection.Find(filter)
             .Project(projection)
             .SingleOrDefaultAsync();
 
@@ -82,5 +82,13 @@ public class PersonService
         if (sanitized.HoursWeeklyCap > 48) sanitized.HoursWeeklyCap = 48;
 
         return sanitized;
+    }
+
+    public async Task<Person?> GetOneByFilterAsync(
+        FilterDefinition<Person> filter)
+    {
+        return await _personCollection
+            .Find(filter)
+            .SingleOrDefaultAsync();
     }
 }

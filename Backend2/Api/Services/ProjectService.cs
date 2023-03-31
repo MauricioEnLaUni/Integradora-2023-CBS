@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
 using MongoDB.Driver;
 
 using Fictichos.Constructora.Model;
@@ -10,25 +8,19 @@ namespace Fictichos.Constructora.Repository;
 
 public class ProjectService
 {
-    public readonly IMongoCollection<Project> projectCollection;
-    public readonly IMongoCollection<Person> personCollection;
-    private readonly IMongoCollection<Material> materialCollection;
+    public readonly IMongoCollection<Project> _projectCollection;
 
     public ProjectService(MongoSettings container)
     {
-        projectCollection = container.Client.GetDatabase("cbs")
+        _projectCollection = container.Client.GetDatabase("cbs")
             .GetCollection<Project>("projects");
-        personCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<Person>("person");
-        materialCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<Material>("material");
     }
 
     public async Task<bool> NameIsUnique(string data)
     {
         FilterDefinition<Project> filter = Builders<Project>.Filter
             .Eq(x => x.Name, data);
-        return await projectCollection.Find(filter)
+        return await _projectCollection.Find(filter)
             .SingleOrDefaultAsync() is null;
         
     }
@@ -51,21 +43,18 @@ public class ProjectService
         };
     }
 
-    public async Task<UpdatedProjectDto?> ValidateUpdate(UpdatedProjectDto data)
+    public async Task<HTTPResult<UpdatedProjectDto?>> ValidateUpdate(
+        UpdatedProjectDto data,
+        Project old)
     {
-        if (UpdateIsEmpty(data)) return null;
-        FilterDefinition<Project> filter = Builders<Project>.Filter
-            .Eq(x => x.Id, data.Id);
-        Project? old = await projectCollection.GetOneByFilterAsync(filter);
-        if (old is null) return null;
+        if (UpdateIsEmpty(data)) return new() { Code = 400 };
 
         UpdatedProjectDto output = new();
         output.Name = await ValidateName(data.Name);
-        Person? responsible = await ValidateResponsible(data.Responsible);
         output.Starts = ValidateStart(old, data.Starts);
         output.Ends = data.Ends;
 
-        return output;
+        return new() { Code = 200, Value = output };
     }
 
     public bool UpdateIsEmpty(UpdatedProjectDto data)
@@ -81,19 +70,6 @@ public class ProjectService
         if (data is null) return null;
         if (!await NameIsUnique(data)) return null;
         return data;
-    }
-
-    public async Task<Person?> ValidateResponsible(string? data)
-    {
-        if (data is null) return null;
-
-        FilterDefinition<Person> respFilter = Builders<Person>
-            .Filter.Eq(x => x.Id, data);
-        Person? resp = await personCollection.Find(respFilter)
-            .SingleOrDefaultAsync();
-        if (resp is null) return null;
-
-        return resp;
     }
 
     /// <summary>
@@ -134,7 +110,7 @@ public class ProjectService
             newOwner.Update(pUp);
             FilterDefinition<Project> filter = Builders<Project>.Filter
                 .Eq(x => x.Id, pUp.Id);
-            projectCollection.ReplaceOne(filter, newOwner);
+            _projectCollection.ReplaceOne(filter, newOwner);
         }
 
         return validated;
@@ -146,7 +122,7 @@ public class ProjectService
 
         FilterDefinition<Project> filter = Builders<Project>.Filter
             .Eq(x => x.Id, data);
-        Project? newProject = await projectCollection
+        Project? newProject = await _projectCollection
             .GetOneByFilterAsync(filter);
         if (newProject is null) return null;
         if (newProject.PayHistory is not null) return null;
@@ -218,7 +194,7 @@ public class ProjectService
         if (data is null) return null;
         FilterDefinition<Project> filter = Builders<Project>.Filter
             .Eq(x => x.Id, data.Parent);
-        Project? project = await projectCollection.GetOneByFilterAsync(filter);
+        Project? project = await _projectCollection.GetOneByFilterAsync(filter);
         if (project is null) return null;
 
         FTasks? original = project.Tasks
@@ -227,6 +203,33 @@ public class ProjectService
         if (original is null) return null;
 
         return original;
+    }
+    #endregion
+
+    #region CRUD
+    public async Task<Project> InsertOneAsync(string data)
+    {
+        Project output = new Project().Instantiate(data);
+        await _projectCollection.InsertOneAsync(output);
+        return output;
+    }
+
+    public void Clear()
+    {
+        _projectCollection.DeleteMany(_ => true);
+    }
+
+    public async Task<Project?> GetOneByFilterAsync(
+        FilterDefinition<Project> filter)
+    {
+        return await _projectCollection.GetOneByFilterAsync(filter);
+    }
+
+    public async Task<List<Project>> GetAllAsync()
+    {
+        return await _projectCollection
+            .Find(_ => true)
+            .ToListAsync();
     }
     #endregion
 }
