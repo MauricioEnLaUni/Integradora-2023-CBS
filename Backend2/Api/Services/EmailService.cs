@@ -1,3 +1,4 @@
+using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 using MongoDB.Driver;
@@ -53,5 +54,11 @@ public class EmailService
             if (await GetEmailByValue(email.NewItem) != null)
                 data.Remove(email);
         }
+    }
+
+    public async Task InsertOneAsync(string owner, string value)
+    {
+        EmailContainer data = new(owner, value);
+        await _emailCollection.InsertOneAsync(data);
     }
 }

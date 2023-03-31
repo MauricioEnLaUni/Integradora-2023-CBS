@@ -12,9 +12,8 @@ public record NewMaterialDto
     public string Name { get; set; } = string.Empty;
     [Required]
     public int Quantity { get; set; } = 0;
-    [Required]
-    public string Location { get; set; } = string.Empty;
-    public int? Status { get; set; } = 0;
+    public int Status { get; set; } = 0;
+    public int Purpose { get; set; } = 0;
     [Required]
     public double BoughtFor { get; set; } = 0;
     [Required]
@@ -23,10 +22,6 @@ public record NewMaterialDto
     public string Owner { get; set; } = string.Empty;
     [Required]
     public string Handler { get; set; } = string.Empty;
-    [Required]
-    public double Depreciation { get; set; }
-    [Required]
-    public double Brand { get; set; }
     [Required]
     public string Category { get; set; } = string.Empty;
 }
@@ -43,13 +38,13 @@ public record UpdatedMaterialDto : DtoBase
     public int? Quantity { get; set; }
     public int? Status { get; set; }
     public double? BoughtFor { get; set; }
-    public DateTime? Closed { get; set; }
     public string? Provider { get; set; } = string.Empty;
     public string? Owner { get; set; } = string.Empty;
     public string? Handler { get; set; } = string.Empty;
     public double? Depreciation { get; set; }
     public NewAddressDto? Location { get; set; }
     public string? Category { get; set; }
+    public int? Purpose { get; set; }
 }
 
 /// <summary>
@@ -62,6 +57,7 @@ public record MaterialMaintenanceDto
 {
     public string Id { get; set; } = string.Empty;
     public int Status { get; set; }
+    public int Purpose { get; set; }
 }
 
 /// <summary>

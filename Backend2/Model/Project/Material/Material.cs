@@ -15,7 +15,8 @@ public class Material
     public string Handler { get; private set; } = string.Empty;
     public string Parent { get; private set; } = string.Empty;
     public Address Location { get; private set; } = new();
-    public int? Status { get; private set; }
+    public int Status { get; private set; } = 0;
+    public int Purpose { get; private set; } = 0;
     public double BoughtFor { get; private set; }
     public double Depreciation { get; private set; }
     public string Provider { get; private set; } = string.Empty;
@@ -25,13 +26,12 @@ public class Material
     {
         Name = data.Name;
         Quantity = data.Quantity;
-        Location = new Address();
-        if (data.Status is not null) Status = data.Status;
+        Status = data.Status;
         BoughtFor = data.BoughtFor;
         Provider = data.Provider;
         Owner = data.Owner;
         Handler = data.Handler;
-        Depreciation = data.Depreciation;
+        Depreciation = 0;
     }
     public Material Instantiate(NewMaterialDto data)
     {
@@ -85,7 +85,8 @@ public class Material
         MaterialMaintenanceDto data = new()
         {
             Id = Id,
-            Status = Status ?? 0
+            Status = Status,
+            Purpose = Purpose
         };
         return JsonConvert.SerializeObject(data);
     }

@@ -175,7 +175,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.SalaryHistory).SetElementName("salaryHistory");
                     classMap.MapMember(p => p.Role).SetElementName("role");
                     classMap.MapMember(p => p.Area).SetElementName("area");
-                    classMap.MapMember(p => p.Responsible).SetElementName("responsible");
+                    classMap.MapMember(p => p.Oversees).SetElementName("oversees");
                     classMap.MapMember(p => p.Material).SetElementName("material");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
                     classMap.MapMember(p => p.Responsibilities).SetElementName("responsibilities");

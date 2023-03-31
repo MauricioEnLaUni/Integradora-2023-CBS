@@ -77,7 +77,7 @@ public class MaterialCategoryService
         }
     }
 
-    private async Task<bool> NameIsUnique(string[] data)
+    private async Task<bool> NameIsUnique(string?[] data)
     {
         FilterDefinition<MaterialCategory> filter = 
             Builders<MaterialCategory>.Filter
@@ -90,6 +90,27 @@ public class MaterialCategoryService
         return true;
     }
 
+    public List<UpdateList<string>>? ValidateSubcategory(
+        List<UpdateList<string>>? data,
+        string oldData)
+    {
+        if (data is null) return null;
+        List<UpdateList<string>>? result = data;
+        result.ForEach(async (e) => {
+            if (e.Operation != 1)
+            {
+                if (!await NameIsUnique(new string?[] {
+                    e.NewItem, ParentRoot(oldData)
+                })) result.Remove(e);
+            } else 
+            {
+                if (e.Key > result.Count)
+                    result.Remove(e);
+            }
+        });
+        return result;
+    }
+
     public async Task<HTTPResult<UpdatedMatCategoryDto>>
         ValidateUpdate(UpdatedMatCategoryDto data)
     {
@@ -99,22 +120,43 @@ public class MaterialCategoryService
         
         HTTPResult<MaterialCategory> oldDocument = GetCategory(data.Id);
         if (oldDocument.Code != 200) return new() { Code = oldDocument.Code };
+        MaterialCategory oldData = oldDocument.Value!;
         
-        UpdatedMatCategoryDto sanitized = data;
-
-        string? parent = GetParent(oldDocument.Value!.Parent, data.Parent)
+        string? parent = GetParent(oldData.Parent, data.Parent)
             .Value;
         if (parent is null) return new() { Code = 400 };
         
+        UpdatedMatCategoryDto sanitized = data;
+
         if (data.Name is not null)
         sanitized.Name = await NameIsUnique(
-                new string[] { data.Name, ParentRoot(parent) }) ?
+                new string?[] { data.Name, ParentRoot(parent) }) ?
                     data.Name : null;
-        
-        
-        
+
+        if (sanitized.SubCategory is not null)
+            sanitized.SubCategory =
+                ValidateSubcategory(sanitized.SubCategory, oldData.Id);
+
         return new() { Code = 200, Value = sanitized };
     }
     
     #endregion ValidateUpdate
+
+    #region Validate New
+
+    public async Task<HTTPResult<NewMaterialCategoryDto>>
+        ValidateNew(NewMaterialCategoryDto data, string oldParent)
+    {
+        string? parent = GetParent(oldParent, data.Parent)
+            .Value;
+        if (parent is null) return new() { Code = 400 };
+        
+        if (!await NameIsUnique(
+            new string?[] { data.Name, ParentRoot(parent) }))
+                return new() { Code = 400 };
+
+        return new() { Code = 200, Value = data };
+    }
+
+    #endregion
 }

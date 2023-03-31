@@ -16,14 +16,18 @@ namespace Fictichos.Constructora.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private IMongoCollection<EmailContainer> EmailCollection { get; init; }
     private readonly IJwtProvider _jwtProvider;
-    protected UserService Repo { get; init; }
+    private readonly UserService _userService;
+    private readonly EmailService _emailService;
 
-    public UserController(UserService repo, IJwtProvider jwtProvider, MongoSettings container, EmailService email)
+    public UserController(
+        MongoSettings container,
+        UserService repo,
+        EmailService email,
+        IJwtProvider jwtProvider)
     {
-        EmailCollection = repo.EmailCollection;
-        Repo = repo;
+        _userService = repo;
+        _emailService = email;
         _jwtProvider = jwtProvider;
     }
 
@@ -35,22 +39,21 @@ public class UserController : ControllerBase
         [FromBody] NewUserDto payload)
     {
         var filter = Builders<User>.Filter.Eq(e => e.Name, payload.Name);
-        var projection = Builders<User>.Projection.Include(e => e.Name);
-        bool nameIsTaken = await Repo.GetOneByFilterAsync(filter) is not null;
+        bool nameIsTaken = await _userService
+            .GetByFilterAsync(filter) is not null;
         if (nameIsTaken) return Conflict();
         
         string newEmail = payload.Email;
         if (!newEmail.IsEmailFormatted()) return BadRequest();
 
         var emailFilter = Builders<EmailContainer>.Filter.Eq(e => e.value, newEmail);
-        bool emailIsTaken = await EmailCollection.Find(emailFilter)
-            .SingleOrDefaultAsync() is not null;
+        bool emailIsTaken = await _emailService
+            .GetEmailByValue(newEmail) is not null;
         if (emailIsTaken) return Conflict();
 
-        User raw = await Repo.CreateAsync(payload);
+        User raw = await _userService.InsertOneAsync(payload);
 
-        EmailContainer email = new(raw.Id, newEmail);
-        await EmailCollection.InsertOneAsync(email);
+        await _emailService.InsertOneAsync(raw.Id, newEmail);
         
         LoginSuccessDto data = raw.ToDto();
 
@@ -68,7 +71,7 @@ public class UserController : ControllerBase
         FilterDefinition<User> filter =
             Builders<User>.Filter.Eq(e => e.Name, payload.Name);
         
-        User? raw = await Repo.GetOneByFilterAsync(filter);
+        User? raw = await _userService.GetByFilterAsync(filter);
         if (raw is null) return NotFound();
 
         bool passwordMatches = raw.ValidatePassword(payload.Password);
@@ -97,14 +100,14 @@ public class UserController : ControllerBase
         if (name is null) return BadRequest();
 
         var filter = Builders<User>.Filter.Eq(x => x.Name, name);
-        User? usr = await Repo.GetOneByFilterAsync(filter);
+        User? usr = await _userService.GetByFilterAsync(filter);
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        if (data.email is not null) Repo.ValidateEmail(data.email, usr);
+        if (data.email is not null) _emailService.ValidateEmailUpdate(data.email, usr);
 
         usr.UserSelfUpdate(data);
-        await Repo.UpdateAsync(usr);
+        _userService.Update(filter, usr);
         
         return NoContent();
     }
@@ -117,12 +120,12 @@ public class UserController : ControllerBase
     {
         var filter = Builders<User>.Filter
             .Eq(x => x.Name, data.name);
-        User? usr = await Repo.GetOneByFilterAsync(filter);
+        User? usr = await _userService.GetByFilterAsync(filter);
         if (usr is null) return NotFound();
 
         if (data.basicFields.email is not null)
         {
-            Repo.ValidateEmail(data.basicFields.email, usr);
+            _emailService.ValidateEmailUpdate(data.basicFields.email, usr);
         }
 
         usr.Update(data);
@@ -134,12 +137,9 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetEmails(string id)
     {
-        User? test = await Repo.GetByIdAsync(id);
-
-        var filter = Builders<EmailContainer>
-            .Filter.Eq(e => e.owner, id);
-        List<EmailContainer> result = await EmailCollection.Find(filter)
-            .ToListAsync();
+        User? test = await _userService.GetByIdAsync(id);
+        
+        List<EmailContainer> result = await _emailService.GetEmailsByUser(id);
 
         List<string> output = new();
         
@@ -153,17 +153,17 @@ public class UserController : ControllerBase
     [HttpGet("userInfo")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetUser(string name)
+    public IActionResult GetUser(string name)
     {
         var filter = Builders<User>.Filter.Eq(x => x.Name, name);
-        User? info = await Repo.GetOneByFilterAsync(name);
+        User? info = _userService.GetByFilter(filter);
         return Ok(info);
     }
 
     [HttpDelete("collection")]
-    public async Task<IActionResult> DeleteCollection()
+    public IActionResult DeleteCollection()
     {
-        await Repo.Collection.DeleteManyAsync(_ => true);
+        _userService.Clear();
         return NoContent();
     }
 }
