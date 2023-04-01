@@ -27,4 +27,13 @@ public class TimeTrackerService
         }
         return result;
     }
+
+    public static DateTime? ValidateDueDate(DateTime? data)
+    {
+        if (data is null) return null;
+        DateTime? due = DateTime.Compare((DateTime)data, DateTime.Now) < 0
+            ? DateTime.Now : data;
+
+        return due;
+    }
 }

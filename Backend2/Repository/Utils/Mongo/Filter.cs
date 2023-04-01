@@ -3,25 +3,40 @@ using MongoDB.Driver;
 
 namespace Fictichos.Constructora.Utilities.MongoDB
 {
-    public class Filter<T>
+    public static class Filter
     {
-        public Dictionary<string,
-            Func<string, BsonValue, FilterDefinition<T>>>
-                Filters { get; } = new()
+        public static FilterDefinition<T>? GetFilter<T>(
+            string choice, string field, BsonValue value)
         {
-            { "eq", (field, value) => Builders<T>.Filter.Eq(field, value) },
-            { "gt", (field, value) => Builders<T>.Filter.Gt(field, value) },
-            { "gte", (field, value) => Builders<T>.Filter.Gte(field, value) },
-            { "lt", (field, value) => Builders<T>.Filter.Lt(field, value) },
-            { "lte", (field, value) => Builders<T>.Filter.Lte(field, value) },
-            { "ne", (field, value) => Builders<T>.Filter.Ne(field, value) },
-            { "in", (field, value)
-                => Builders<T>.Filter.In(field, (BsonArray)value) },
-            { "nin", (field, value)
-                => Builders<T>.Filter.Nin(field, (BsonArray)value) },
-            { "regex", (field, value)
-                    => Builders<T>.Filter
-                        .Regex(field, (BsonRegularExpression)value) }
-        };
+            FilterDefinitionBuilder<T> noun = Builders<T>.Filter;
+            switch(choice)
+            {
+                case "eq":
+                    return noun.Eq(field, value);
+                case "gt":
+                    return noun.Gt(field, value);
+                case "gte":
+                    return noun.Gte(field, value);
+                case "lt":
+                    return noun.Lt(field, value);
+                case "lte":
+                    return noun.Lte(field, value);
+                case "ne":
+                    return noun.Ne(field, value);
+                case "in":
+                    return noun.In(field, (BsonArray)value);
+                case "nin":
+                    return noun.Nin(field, (BsonArray)value);
+                case "regex":
+                    return noun.Regex(field, (BsonRegularExpression)value);
+                default:
+                    return noun.Where(_ => true);
+            }
+        }
+
+        public static FilterDefinition<T> EmptyFilter<T>()
+        {
+            return Builders<T>.Filter.Where(_ => true);
+        }
     }
 }

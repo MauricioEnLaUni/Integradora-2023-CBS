@@ -20,6 +20,7 @@ public class Material
     public double BoughtFor { get; private set; }
     public double Depreciation { get; private set; }
     public string Provider { get; private set; } = string.Empty;
+    public string? Assigned { get; private set; }
 
     public Material() { }
     private Material(NewMaterialDto data)
@@ -47,6 +48,7 @@ public class Material
         Owner = data.Owner ?? Handler;
         Handler = data.Handler ?? Handler;
         Depreciation = data.Depreciation ?? Depreciation;
+        Assigned = data.Assigned ?? Assigned;
 
         Location = data.Location is null ? Location :
             new Address(data.Location);

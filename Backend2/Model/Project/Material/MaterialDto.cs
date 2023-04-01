@@ -38,13 +38,14 @@ public record UpdatedMaterialDto : DtoBase
     public int? Quantity { get; set; }
     public int? Status { get; set; }
     public double? BoughtFor { get; set; }
-    public string? Provider { get; set; } = string.Empty;
-    public string? Owner { get; set; } = string.Empty;
-    public string? Handler { get; set; } = string.Empty;
+    public string? Provider { get; set; }
+    public string? Owner { get; set; }
+    public string? Handler { get; set; }
     public double? Depreciation { get; set; }
     public NewAddressDto? Location { get; set; }
     public string? Category { get; set; }
     public int? Purpose { get; set; }
+    public string? Assigned { get; set; }
 }
 
 /// <summary>

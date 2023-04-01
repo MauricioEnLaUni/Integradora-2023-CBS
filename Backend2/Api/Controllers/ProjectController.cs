@@ -51,7 +51,7 @@ public class ProjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> NewProject([FromBody] string data)
     {
-        if (await _projectService.NameIsUnique(data)) return Conflict();
+        if (!await _projectService.NameIsUnique(data)) return Conflict();
 
         Project result = await _projectService.InsertOneAsync(data);
 

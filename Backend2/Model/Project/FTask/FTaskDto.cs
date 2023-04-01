@@ -1,5 +1,3 @@
-using MongoDB.Bson;
-
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 
@@ -11,6 +9,7 @@ namespace Fictichos.Constructora.Dto
         public string Parent { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime Ends { get; set; }
+        public string Overseer { get; set; } = string.Empty;
         public List<string> Assignees { get; set; } = new();
         public Address? Address { get; set; }
     }
@@ -23,9 +22,12 @@ namespace Fictichos.Constructora.Dto
         public List<IndexedObjectUpdate<NewFTaskDto, UpdatedFTaskDto>>? Subtasks
             { get; set; }
         public List<UpdateList<string>>? Material { get; set; }
+        public string? Overseer { get; set; }
         public List<UpdateList<string>>? EmployeesAssigned { get; set; }
+
         public Address? Address { get; set; }
         public DateTime? Ends { get; set; }
+        public bool? Complete { get; set; }
     }
 
     public record FTaskUpdateExternalDto

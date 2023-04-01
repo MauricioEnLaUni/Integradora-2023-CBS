@@ -56,7 +56,9 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             {
                 BsonClassMap.RegisterClassMap<Project>(classMap => {
                     classMap.MapMember(p => p.Name).SetElementName("name");
-                    classMap.MapMember(p => p.Responsible).SetElementName("responsible");
+                    classMap.MapMember(p => p.Responsible)
+                        .SetElementName("responsible")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.Starts).SetElementName("starts");
                     classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.PayHistory).SetElementName("payments");
@@ -72,13 +74,22 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                 BsonClassMap.RegisterClassMap<Material>(classMap => {
                     classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.Quantity).SetElementName("qty");
-                    classMap.MapMember(p => p.Owner).SetElementName("owner");
-                    classMap.MapMember(p => p.Handler).SetElementName("handler");
+                    classMap.MapMember(p => p.Owner)
+                        .SetElementName("owner")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                    classMap.MapMember(p => p.Assigned)
+                        .SetElementName("assigned")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                    classMap.MapMember(p => p.Handler)
+                        .SetElementName("handler")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.Location).SetElementName("location");
                     classMap.MapMember(p => p.Status).SetElementName("status");
                     classMap.MapMember(p => p.BoughtFor).SetElementName("price");
                     classMap.MapMember(p => p.Depreciation).SetElementName("depreciation");
-                    classMap.MapMember(p => p.Provider).SetElementName("provider");
+                    classMap.MapMember(p => p.Provider)
+                        .SetElementName("provider")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                 });
             }
         }
@@ -105,7 +116,12 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.StartDate).SetElementName("starts");
                     classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.Complete).SetElementName("complete");
-                    classMap.MapMember(p => p.Parent).SetElementName("parent");
+                    classMap.MapMember(p => p.Overseer)
+                        .SetElementName("overseer")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                    classMap.MapMember(p => p.Parent)
+                        .SetElementName("parent")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.Subtasks).SetElementName("subtasks");
                     classMap.MapMember(p => p.EmployeesAssigned).SetElementName("employees");
                     classMap.MapMember(p => p.Material).SetElementName("Material");
@@ -121,7 +137,9 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                 BsonClassMap.RegisterClassMap<Account>(classMap => {
                     classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.Payments).SetElementName("payments");
-                    classMap.MapMember(p => p.Owner).SetElementName("owner");
+                    classMap.MapMember(p => p.Owner)
+                        .SetElementName("owner")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                 });
             }
         }
@@ -176,7 +194,9 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.SalaryHistory).SetElementName("salaryHistory");
                     classMap.MapMember(p => p.Role).SetElementName("role");
                     classMap.MapMember(p => p.Area).SetElementName("area");
-                    classMap.MapMember(p => p.Oversees).SetElementName("oversees");
+                    classMap.MapMember(p => p.Oversees)
+                        .SetElementName("oversees")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.Material).SetElementName("material");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
                     classMap.MapMember(p => p.Responsibilities).SetElementName("responsibilities");

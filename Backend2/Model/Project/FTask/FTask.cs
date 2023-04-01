@@ -14,6 +14,7 @@ namespace Fictichos.Constructora.Model
         public DateTime Ends { get; set; }
         public bool Complete { get; set; }
         public string Parent { get; } = string.Empty;
+        public string Overseer { get; set; } = string.Empty;
         public List<FTasks> Subtasks { get; set; } = new();
         public List<string> EmployeesAssigned { get; set; } = new();
         public List<string> Material { get; set; } = new();
@@ -27,6 +28,7 @@ namespace Fictichos.Constructora.Model
             Ends = newTask.Ends;
             Parent = newTask.Parent;
             EmployeesAssigned = newTask.Assignees;
+            Overseer = newTask.Overseer;
             if (newTask.Address is not null) Address = newTask.Address;
             if (newTask.Parent is not null) Parent = newTask.Parent;
         }

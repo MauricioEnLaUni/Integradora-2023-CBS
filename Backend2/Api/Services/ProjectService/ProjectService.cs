@@ -2,6 +2,7 @@ using MongoDB.Driver;
 
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Utilities.MongoDB;
 using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository;
@@ -9,11 +10,18 @@ namespace Fictichos.Constructora.Repository;
 public class ProjectService
 {
     private readonly IMongoCollection<Project> _projectCollection;
+    private readonly PersonService _personService;
+    private readonly MaterialService _materialService;
 
-    public ProjectService(MongoSettings container)
+    public ProjectService(
+        MongoSettings container,
+        PersonService person,
+        MaterialService material)
     {
         _projectCollection = container.Client.GetDatabase("cbs")
             .GetCollection<Project>("projects");
+        _personService = person;
+        _materialService = material;
     }
 
     public async Task<bool> NameIsUnique(string data)
@@ -100,7 +108,7 @@ public class ProjectService
         UpdatedAccountDto validated = data;
         Project? newOwner = await ValidateAccountOwner(data.Owner);
 
-        validated.Payments = ValidatePayments(data.Payments);
+        validated.Payments = AccountManager.ValidatePayments(data.Payments);
         oldAccount.Update(validated);
 
         if (newOwner is null)
@@ -133,79 +141,60 @@ public class ProjectService
         return newProject;
     }
 
-    private List<IndexedObjectUpdate<NewPaymentDto, UpdatedPaymentDto>>?
-        ValidatePayments(List<IndexedObjectUpdate<NewPaymentDto, UpdatedPaymentDto>>? data)
-    {
-        if (data is null) return null;
-        
-        data.ForEach(e => {
-            if (e.NewItem is not null) e.NewItem.Due
-                = (DateTime)ValidateDueDate(e.NewItem.Due)!;
-        });
-        data.ForEach(e => {
-            if (e.UpdateItem is not null) e.UpdateItem.Due
-                = (DateTime)ValidateDueDate(e.UpdateItem.Due)!;
-        });
-        return data;
-    }
-
-    private DateTime? ValidateDueDate(DateTime? data)
-    {
-        if (data is null) return null;
-        DateTime? due = DateTime.Compare((DateTime)data, DateTime.Now) < 0
-            ? DateTime.Now : data;
-
-        return due;
-    }
-
     #endregion
 
     #region FTask Validation
-    
-    private static NewFTaskDto? ValidateNewFTask(NewFTaskDto? data)
+
+    private UpdatedFTaskDto? ValidateFTaskUpdate(UpdatedFTaskDto? data)
     {
         if (data is null) return null;
+        List<string> employees = _personService
+            .GetByFilter(Filter.EmptyFilter<Person>())
+            .Select(x => x.Id)
+            .ToList();
+        Project? originalDocument = GetOneByFilter(data.Id);
 
-        NewFTaskDto validated = data;
-        if (validated.Ends < DateTime.Now) return null;
-
-        return validated;
-    }
-
-    private async Task<UpdatedFTaskDto?> ValidateFTask(UpdatedFTaskDto? data)
-    {
-        if (data is null) return null;
-
-        FTasks? original = await GetTask(data);
-        if (original is null) return null;
+        HTTPResult<FTasks?> original =
+            FTaskManager.GetTask(originalDocument, data.Id);
+        if (original.Code != 200) return null;
 
         UpdatedFTaskDto result = data;
-        result.Ends = ValidateDueDate(data.Ends);
+        result.Ends = TimeTrackerService.ValidateDueDate(data.Ends);
         
-        result.Subtasks?.ForEach(async (e) => {
-            if (e.Operation == 2) e.UpdateItem = await ValidateFTask(e.UpdateItem);
-            if (e.Operation == 0) e.NewItem = ValidateNewFTask(e.NewItem);
+        result.Subtasks?.ForEach(e => {
+            if (e.Operation == 2) e.UpdateItem =
+                ValidateFTaskUpdate(e.UpdateItem);
+            if (e.Operation == 0) e.NewItem =
+                FTaskManager.ValidateNewFTask(e.NewItem, employees);
             if (e.Operation != 0 && e.NewItem is null && e.UpdateItem is null)
                 result.Subtasks.Remove(e);
         });
 
+        result.EmployeesAssigned = FTaskManager.ValidateAssigned(
+            result.EmployeesAssigned,
+            employees,
+            originalDocument!.Tasks
+                .Where(x => x.Id == data.Id)
+                .SingleOrDefault());
+                
+        
+
         return result;
     }
 
-    private async Task<FTasks?> GetTask(UpdatedFTaskDto data)
+    private List<UpdateList<string>>? ValidateMaterial(
+        List<string> materialList,
+        List<UpdateList<string>> newData,
+        FTasks original)
     {
-        if (data is null) return null;
-        FilterDefinition<Project> filter = Builders<Project>.Filter
-            .Eq(x => x.Id, data.Parent);
-        Project? project = await _projectCollection.GetOneByFilterAsync(filter);
-        if (project is null) return null;
+        List<UpdateList<string>> result = newData;
+        result.ForEach(e => {
+            if (e.Operation is not 1
+            && (!materialList.Contains(e.NewItem!)
+            || original.Material.Contains(e.NewItem!))) result.Remove(e);
+        });
 
-        FTasks? original = project.Tasks
-            .Where(x => x.Id == data.Id)
-            .SingleOrDefault();
-        if (original is null) return null;
-
-        return original;
+        return result;
     }
     #endregion
 
@@ -219,7 +208,7 @@ public class ProjectService
 
     public void Clear()
     {
-        _projectCollection.DeleteMany(_ => true);
+        _projectCollection.DeleteMany(Filter.EmptyFilter<Project>());
     }
 
     public Project? GetOneByFilter(
@@ -239,7 +228,7 @@ public class ProjectService
     public async Task<List<Project>> GetAllAsync()
     {
         return await _projectCollection
-            .Find(_ => true)
+            .Find(Filter.EmptyFilter<Project>())
             .ToListAsync();
     }
     #endregion
