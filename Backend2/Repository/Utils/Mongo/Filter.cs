@@ -1,3 +1,4 @@
+using Fictichos.Constructora.Repository;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -34,9 +35,15 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             }
         }
 
-        public static FilterDefinition<T> EmptyFilter<T>()
+        public static FilterDefinition<T> Empty<T>()
         {
             return Builders<T>.Filter.Where(_ => true);
+        }
+
+        public static FilterDefinition<T> ById<T>(string id)
+            where T : BaseEntity
+        {
+            return Builders<T>.Filter.Eq(x => x.Id, id);
         }
     }
 }

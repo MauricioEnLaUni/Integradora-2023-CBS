@@ -19,6 +19,7 @@ namespace Fictichos.Constructora.Model
         public List<string> EmployeesAssigned { get; set; } = new();
         public List<string> Material { get; set; } = new();
         public Address? Address { get; set; }
+        public string Owner { get; set; } = string.Empty;
 
         public FTasks() { }
         public FTasks(NewFTaskDto newTask)

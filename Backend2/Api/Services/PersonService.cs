@@ -7,17 +7,16 @@ using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository;
 
-public class PersonService
+internal class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDto>
 {
-    public readonly IMongoCollection<Person> _personCollection;
+    private const string MAINCOLLECTION = "people";
     private readonly TimeTrackerService timeService;
     private readonly EmailService emailService;
 
-    public PersonService(MongoSettings container, EmailService email, TimeTrackerService time)
+    internal PersonService(MongoSettings container, EmailService email, TimeTrackerService time)
+        : base(container, MAINCOLLECTION)
     {
         timeService = time;
-        _personCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<Person>("people");
         emailService = email;
     }
     
@@ -59,7 +58,7 @@ public class PersonService
             .Eq(x => x.Id, data.Parent);
         ProjectionDefinition<Person> projection = Builders<Person>.Projection
             .Include(x => x.Employed);
-        BsonDocument? parent = await _personCollection.Find(filter)
+        BsonDocument? parent = await _mainCollection.Find(filter)
             .Project(projection)
             .SingleOrDefaultAsync();
 
@@ -83,34 +82,4 @@ public class PersonService
 
         return sanitized;
     }
-
-    #region Queries
-    public List<Person> GetByFilter(FilterDefinition<Person> filter)
-    {
-        return _personCollection.Find(filter).ToList();
-    }
-
-    public async Task<List<Person>>
-        GetByFilterAsync(FilterDefinition<Person> filter)
-    {
-        return await _personCollection
-            .Find(filter)
-            .ToListAsync();
-    }
-
-    public Person? GetOneByFilter(FilterDefinition<Person> filter)
-    {
-        return _personCollection
-            .Find(filter)
-            .SingleOrDefault();
-    }
-
-    public async Task<Person?> GetOneByFilterAsync(
-            FilterDefinition<Person> filter)
-    {
-        return await _personCollection
-            .Find(filter)
-            .SingleOrDefaultAsync();
-    }
-    #endregion
 }

@@ -45,4 +45,26 @@ public class MaterialService
     }
 
     #endregion
+
+    #region Getters
+    public List<Material> GetByFilter(FilterDefinition<Material> filter)
+    {
+        return _materialCollection.Find(filter).ToList();
+    }
+
+    public async Task<List<Material>> GetByFilterAsync(FilterDefinition<Material> filter)
+    {
+        return await _materialCollection.Find(filter).ToListAsync();
+    }
+
+    public async Task<Material?> GetOneByFilterAsync(FilterDefinition<Material> filter)
+    {
+        return await _materialCollection.Find(filter).SingleOrDefaultAsync();
+    }
+
+    public Material? GetOneByFilter(FilterDefinition<Material> filter)
+    {
+        return _materialCollection.Find(filter).SingleOrDefault();
+    }
+    #endregion
 }

@@ -1,0 +1,90 @@
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Utilities.MongoDB;
+using MongoDB.Driver;
+
+namespace Fictichos.Constructora.Repository;
+
+internal class BaseService<TModel, TNewDto, TUpdateDto>
+    where TModel : BaseEntity, IQueryMask<TModel, TNewDto, TUpdateDto>, new()
+    where TUpdateDto : DtoBase
+{
+    protected readonly IMongoCollection<TModel> _mainCollection;
+
+    internal BaseService(
+        MongoSettings container, string mainCollectionName)
+    {
+        _mainCollection = container.Client.GetDatabase("cbs")
+            .GetCollection<TModel>(mainCollectionName);
+    }
+
+    internal TModel InsertOne(TNewDto data)
+    {
+        TModel result = new TModel().Instantiate(data);
+        _mainCollection.InsertOne(result);
+        return result;
+    }
+
+    internal async Task<TModel> InsertOneAsync(TNewDto data)
+    {
+        TModel result = new TModel().Instantiate(data);
+        await _mainCollection.InsertOneAsync(result);
+        return result;
+    }
+
+    internal TModel? GetOneBy(FilterDefinition<TModel> filter)
+    {
+        return _mainCollection
+            .Find(filter)
+            .SingleOrDefault();
+    }
+
+    internal async Task<TModel?> GetOneByAsync(
+        FilterDefinition<TModel> filter)
+    {
+        return await _mainCollection
+            .Find(filter)
+            .SingleOrDefaultAsync();
+    }
+
+    internal List<TModel> GetBy(FilterDefinition<TModel> filter)
+    {
+        return _mainCollection
+            .Find(filter)
+            .ToList();
+    }
+
+    internal async Task<List<TModel>> GetByAsync(
+        FilterDefinition<TModel> filter)
+    {
+        return await _mainCollection
+            .Find(filter)
+            .ToListAsync();
+    }
+
+    internal void DeleteOne(FilterDefinition<TModel> filter)
+    {
+        _mainCollection.DeleteOne(filter);
+    }
+
+    internal async Task DeleteOneAsync(
+        FilterDefinition<TModel> filter)
+    {
+        await _mainCollection.DeleteOneAsync(filter);
+    }
+
+    internal void DeleteMany(FilterDefinition<TModel> filter)
+    {
+        _mainCollection.DeleteMany(filter);
+    }
+
+    internal async Task DeleteManyAsync(FilterDefinition<TModel> filter)
+    {
+        await _mainCollection.DeleteManyAsync(filter);
+    }
+
+    internal void Clear()
+    {
+        _mainCollection.DeleteMany(Filter.Empty<TModel>());
+    }
+}

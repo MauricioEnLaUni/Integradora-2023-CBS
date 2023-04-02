@@ -24,7 +24,6 @@ namespace Fictichos.Constructora.Dto
         public List<UpdateList<string>>? Material { get; set; }
         public string? Overseer { get; set; }
         public List<UpdateList<string>>? EmployeesAssigned { get; set; }
-
         public Address? Address { get; set; }
         public DateTime? Ends { get; set; }
         public bool? Complete { get; set; }

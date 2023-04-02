@@ -2,6 +2,7 @@ using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Utilities.MongoDB;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -30,7 +31,8 @@ public class ProjectController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         return Ok(
-            await _projectService.GetAllAsync()
+            await _projectService
+            .GetByFilterAsync(Filter.Empty<Project>())
         );
     }
 

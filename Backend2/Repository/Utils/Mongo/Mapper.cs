@@ -122,6 +122,9 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Parent)
                         .SetElementName("parent")
                         .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                    classMap.MapMember(p => p.Owner)
+                        .SetElementName("owner")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.Subtasks).SetElementName("subtasks");
                     classMap.MapMember(p => p.EmployeesAssigned).SetElementName("employees");
                     classMap.MapMember(p => p.Material).SetElementName("Material");
