@@ -184,7 +184,10 @@ public class TaskController : ControllerBase
         FilterDefinition<FTasks> filter = Builders<FTasks>
             .Filter
             .Eq(x => x.Id, data.Id);
-        _taskService.UpdateMaterial(filter, original);
+        UpdateDefinition<FTasks> update =
+            Builders<FTasks>.Update.Set(x => x.Material, original);
+        UpdateDto<FTasks> updateWrapper = new(filter, update);
+        _taskService.Update(updateWrapper);
 
         return NoContent();
     }
@@ -258,6 +261,26 @@ public class TaskController : ControllerBase
         
         List<string> updated = original.EmployeesAssigned;
         valid.ForEach(updated.UpdateWithIndex);
+        updated.ForEach(async (e) => {
+            UpdateDefinition<Person> update =
+                Builders<Person>
+                    .Update
+                    .Set(x => x.ModifiedAt, DateTime.Now);
+            if (!original.EmployeesAssigned.Contains(e))
+            {
+                update = update
+                    .AddToSet(x => x.Employed!.Assignments, data.Id);
+            }
+            else
+            {
+                update = update
+                    .Pull(x => x.Employed!.Assignments, data.Id);
+            }
+            UpdateDto<Person> wrapper =
+                new(Filter.ById<Person>(e), update);
+            await _peopleService.UpdateAsync(wrapper);
+        });
+
         FilterDefinition<FTasks> filter = Builders<FTasks>
             .Filter
             .Eq(x => x.Id, data.Id);

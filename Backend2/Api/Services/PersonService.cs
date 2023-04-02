@@ -87,4 +87,9 @@ internal class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDt
     {
         _mainCollection.UpdateOne(data.filter, data.update);
     }
+
+    internal async Task UpdateAsync(UpdateDto<Person> data)
+    {
+        await _mainCollection.UpdateOneAsync(data.filter, data.update);
+    }
 }
