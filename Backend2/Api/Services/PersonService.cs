@@ -82,4 +82,9 @@ internal class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDt
 
         return sanitized;
     }
+
+    internal void Update(UpdateDto<Person> data)
+    {
+        _mainCollection.UpdateOne(data.filter, data.update);
+    }
 }

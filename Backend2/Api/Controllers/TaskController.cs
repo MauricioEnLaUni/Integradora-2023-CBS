@@ -58,7 +58,7 @@ public class TaskController : ControllerBase
             || Assigned.Count < 1
             || !Assigned.Contains(data.Overseer))
                 return BadRequest();
-        if (!rawProject.Contains(data.Parent) && data.Parent != "root")
+        if (data.Parent is not null && !rawProject.Contains(data.Parent))
             return NotFound();
 
         NewFTaskDto payload = taskValidation.Value!;
@@ -131,17 +131,19 @@ public class TaskController : ControllerBase
         FTasks? original = await _taskService
             .GetOneByAsync(Filter.ById<FTasks>(data.Id));
         if (original is null) return NotFound();
-        if (original.Owner is not null)
-        {
-            Project? owner = await _projectService
-                .GetOneByAsync(Filter.ById<Project>(data.Parent));
-            if (owner is null) return NotFound();
-        }
+
+        Project? owner = await _projectService
+            .GetOneByAsync(Filter.ById<Project>(original.Owner));
+        if (owner is null) return NotFound();
+
         List<string> employees = new();
         List<string> materials = new();
+        FilterDefinition<Person> employeeFilter = Builders<Person>
+            .Filter
+            .Exists(x => x.Employed);
 
         employees = (await _peopleService
-                .GetByAsync(Filter.Empty<Person>()))
+                .GetByAsync(employeeFilter))
                 .Select(x => x.Id)
                 .ToList();
         
@@ -154,6 +156,118 @@ public class TaskController : ControllerBase
             _taskService.ValidateUpdate(data, employees, original, materials);
         original.Update(result);
         _taskService.ReplaceOne(Filter.ById<FTasks>(data.Id), original);
+        
+        return NoContent();
+    }
+
+    [HttpPatch("{material}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateMaterial(
+        TaskSingleUpdateList<string> data)
+    {
+        List<string>? original = (await _taskService
+            .GetOneByAsync(Filter.ById<FTasks>(data.Id)))?
+            .Material;
+        List<string> materials = (await _materialService
+            .GetByFilterAsync(Filter.Empty<Material>()))
+            .Select(x => x.Id)
+            .ToList();
+        if (original is null) return NotFound();
+
+        data.changes.ForEach(e => {
+            if (e.NewItem is null || !materials.Contains(e.NewItem))
+                data.changes.Remove(e);
+            original.UpdateWithIndex(e);
+        });
+
+        FilterDefinition<FTasks> filter = Builders<FTasks>
+            .Filter
+            .Eq(x => x.Id, data.Id);
+        _taskService.UpdateMaterial(filter, original);
+
+        return NoContent();
+    }
+
+    [HttpPatch("{overseer}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateOverseer(
+        TaskSingleUpdate<string> data)
+    {
+        FilterDefinition<Person> employeeFilter = Builders<Person>
+            .Filter
+            .Exists(x => x.Employed);
+        List<string> employees = (await _peopleService
+            .GetByAsync(employeeFilter))
+            .Select(x => x.Id)
+            .ToList();
+
+        FTasks? original = await _taskService
+            .GetOneByAsync(Filter.ById<FTasks>(data.Id));
+        if (original is null) return NotFound();
+        if (!employees.Contains(data.change)) return NotFound();
+
+        if (!original.EmployeesAssigned.Contains(data.change))
+        {
+            UpdateList<string> newEmp = new()
+                { Operation = 0, Key = 0, NewItem = data.change };
+            original.EmployeesAssigned.UpdateWithIndex(newEmp);
+            UpdateDefinition<Person> empUpdate = Builders<Person>
+                .Update
+                .Set(x => x.ModifiedAt, DateTime.Now)
+                .AddToSet(x => x.Employed!.Oversees, data.Id);
+            UpdateDto<Person> empUpdateWrapper =
+                new(Filter.ById<Person>(data.Id), empUpdate);
+            _peopleService.Update(empUpdateWrapper);
+        }
+        UpdateDefinition<FTasks> update = Builders<FTasks>
+            .Update
+            .Set(x => x.ModifiedAt, DateTime.Now)
+            .Set(x => x.Overseer, data.change);
+        UpdateDto<FTasks> updateWrapper =
+            new(Filter.ById<FTasks>(data.Id), update);
+
+        _taskService.Update(updateWrapper);
+
+        return NoContent();
+    }
+
+    [HttpPatch("{assigned}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateAssigned(
+        TaskSingleUpdateList<string> data)
+    {
+        FilterDefinition<Person> employeeFilter = Builders<Person>
+            .Filter
+            .Exists(x => x.Employed);
+        List<string> employees = (await _peopleService
+            .GetByAsync(employeeFilter))
+            .Select(x => x.Id)
+            .ToList();
+
+        FTasks? original = await _taskService
+            .GetOneByAsync(Filter.ById<FTasks>(data.Id));
+        if (original is null) return NotFound();
+        List<UpdateList<string>>? valid = FTaskService.ValidateAssigned(
+            data.changes, employees, original.EmployeesAssigned);
+        if (valid is null) return BadRequest();
+        
+        List<string> updated = original.EmployeesAssigned;
+        valid.ForEach(updated.UpdateWithIndex);
+        FilterDefinition<FTasks> filter = Builders<FTasks>
+            .Filter
+            .Eq(x => x.Id, data.Id);
+        UpdateDefinition<FTasks> update = Builders<FTasks>
+            .Update
+            .Set(x => x.ModifiedAt, DateTime.Now)
+            .Set(x => x.EmployeesAssigned, updated);
+        UpdateDto<FTasks> updateWrapper = new(filter, update);
+
+        _taskService.Update(updateWrapper);
         
         return NoContent();
     }

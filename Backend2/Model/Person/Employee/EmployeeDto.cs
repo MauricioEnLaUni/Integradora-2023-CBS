@@ -43,5 +43,6 @@ namespace Fictichos.Constructora.Dto
         public DateTime? Closed { get; set; }
         public bool? Active { get; set; }
         public List<UpdateList<string>> Oversees { get; set; } = new();
+        public List<UpdateList<string>>? Assignments { get; set; }
     }
 }

@@ -61,7 +61,7 @@ namespace Fictichos.Constructora.Model
             Role = data.Role ?? Role;
             Area = data.Area ?? Area;
             Parent = data.Parent ?? Parent;
-            
+
             data.Oversees?.ForEach(Oversees.UpdateWithIndex);
             data.Responsibilities?.ForEach(Responsibilities.UpdateWithIndex);
             data.Material?.ForEach(Material.UpdateWithIndex);

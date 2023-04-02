@@ -127,7 +127,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                         .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.Subtasks).SetElementName("subtasks");
                     classMap.MapMember(p => p.EmployeesAssigned).SetElementName("employees");
-                    classMap.MapMember(p => p.Material).SetElementName("Material");
+                    classMap.MapMember(p => p.Material).SetElementName("material");
                     classMap.MapMember(p => p.Address).SetElementName("address");
                 });
             }
@@ -221,6 +221,9 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.InternalKey).SetElementName("key");
                     classMap.MapMember(p => p.Charges).SetElementName("charges");
                     classMap.MapMember(p => p.ScheduleHistory).SetElementName("scheduleHistory");
+                    classMap.MapMember(p => p.Assignments)
+                        .SetElementName("assignments")
+                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                 });
             }
         }

@@ -113,4 +113,14 @@ internal class FTaskService
 
         return result;
     }
+
+    internal void UpdateMaterial(UpdateDto<FTasks> data)
+    {
+        _mainCollection.UpdateOne(data.filter, data.update);
+    }
+
+    internal void Update(UpdateDto<FTasks> data)
+    {
+        _mainCollection.UpdateOne(data.filter, data.update);
+    }
 }

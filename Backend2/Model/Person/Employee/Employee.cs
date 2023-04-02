@@ -21,6 +21,7 @@ namespace Fictichos.Constructora.Model
         public List<Schedule> ScheduleHistory { get; private set; } = new List<Schedule>();
         public List<string> Oversees { get; private set; } = new();
         public List<Record> Historial { get; private set; } = new();
+        public List<string> Assignments { get; set; } = new();
 
         public Employee() { }
         public Employee(NewEmployeeDto data)
@@ -68,6 +69,8 @@ namespace Fictichos.Constructora.Model
             DOB = data.DOB ?? DOB;
             CURP = data.CURP ?? CURP;
             RFC = data.RFC ?? RFC;
+
+            data.Assignments?.ForEach(Assignments.UpdateWithIndex);
             data.Oversees?.ForEach(Oversees.UpdateWithIndex);
             data.Charges?.ForEach(Charges.UpdateObjectWithIndex<Job, NewJobDto, UpdatedJobDto>);
             data.ScheduleHistory?.ForEach(ScheduleHistory.UpdateObjectWithIndex<Schedule, NewScheduleDto, UpdatedScheduleDto>);

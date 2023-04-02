@@ -13,7 +13,7 @@ namespace Fictichos.Constructora.Model
         public DateTime StartDate { get; set; }
         public DateTime Ends { get; set; }
         public bool Complete { get; set; }
-        public string Parent { get; } = string.Empty;
+        public string? Parent { get; } = string.Empty;
         public string Overseer { get; set; } = string.Empty;
         public List<FTasks> Subtasks { get; set; } = new();
         public List<string> EmployeesAssigned { get; set; } = new();
