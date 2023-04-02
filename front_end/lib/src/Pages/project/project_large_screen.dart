@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/icon.dart';
+import 'package:front_end/src/Pages/material/material_page.dart';
+import 'package:front_end/src/Pages/person/person_page.dart';
 
 const IconData person = IconData(0xe491, fontFamily: 'MaterialIcons');
 const IconData construction = IconData(0xe189, fontFamily: 'MaterialIcons');
@@ -21,8 +23,11 @@ class LargeScreen extends StatelessWidget {
             icon: const Icon(
               Icons.person,
             ),
-            onPressed: () {
-              //
+            onPressed: () {  
+              Navigator.push(  
+                context,  
+                MaterialPageRoute(builder: (context) => person_page()),  
+              );  
             },
             tooltip: 'persona',
           ),
@@ -31,8 +36,11 @@ class LargeScreen extends StatelessWidget {
             icon: const Icon(
               Icons.construction,
             ),
-            onPressed: () {
-              //
+            onPressed: () {  
+              Navigator.push(  
+                context,  
+                MaterialPageRoute(builder: (context) => FMaterialPage()),  
+              );  
             },
             tooltip: 'material',
           ),
