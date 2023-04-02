@@ -30,6 +30,7 @@ namespace Fictichos.Constructora.Model
             Parent = newTask.Parent;
             EmployeesAssigned = newTask.Assignees;
             Overseer = newTask.Overseer;
+            Owner = newTask.Owner;
             if (newTask.Address is not null) Address = newTask.Address;
             if (newTask.Parent is not null) Parent = newTask.Parent;
         }

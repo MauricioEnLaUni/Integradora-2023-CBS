@@ -66,26 +66,8 @@ internal class ProjectService
 
         output.PayHistory =
             await ValidateAccount(old.PayHistory, output.PayHistory);
-        output.Tasks =
-            FTasksDriver(output.Tasks);
 
         return new() { Code = 200, Value = output };
-    }
-
-    private List<IndexedObjectUpdate<NewFTaskDto, UpdatedFTaskDto>>?
-        FTasksDriver(
-            List<IndexedObjectUpdate<NewFTaskDto, UpdatedFTaskDto>>? data)
-    {
-        if (data is null) return null;
-        List<IndexedObjectUpdate<NewFTaskDto, UpdatedFTaskDto>> output = data;
-        output.ForEach(async (e) => {
-            if (e.Operation != 1 && e.NewItem is null && e.UpdateItem is null)
-                output.Remove(e);
-            if (e.Operation == 2) e.UpdateItem =
-                await ValidateFTaskUpdate(e.UpdateItem);
-        });
-
-        return output;
     }
 
     public bool UpdateIsEmpty(UpdatedProjectDto data)
@@ -161,75 +143,5 @@ internal class ProjectService
         return newProject;
     }
 
-    #endregion
-
-    #region FTask Validation
-
-    private async Task<UpdatedFTaskDto?>
-        ValidateFTaskUpdate(UpdatedFTaskDto? data)
-    {
-        List<string> employees = new();
-        List<Material> materials = new();
-
-        if (data is null) return null;
-        if (data.EmployeesAssigned is not null)
-        {
-            employees = (await _personService
-                .GetByAsync(Filter.Empty<Person>()))
-                .Select(x => x.Id)
-                .ToList();
-        }
-        if (data.Material is not null)
-            materials = await _materialService
-                .GetByFilterAsync(Filter.Empty<Material>());
-        Project? originalDocument = GetOneBy(data.Id);
-
-        HTTPResult<FTasks?> original =
-            FTaskManager.GetTask(originalDocument, data.Id);
-        if (original.Code != 200) return null;
-
-        UpdatedFTaskDto result = data;
-        result.Ends = TimeTrackerService.ValidateDueDate(data.Ends);
-        
-        result.Subtasks?.ForEach(async (e) => {
-            if (e.Operation == 2) e.UpdateItem =
-                await ValidateFTaskUpdate(e.UpdateItem);
-            if (e.Operation == 0) e.NewItem =
-                FTaskManager.ValidateNewFTask(e.NewItem, employees);
-            if (e.Operation != 0 && e.NewItem is null && e.UpdateItem is null)
-                result.Subtasks.Remove(e);
-        });
-
-        result.EmployeesAssigned = FTaskManager.ValidateAssigned(
-            result.EmployeesAssigned,
-            employees,
-            originalDocument!.Tasks
-                .Where(x => x.Id == data.Id)
-                .SingleOrDefault());
-
-        result.Material = ValidateMaterial(
-                materials.Select(x => x.Id).ToList(),
-                result.Material!,
-                original.Value!);
-
-        return result;
-    }
-
-    private List<UpdateList<string>>? ValidateMaterial(
-        List<string> materialList,
-        List<UpdateList<string>>? newData,
-        FTasks original)
-    {
-        if (newData is null) return null;
-
-        List<UpdateList<string>> result = newData;
-        result.ForEach(e => {
-            if (e.Operation is not 1
-            && (!materialList.Contains(e.NewItem!)
-            || original.Material.Contains(e.NewItem!))) result.Remove(e);
-        });
-
-        return result;
-    }
     #endregion
 }

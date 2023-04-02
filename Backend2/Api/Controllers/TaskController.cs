@@ -38,8 +38,6 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> Create(
         [FromBody] NewFTaskDto data)
     {
-        HTTPResult<NewFTaskDto> taskValidation =
-            await _taskService.ValidateNew(data);
         List<string> rawEmployee = (await _peopleService
             .GetByAsync(data.Overseer))
             .Select(x => x.Id)
@@ -49,6 +47,8 @@ public class TaskController : ControllerBase
             .Select(x => x.Id)
             .ToList();
         List<string> Assigned = data.Assignees;
+        HTTPResult<NewFTaskDto> taskValidation =
+            _taskService.ValidateNew(data, rawEmployee);
         Assigned.ForEach(e => {
             if (!rawEmployee.Contains(e)) Assigned.Remove(e);
         });
@@ -131,26 +131,30 @@ public class TaskController : ControllerBase
         FTasks? original = await _taskService
             .GetOneByAsync(Filter.ById<FTasks>(data.Id));
         if (original is null) return NotFound();
-        if (original.Owner != "root")
+        if (original.Owner is not null)
         {
             Project? owner = await _projectService
                 .GetOneByAsync(Filter.ById<Project>(data.Parent));
             if (owner is null) return NotFound();
         }
         List<string> employees = new();
-        List<Material> materials = new();
+        List<string> materials = new();
 
-        if (data.EmployeesAssigned is not null)
-        {
-            employees = (await _peopleService
+        employees = (await _peopleService
                 .GetByAsync(Filter.Empty<Person>()))
                 .Select(x => x.Id)
                 .ToList();
-        }
-        if (data.Material is not null)
-            materials = await _materialService
-                .GetByFilterAsync(Filter.Empty<Material>());
         
-
+        materials = (await _materialService
+            .GetByFilterAsync(Filter.Empty<Material>()))
+            .Select(x => x.Id)
+            .ToList();
+        
+        UpdatedFTaskDto result =
+            _taskService.ValidateUpdate(data, employees, original, materials);
+        original.Update(result);
+        _taskService.ReplaceOne(Filter.ById<FTasks>(data.Id), original);
+        
+        return NoContent();
     }
 }

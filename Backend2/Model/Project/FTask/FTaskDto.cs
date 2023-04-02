@@ -12,6 +12,7 @@ namespace Fictichos.Constructora.Dto
         public string Overseer { get; set; } = string.Empty;
         public List<string> Assignees { get; set; } = new();
         public Address? Address { get; set; }
+        public string Owner { get; set; } = string.Empty;
     }
 
     public record UpdatedFTaskDto : DtoBase
@@ -23,6 +24,7 @@ namespace Fictichos.Constructora.Dto
             { get; set; }
         public List<UpdateList<string>>? Material { get; set; }
         public string? Overseer { get; set; }
+        public string? Owner { get; set; }
         public List<UpdateList<string>>? EmployeesAssigned { get; set; }
         public Address? Address { get; set; }
         public DateTime? Ends { get; set; }

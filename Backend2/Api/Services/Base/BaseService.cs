@@ -87,4 +87,9 @@ internal class BaseService<TModel, TNewDto, TUpdateDto>
     {
         _mainCollection.DeleteMany(Filter.Empty<TModel>());
     }
+
+    internal void ReplaceOne(FilterDefinition<TModel> filter, TModel data)
+    {
+        _mainCollection.ReplaceOne(filter, data);
+    }
 }
