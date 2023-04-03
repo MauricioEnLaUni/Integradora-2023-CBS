@@ -69,11 +69,10 @@ class _project_large_ScreenState extends State<project_large_Screen> {
     return DataTable(
       columns: const [
         DataColumn(label: Text('Nombre')),
-        DataColumn(label: Text('persona a cargo')),
-        DataColumn(label: Text('puesto')),
+        DataColumn(label: Text('Fecha de Inicio')),
+        DataColumn(label: Text('Fecha de Finalizacion')),
         DataColumn(label: Text('No se')),
         DataColumn(label: Text('Cuentas +-')),
-        DataColumn(label: Text('Acciones')),
       ],
       rows: _data.asMap().entries.map((entry) {
         final index = entry.key;
