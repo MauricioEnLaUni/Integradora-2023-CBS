@@ -12,6 +12,8 @@ class Dashboard extends StatelessWidget {
 }
 
 class DashBoardLayout extends StatelessWidget {
+  const DashBoardLayout({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

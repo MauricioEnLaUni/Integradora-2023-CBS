@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/icon.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide State;
-import 'package:front_end/src/Pages/material/material_page.dart';
-import 'package:front_end/src/Pages/person/person_page.dart';
-
-
 
 class person_large_Screen extends StatefulWidget {
   const person_large_Screen({Key? key}) : super(key: key);
@@ -14,13 +8,13 @@ class person_large_Screen extends StatefulWidget {
 }
 
 class _person_large_ScreenState extends State<person_large_Screen> {
-   final Db _db = Db('mongodb://localhost:27017/prueba');
+  final Db _db = Db('mongodb://localhost:27017/prueba');
   List<Map<String, dynamic>> _data = [];
   bool _editingEnabled = false;
   List<TextEditingController> _controllers = [];
-  bool _isEditing = false;
+  final bool _isEditing = false;
 
-   @override
+  @override
   void initState() {
     super.initState();
     _connectToDb();
@@ -28,11 +22,10 @@ class _person_large_ScreenState extends State<person_large_Screen> {
 
   void _connectToDb() async {
     await _db.open();
-    print('Connected to database');
     final collection = _db.collection('personas');
     final results = await collection.find().toList();
     setState(() {
-      _data = results.map((result) => result as Map<String, dynamic>).toList();
+      _data = results.map((result) => result).toList();
       _controllers = List.generate(
         _data.length,
         (index) => TextEditingController(),
@@ -61,8 +54,8 @@ class _person_large_ScreenState extends State<person_large_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    return  DataTable(
-      columns: [
+    return DataTable(
+      columns: const [
         DataColumn(label: Text('Nombre')),
         DataColumn(label: Text('Proyecto')),
         DataColumn(label: Text('puesto')),
@@ -94,18 +87,18 @@ class _person_large_ScreenState extends State<person_large_Screen> {
                   )
                 : Text(data['proyecto']),
           ),
-          DataCell(
-            _editingEnabled
-                ? TextField(
-                    controller: _controllers[index],
-                    decoration: InputDecoration(
-                      hintText: data['puesto'],
-                    ),
-                  )
-                : Text(data['puesto'])),
+          DataCell(_editingEnabled
+              ? TextField(
+                  controller: _controllers[index],
+                  decoration: InputDecoration(
+                    hintText: data['puesto'],
+                  ),
+                )
+              : Text(data['puesto'])),
           DataCell(_isEditing
               ? TextField(
-                  controller: TextEditingController(text: data['no_se_1'].toString()),
+                  controller:
+                      TextEditingController(text: data['no_se_1'].toString()),
                   onChanged: (value) {
                     setState(() {
                       data['no_se_1'] = int.parse(value);
@@ -115,7 +108,8 @@ class _person_large_ScreenState extends State<person_large_Screen> {
               : Text(data['no_se_1'].toString())),
           DataCell(_isEditing
               ? TextField(
-                  controller: TextEditingController(text: data['no_se_2'].toString()),
+                  controller:
+                      TextEditingController(text: data['no_se_2'].toString()),
                   onChanged: (value) {
                     setState(() {
                       data['no_se_2'] = int.parse(value);

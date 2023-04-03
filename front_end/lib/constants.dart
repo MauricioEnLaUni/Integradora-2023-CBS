@@ -17,6 +17,6 @@ abstract class Constants {
   );
 }
 
-Color blueBar = Color.fromARGB(0, 99, 250, 248);
-Color shadow = Color.fromARGB(0, 24, 24, 24);
-Color pk = Color.fromARGB(255, 255, 191, 191);
+Color blueBar = const Color.fromARGB(0, 99, 250, 248);
+Color shadow = const Color.fromARGB(0, 24, 24, 24);
+Color pk = const Color.fromARGB(255, 255, 191, 191);

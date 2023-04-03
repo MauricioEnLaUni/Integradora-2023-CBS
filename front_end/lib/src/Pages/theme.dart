@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    MyApp(),
+    const MyApp(),
   );
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -14,18 +16,18 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isDarkMode = false;
   String my_text = "Click the button below to toggle dark mode";
-  Icon my_icon = Icon(Icons.light_mode);
+  Icon my_icon = const Icon(Icons.light_mode);
 
   void _toggleDarkMode() {
     setState(() {
       _isDarkMode = !_isDarkMode;
       if (_isDarkMode == false) {
         my_text = "Click the button below to toggle dark mode";
-        my_icon = Icon(Icons.light_mode);
+        my_icon = const Icon(Icons.light_mode);
       } else {
         my_text = "Click the button below to toggle light mode";
 
-        my_icon = Icon(Icons.dark_mode);
+        my_icon = const Icon(Icons.dark_mode);
       }
     });
   }
@@ -36,7 +38,7 @@ class _MyAppState extends State<MyApp> {
       theme: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Dark Mode Example'),
+          title: const Text('Dark Mode Example'),
         ),
         body: Center(
           child: Column(
@@ -46,7 +48,7 @@ class _MyAppState extends State<MyApp> {
               Text(my_text),
               ElevatedButton(
                 onPressed: _toggleDarkMode,
-                child: Text('Toggle Dark Mode'),
+                child: const Text('Toggle Dark Mode'),
               ),
             ],
           ),

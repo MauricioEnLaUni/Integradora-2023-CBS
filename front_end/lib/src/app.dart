@@ -12,7 +12,7 @@ class App extends StatelessWidget {
         appBar: AppBar(
           title: const Text("login"),
         ),
-        body: const LogInPage(),
+        body: const LoginPage(),
       ),
     );
   }

@@ -1,5 +1,3 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Pages/material/material_page.dart';
 import 'package:front_end/src/Pages/person/person_page.dart';
@@ -18,11 +16,11 @@ class SmallScreen extends StatelessWidget {
             icon: const Icon(
               Icons.person,
             ),
-            onPressed: () {  
-              Navigator.push(  
-                context,  
-                MaterialPageRoute(builder: (context) => person_page()),  
-              );  
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => person_page()),
+              );
             },
             tooltip: 'persona',
           ),
@@ -31,11 +29,11 @@ class SmallScreen extends StatelessWidget {
             icon: const Icon(
               Icons.construction,
             ),
-            onPressed: () {  
-              Navigator.push(  
-                context,  
-                MaterialPageRoute(builder: (context) => FMaterialPage()),  
-              );  
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FMaterialPage()),
+              );
             },
             tooltip: 'material',
           ),
