@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/src/helpers/responsiveness.dart';
-import 'package:front_end/src/wigets/large_screen.dart';
-import 'package:front_end/src/wigets/small_screen.dart';
+import 'package:front_end/src/Pages/menu/menu_large_screen.dart';
+import 'package:front_end/src/Pages/menu/menu_small_screen.dart';
 import 'package:front_end/src/wigets/top_nav.dart';
-import '../../constants.dart';
+import '../../../constants.dart';
 
 class project_page extends StatelessWidget {
   const project_page({super.key});

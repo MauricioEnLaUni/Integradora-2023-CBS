@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Pages/dashboard.dart';
 import 'package:front_end/src/controllers/auth_controller.dart';
-import 'package:front_end/src/Pages/project_page.dart';
-import 'package:front_end/src/models/user_dto.dart';
+import 'package:front_end/src/Pages/menu/menu_page.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
@@ -11,7 +10,7 @@ class LogInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserManagement manager = UserManagement();
-    LoginDto credentials = LoginDto('', '');
+    AuthController authController = AuthController();
 
     return Column(
       children: [
@@ -40,9 +39,8 @@ class LogInPage extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            credentials.name = manager._usernameController.toString();
-            credentials.name = manager._passwordController.toString();
-            AuthController.loginWithServer(credentials);
+            authController.loginUser(
+                manager.username.toString(), manager.password.toString());
           },
           child: const Text('Login'),
         ),

@@ -1,5 +1,4 @@
 import 'dart:html';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:front_end/src/helpers/responsiveness.dart';
@@ -10,7 +9,7 @@ import 'package:front_end/src/wigets/custom_text.dart';
 
 AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
   AppBar(
-    leading: !ResponsiveWidget.isSmallScreen (context) ?
+    leading:
     Row(
       children: [
         Container(
@@ -18,10 +17,6 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
           child: Image.asset("assets/cbs.png", width: 28,),
         ) // Container
       ],
-    ) : IconButton (icon: Icon (Icons.menu),
-    onPressed: () { 
-      // key.currentState.openDrawer(); es el menu aun no esta
-    }
     ),
     elevation: 0,
     title: Row(
@@ -34,7 +29,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
 
         Stack(
           children: [
-          IconButton(icon: Icon(Icons.notifications, color: shadow.withOpacity(.7),),
+          IconButton(icon: Icon(Icons.add, color: shadow.withOpacity(.7),),
           onPressed: () {
               
           }
@@ -46,10 +41,6 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
               width: 12,
               height: 12,
               padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                // color: active,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: pk, width: 2)),
             ),
             )
         ]
