@@ -15,7 +15,7 @@ namespace Fictichos.Constructora.Model
         public bool Complete { get; set; }
         public string? Parent { get; } = string.Empty;
         public string Overseer { get; set; } = string.Empty;
-        public List<FTasks> Subtasks { get; set; } = new();
+        public List<string> Subtasks { get; set; } = new();
         public List<string> EmployeesAssigned { get; set; } = new();
         public List<string> Material { get; set; } = new();
         public Address? Address { get; set; }
@@ -42,19 +42,12 @@ namespace Fictichos.Constructora.Model
 
         public FTasksDto ToDto()
         {
-            List<FTasksDto>? list = new();
-            if (Subtasks.Any())
-            {
-                Subtasks.ForEach(e => {
-                    list.Add(e.ToDto());
-                });
-            }
             return new()
             {
                 Id = Id,
                 StartDate = StartDate,
                 Ends = Ends,
-                Subtasks = list,
+                Subtasks = Subtasks,
                 EmployeesAssigned = EmployeesAssigned,
                 Material = Material,
                 Address = Address
@@ -76,7 +69,6 @@ namespace Fictichos.Constructora.Model
 
             data.Material?.ForEach(Material.UpdateWithIndex);
             data.EmployeesAssigned?.ForEach(EmployeesAssigned.UpdateWithIndex);
-            data.Subtasks?.ForEach(Subtasks.UpdateObjectWithIndex<FTasks, NewFTaskDto, UpdatedFTaskDto>);
         }
     }
 }
