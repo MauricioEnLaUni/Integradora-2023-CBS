@@ -27,8 +27,13 @@ public class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDto>
         NewPersonDto result = data;
         
         if (result.Email is not null)
+        {
+            FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
+                .Filter
+                .Eq(x => x.value, result.Email);
             result.Email = await emailService
-                .GetEmailByValue(result.Email) is null ? result.Email : null;
+                .GetByAsync(filter) is null ? result.Email : null;
+        }
         if (result.Email is null && result.Phone is null) return null;
         
 

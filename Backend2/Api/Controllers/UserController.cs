@@ -9,6 +9,7 @@ using Fictichos.Constructora.Abstraction;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Middleware;
 using System.Security.Claims;
+using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -38,21 +39,22 @@ public class UserController : ControllerBase
         [FromBody] NewUserDto payload)
     {
         var filter = Builders<User>.Filter.Eq(e => e.Name, payload.Name);
-        bool nameIsTaken = await _userService
-            .GetByFilterAsync(filter) is not null;
-        if (nameIsTaken) return Conflict();
+        if (!_userService.NameIsUnique(payload.Name)) return Conflict();
         
         string newEmail = payload.Email;
         if (!newEmail.IsEmailFormatted()) return BadRequest();
 
-        var emailFilter = Builders<EmailContainer>.Filter.Eq(e => e.value, newEmail);
+        var emailFilter = Builders<EmailContainer>
+            .Filter
+            .Eq(e => e.value, newEmail);
         bool emailIsTaken = await _emailService
-            .GetEmailByValue(newEmail) is not null;
+            .GetByAsync(emailFilter) is not null;
         if (emailIsTaken) return Conflict();
 
         User raw = await _userService.InsertOneAsync(payload);
-
-        await _emailService.InsertOneAsync(raw.Id, newEmail);
+        
+        NewEmailDto wrapper = new() { owner = raw.Id, value = newEmail };
+        await _emailService.InsertOneAsync(wrapper);
         
         LoginSuccessDto data = raw.ToDto();
 
@@ -70,7 +72,7 @@ public class UserController : ControllerBase
         FilterDefinition<User> filter =
             Builders<User>.Filter.Eq(e => e.Name, payload.Name);
         
-        User? raw = await _userService.GetByFilterAsync(filter);
+        User? raw = await _userService.GetOneByAsync(filter);
         if (raw is null) return NotFound();
 
         bool passwordMatches = raw.ValidatePassword(payload.Password);
@@ -99,14 +101,14 @@ public class UserController : ControllerBase
         if (name is null) return BadRequest();
 
         var filter = Builders<User>.Filter.Eq(x => x.Name, name);
-        User? usr = await _userService.GetByFilterAsync(filter);
+        User? usr = await _userService.GetOneByAsync(filter);
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
         if (data.email is not null) _emailService.ValidateEmailUpdate(data.email);
 
         usr.UserSelfUpdate(data);
-        _userService.Update(filter, usr);
+        _userService.ReplaceOne(filter, usr);
         
         return NoContent();
     }
@@ -119,7 +121,7 @@ public class UserController : ControllerBase
     {
         var filter = Builders<User>.Filter
             .Eq(x => x.Name, data.name);
-        User? usr = await _userService.GetByFilterAsync(filter);
+        User? usr = await _userService.GetOneByAsync(filter);
         if (usr is null) return NotFound();
 
         if (data.basicFields.email is not null)
@@ -134,11 +136,16 @@ public class UserController : ControllerBase
     [HttpGet("emails")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetEmails(string id)
     {
-        User? test = await _userService.GetByIdAsync(id);
+        User? test = await _userService.GetOneByAsync(Filter.ById<User>(id));
+        if (test is null) return NotFound();
         
-        List<EmailContainer> result = await _emailService.GetEmailsByUser(id);
+        FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
+            .Filter
+            .Eq(x => x.owner, id);
+        List<EmailContainer> result = await _emailService.GetByAsync(filter);
 
         List<string> output = new();
         
@@ -155,7 +162,7 @@ public class UserController : ControllerBase
     public IActionResult GetUser(string name)
     {
         var filter = Builders<User>.Filter.Eq(x => x.Name, name);
-        User? info = _userService.GetByFilter(filter);
+        User? info = _userService.GetOneBy(filter);
         return Ok(info);
     }
 

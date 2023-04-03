@@ -1,41 +1,18 @@
+using MongoDB.Driver;
+
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
-using MongoDB.Driver;
 
 namespace Fictichos.Constructora.Repository;
 
 public class EmailService
+    : BaseService<EmailContainer, NewEmailDto, UpdatedEmailDto>
 {
-    private readonly IMongoCollection<EmailContainer> _emailCollection;
+    private const string MAINCOLLECTION = "emails";
 
     public EmailService(MongoSettings container)
-    {
-        _emailCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<EmailContainer>("email");
-    }
-
-    public async Task<List<EmailContainer>> GetEmailsByUser(string data)
-    {
-        List<EmailContainer> result = new();
-        if (data is null) return result;
-
-        FilterDefinition<EmailContainer> filter = Builders<EmailContainer>.Filter
-            .Eq(x => x.owner, data);
-        result = await _emailCollection.GeyByFilterAsync(filter);
-        return result;
-    }
-
-    public async Task<EmailContainer?> GetEmailByValue(string data)
-    {
-        if (data is null) return null;
-        
-        FilterDefinition<EmailContainer> filter = Builders<EmailContainer>.Filter
-            .Eq(x => x.value, data);
-        EmailContainer? result = await _emailCollection.GetOneByFilterAsync(filter);
-
-        return result;
-    }
+        : base(container, MAINCOLLECTION) { }
 
     public async void ValidateEmailUpdate(
         List<UpdateList<string>> data)
@@ -50,14 +27,12 @@ public class EmailService
                 data.Remove(email);
                 continue;
             }
-            if (await GetEmailByValue(email.NewItem) != null)
+            FilterDefinition<EmailContainer> filter =
+                Builders<EmailContainer>
+                    .Filter
+                    .Eq(x => x.Id, email.NewItem);
+            if (await GetByAsync(filter) != null)
                 data.Remove(email);
         }
-    }
-
-    public async Task InsertOneAsync(string owner, string value)
-    {
-        EmailContainer data = new(owner, value);
-        await _emailCollection.InsertOneAsync(data);
     }
 }
