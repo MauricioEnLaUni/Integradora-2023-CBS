@@ -19,7 +19,7 @@ public record UpdatedFTaskDto : DtoBase
     public string Parent { get; set; } = string.Empty;
     public string? Name { get; set; }
     public DateTime? StartDate { get; set; }
-    public List<UpdateList<string>>? Subtasks
+    public List<IndexedObjectUpdate<NewFTaskDto, UpdatedFTaskDto>>? Subtasks
         { get; set; }
     public List<UpdateList<string>>? Material { get; set; }
     public string? Overseer { get; set; }
@@ -48,8 +48,8 @@ public record FTasksDto
     public string Id { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime Ends { get; set; }
-    public string Parent { get; set; } = string.Empty;
-    public List<string> Subtasks { get; set; } = new();
+    public string? Parent { get; set; }
+    public List<FTasksDto> Subtasks { get; set; } = new();
     public List<string> EmployeesAssigned { get; set; } = new();
     public List<string> Material { get; set; } = new();
     public Address? Address { get; set; }

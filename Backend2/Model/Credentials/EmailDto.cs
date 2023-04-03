@@ -8,8 +8,8 @@ public record NewEmailDto
 
 public record UpdatedEmailDto : DtoBase
 {
-    internal string? owner;
-    internal string? value;
+    internal string? owner = string.Empty;
+    internal string? value = string.Empty;
 }
 
 public record EmailContainerDto

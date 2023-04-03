@@ -19,7 +19,7 @@ namespace Fictichos.Constructora.Dto
         public DateTime CreatedAt { get; set; }
         public List<string> Roles { get; set; } = new();
         public List<string> Email { get; set; } = new();
-        public byte[]? Avatar;
+        public byte[]? Avatar { get; set; }
     }
 
     public record NewUserDto
