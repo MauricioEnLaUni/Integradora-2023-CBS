@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_end/constants.dart';
 import 'package:front_end/src/wigets/custom_text.dart';
 import '../models/user_dto.dart';
+import '../Pages/menu/menu_page.dart';
 
 AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
     AppBar(
@@ -13,7 +14,13 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
               "assets/cbs.png",
               width: 28,
             ),
-          ) // Container
+          ),
+          Expanded(
+            child: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {},
+            ),
+          )
         ],
       ),
       elevation: 0,
@@ -62,7 +69,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
             width: 24,
           ),
           const CustomText(
-            text: (usr.Name),
+            text: ("usr.Name"),
             color: Colors.blueGrey,
           ),
           const SizedBox(
