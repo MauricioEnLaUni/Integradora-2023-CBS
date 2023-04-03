@@ -13,7 +13,7 @@ namespace Fictichos.Constructora.Model
         public string Responsible { get; private set; } = string.Empty;
         public DateTime Starts { get; private set; } = DateTime.Now;
         public DateTime Ends { get; private set; }
-        public Account PayHistory { get; private set; } = new();
+        public string PayHistory { get; private set; } = string.Empty;
         public List<FTasks> Tasks { get; private set; } = new();
 
         public Project() { }
@@ -46,9 +46,9 @@ namespace Fictichos.Constructora.Model
             Name = data.Name ?? Name;
             Ends = data.Ends ?? Ends;
             Responsible = data.Responsible ?? Responsible;
+            PayHistory = data.PayHistory ?? PayHistory;
             data.Tasks?.ForEach(Tasks.UpdateObjectWithIndex<FTasks, NewFTaskDto, UpdatedFTaskDto>);
 
-            if (data.PayHistory is not null) PayHistory.Update(data.PayHistory);
             ModifiedAt = DateTime.Now;
         }
     }

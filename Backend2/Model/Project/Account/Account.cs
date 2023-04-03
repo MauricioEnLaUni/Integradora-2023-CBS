@@ -1,5 +1,3 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Dto;
@@ -54,7 +52,14 @@ namespace Fictichos.Constructora.Model
         {
             Name = data.Name ?? Name;
             Owner = data.Owner ?? Owner;
+            ModifiedAt = DateTime.Now;
+
             data.Payments?.ForEach(Payments.UpdateObjectWithIndex<Payment, NewPaymentDto, UpdatedPaymentDto>);
+        }
+
+        public void ClearPayments()
+        {
+            Payments = new();
         }
     }
 }
