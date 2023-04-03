@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/constants.dart';
 import 'package:front_end/src/wigets/custom_text.dart';
+import '../models/user_dto.dart';
 
 AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
     AppBar(
@@ -61,7 +62,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
             width: 24,
           ),
           const CustomText(
-            text: "nombre",
+            text: (usr.Name),
             color: Colors.blueGrey,
           ),
           const SizedBox(
