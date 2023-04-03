@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Pages/dashboard.dart';
 import 'package:front_end/src/controllers/auth_controller.dart';
-import 'package:front_end/src/Pages/project/project_page.dart';
+import 'package:front_end/src/Pages/menu/menu_page.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});

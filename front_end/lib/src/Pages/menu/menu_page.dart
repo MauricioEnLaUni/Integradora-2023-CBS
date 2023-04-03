@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/src/helpers/responsiveness.dart';
-import 'package:front_end/src/Pages/project/project_large_screen.dart';
-import 'package:front_end/src/Pages/project/project_small_screen.dart';
+import 'package:front_end/src/Pages/menu/menu_large_screen.dart';
+import 'package:front_end/src/Pages/menu/menu_small_screen.dart';
 import 'package:front_end/src/wigets/top_nav.dart';
 import '../../../constants.dart';
 
