@@ -30,10 +30,11 @@ public class ProjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(
-            await _projectService
-            .GetByFilterAsync(Filter.Empty<Project>())
-        );
+        List<Project> raw = await _projectService
+            .GetByAsync(Filter.Empty<Project>());
+        List<ProjectDto> result = _projectService.ToDtoList(raw);
+        
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
@@ -41,7 +42,7 @@ public class ProjectController : ControllerBase
     {
         FilterDefinition<Project> filter = Builders<Project>
             .Filter.Eq(x => x.Id, id);
-        Project? raw = await _projectService.GetOneByFilterAsync(filter);
+        Project? raw = await _projectService.GetOneByAsync(filter);
         if (raw is null) return NotFound();
 
         return Ok(raw.ToDto());
@@ -76,7 +77,7 @@ public class ProjectController : ControllerBase
             .Filter
             .Eq(x => x.Id, data.Id);
         Project? original = await _projectService
-            .GetOneByFilterAsync(projectFilter);
+            .GetOneByAsync(projectFilter);
         if (original is null) return NotFound();
 
         HTTPResult<UpdatedProjectDto?> projectValidation =
@@ -89,7 +90,7 @@ public class ProjectController : ControllerBase
             .Filter
             .Eq(x => x.Id, validated.Responsible);
         Person? responsible = await _personService
-            .GetOneByFilterAsync(respFilter);
+            .GetOneByAsync(respFilter);
         validated.Responsible = responsible?.Id;
         
         return NoContent();

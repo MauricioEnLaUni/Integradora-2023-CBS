@@ -56,9 +56,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             {
                 BsonClassMap.RegisterClassMap<Project>(classMap => {
                     classMap.MapMember(p => p.Name).SetElementName("name");
-                    classMap.MapMember(p => p.Responsible)
-                        .SetElementName("responsible")
-                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                    classMap.MapMember(p => p.Responsible).SetElementName("responsible");
                     classMap.MapMember(p => p.Starts).SetElementName("starts");
                     classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.PayHistory).SetElementName("payments");
@@ -197,9 +195,6 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.SalaryHistory).SetElementName("salaryHistory");
                     classMap.MapMember(p => p.Role).SetElementName("role");
                     classMap.MapMember(p => p.Area).SetElementName("area");
-                    classMap.MapMember(p => p.Oversees)
-                        .SetElementName("oversees")
-                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.Material).SetElementName("material");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
                     classMap.MapMember(p => p.Responsibilities).SetElementName("responsibilities");
@@ -221,9 +216,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.InternalKey).SetElementName("key");
                     classMap.MapMember(p => p.Charges).SetElementName("charges");
                     classMap.MapMember(p => p.ScheduleHistory).SetElementName("scheduleHistory");
-                    classMap.MapMember(p => p.Assignments)
-                        .SetElementName("assignments")
-                        .SetSerializer(new StringSerializer(BsonType.ObjectId));
+                    classMap.MapMember(p => p.Assignments).SetElementName("assignments");
                 });
             }
         }

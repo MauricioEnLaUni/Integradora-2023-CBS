@@ -16,7 +16,7 @@ public class AccountController : ControllerBase
     private readonly AccountService _accountService;
     private readonly ProjectService _projectService;
 
-    internal AccountController(
+    public AccountController(
         AccountService accounts,
         ProjectService projects)
     {
@@ -36,12 +36,19 @@ public class AccountController : ControllerBase
             .GetByAsync(Filter.Empty<Account>());
         Project? owner = await _projectService
             .GetOneByAsync(Filter.ById<Project>(data.Owner));
-        HTTPResult<Account> validation = _accountService
+        HTTPResult<NewAccountDto> validation = _accountService
             .ValidateNew(accounts, data, owner);
         if (validation.Code == 404) return NotFound();
         if (validation.Code == 409) return Conflict();
 
-        Account? newItem = validation.Value;
+        Account newItem = _accountService.InsertOne(validation.Value!);
+        UpdateDefinition<Project> projectUpdate = Builders<Project>
+            .Update
+            .Set(x => x.ModifiedAt, DateTime.Now)
+            .Set(x => x.PayHistory, newItem.Id);
+        UpdateDto<Project> wrapper =
+            new(Filter.ById<Project>(owner!.Id), projectUpdate);
+        _projectService.Update(wrapper);
         
         return CreatedAtAction(
             actionName: nameof(GetById),

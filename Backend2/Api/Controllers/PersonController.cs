@@ -25,7 +25,7 @@ public class PersonController : ControllerBase
         FilterDefinition<Person> filter = Builders<Person>
         .Filter
         .Where(_ => true);
-        return _personService.GetByFilter(filter);
+        return _personService.GetBy(filter);
     }
 
     [HttpGet("{id}")]
@@ -36,7 +36,7 @@ public class PersonController : ControllerBase
         FilterDefinition<Person> filter = Builders<Person>
             .Filter
             .Eq(x => x.Id, id);
-        Person? output = _personService.GetOneByFilter(filter);
+        Person? output = _personService.GetOneBy(filter);
         if (output is null) return NotFound();
 
         return Ok(output);
@@ -49,7 +49,7 @@ public class PersonController : ControllerBase
         FilterDefinition<Person> filter = Builders<Person>
             .Filter
             .Where(x => x.Employed != null);
-        return Ok(_personService.GetByFilter(filter));
+        return Ok(_personService.GetBy(filter));
     }
 
     [HttpGet("{project}")]
@@ -60,7 +60,7 @@ public class PersonController : ControllerBase
         FilterDefinition<Project> projectFilter = Builders<Project>
             .Filter
             .Eq(x => x.Id, id);
-        Project? project = _projectService.GetOneByFilter(projectFilter);
+        Project? project = _projectService.GetOneBy(projectFilter);
         if (project is null) return NotFound();
 
         return Ok();
@@ -74,6 +74,6 @@ public class PersonController : ControllerBase
         FilterDefinition<Person> filter = Builders<Person>
             .Filter
             .Eq(x => x.Relation, relation);
-        return Ok(_personService.GetByFilter(filter));
+        return Ok(_personService.GetBy(filter));
     }
 }

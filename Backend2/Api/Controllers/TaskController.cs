@@ -18,7 +18,7 @@ public class TaskController : ControllerBase
     private readonly PersonService _peopleService;
     private readonly ProjectService _projectService;
     private readonly MaterialService _materialService;
-    internal TaskController(
+    public TaskController(
         FTaskService service,
         PersonService people,
         ProjectService project,

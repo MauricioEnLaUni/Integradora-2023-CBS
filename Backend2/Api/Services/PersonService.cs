@@ -7,13 +7,13 @@ using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository;
 
-internal class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDto>
+public class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDto>
 {
     private const string MAINCOLLECTION = "people";
     private readonly TimeTrackerService timeService;
     private readonly EmailService emailService;
 
-    internal PersonService(MongoSettings container, EmailService email, TimeTrackerService time)
+    public PersonService(MongoSettings container, EmailService email, TimeTrackerService time)
         : base(container, MAINCOLLECTION)
     {
         timeService = time;
@@ -81,11 +81,6 @@ internal class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDt
         if (sanitized.HoursWeeklyCap > 48) sanitized.HoursWeeklyCap = 48;
 
         return sanitized;
-    }
-
-    internal void Update(UpdateDto<Person> data)
-    {
-        _mainCollection.UpdateOne(data.filter, data.update);
     }
 
     internal async Task UpdateAsync(UpdateDto<Person> data)

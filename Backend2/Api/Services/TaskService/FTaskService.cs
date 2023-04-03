@@ -6,12 +6,12 @@ using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository;
 
-internal class FTaskService
+public class FTaskService
     : BaseService<FTasks, NewFTaskDto, UpdatedFTaskDto>
 {
     private const string MAINCOLLECTION = "tasks";
 
-    internal FTaskService(MongoSettings container)
+    public FTaskService(MongoSettings container)
         : base(container, MAINCOLLECTION) { }
 
     internal HTTPResult<NewFTaskDto> ValidateNew(
@@ -111,10 +111,5 @@ internal class FTaskService
         });
 
         return result;
-    }
-
-    internal void Update(UpdateDto<FTasks> data)
-    {
-        _mainCollection.UpdateOne(data.filter, data.update);
     }
 }

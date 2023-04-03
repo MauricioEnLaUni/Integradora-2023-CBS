@@ -26,6 +26,5 @@ namespace Fictichos.Constructora.Dto
         public DateTime? Starts { get; set; }
         public DateTime? Ends { get; set; }
         public string? PayHistory { get; set; }
-        public Account? Transferred { get; set; }
     }
 }

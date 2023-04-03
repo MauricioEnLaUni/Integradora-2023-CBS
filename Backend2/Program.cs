@@ -26,6 +26,7 @@ builder.Services.AddSingleton<TimeTrackerService>();
 builder.Services.AddSingleton<PersonService>();
 builder.Services.AddSingleton<MaterialCategoryService>();
 builder.Services.AddSingleton<MaterialService>();
+builder.Services.AddSingleton<AccountService>();
 builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 
 var AllowOrigins = "_allowOrigins";

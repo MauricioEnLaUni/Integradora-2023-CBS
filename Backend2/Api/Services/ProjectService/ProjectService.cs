@@ -2,35 +2,23 @@ using MongoDB.Driver;
 
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
-using Fictichos.Constructora.Utilities.MongoDB;
 using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository;
 
-internal class ProjectService
+public class ProjectService
     : BaseService<Project, string, UpdatedProjectDto>
 {
     private const string MAINCOLLECTION = "projects";
-    private readonly IMongoCollection<Project> _projectCollection;
-    private readonly PersonService _personService;
-    private readonly MaterialService _materialService;
 
-    internal ProjectService(
-        MongoSettings container,
-        PersonService person,
-        MaterialService material) : base(container, MAINCOLLECTION)
-    {
-        _projectCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<Project>("projects");
-        _personService = person;
-        _materialService = material;
-    }
+    public ProjectService(
+        MongoSettings container) : base(container, MAINCOLLECTION) { }
 
     public async Task<bool> NameIsUnique(string data)
     {
         FilterDefinition<Project> filter = Builders<Project>.Filter
             .Eq(x => x.Name, data);
-        return await _projectCollection.Find(filter)
+        return await _mainCollection.Find(filter)
             .SingleOrDefaultAsync() is null;
         
     }
@@ -53,9 +41,8 @@ internal class ProjectService
         };
     }
 
-    public async Task<HTTPResult<UpdatedProjectDto?>> ValidateUpdate(
-        UpdatedProjectDto data,
-        Project old)
+    public async Task<HTTPResult<UpdatedProjectDto?>>
+        ValidateUpdate(UpdatedProjectDto data, Project old)
     {
         if (UpdateIsEmpty(data)) return new() { Code = 400 };
 
@@ -63,9 +50,10 @@ internal class ProjectService
         output.Name = await ValidateName(data.Name);
         output.Starts = ValidateStart(old, data.Starts);
         output.Ends = data.Ends;
-
-        output.PayHistory =
-            await ValidateAccount(old.PayHistory, output.PayHistory);
+        if (output.Starts is not null
+            && output.Ends is not null
+            && ValidateDates(output.Starts, output.Ends))
+                return new() { Code = 400 };
 
         return new() { Code = 200, Value = output };
     }
@@ -100,48 +88,22 @@ internal class ProjectService
         return data;
     }
 
-    #region Account Validation
-
-    private async Task<UpdatedAccountDto?>
-        ValidateAccount(Account oldAccount, UpdatedAccountDto? data)
+    internal bool ValidateDates(DateTime? start, DateTime? ends)
     {
-        if (data is null) return null;
+        if (start is null || ends is null) return false;
+        DateTime st = (DateTime)start;
+        DateTime end = (DateTime)ends;
+        if (DateTime.Compare(st, end) >= 0) return false;
 
-        UpdatedAccountDto validated = data;
-        Project? newOwner = await ValidateAccountOwner(data.Owner);
-
-        validated.Payments = AccountManager.ValidatePayments(data.Payments);
-        oldAccount.Update(validated);
-
-        if (newOwner is null)
-        {
-            validated.Owner = null;
-        }
-        else
-        {
-            UpdatedProjectDto pUp = new() { Id = newOwner.Id, Transferred = oldAccount };
-            newOwner.Update(pUp);
-            FilterDefinition<Project> filter = Builders<Project>.Filter
-                .Eq(x => x.Id, pUp.Id);
-            _projectCollection.ReplaceOne(filter, newOwner);
-        }
-
-        return validated;
+        return true;
     }
 
-    private async Task<Project?> ValidateAccountOwner(string? data)
+    internal List<ProjectDto> ToDtoList(List<Project> data)
     {
-        if (data is null) return null;
-
-        FilterDefinition<Project> filter = Builders<Project>.Filter
-            .Eq(x => x.Id, data);
-        Project? newProject = await _projectCollection
-            .GetOneByFilterAsync(filter);
-        if (newProject is null) return null;
-        if (newProject.PayHistory is not null) return null;
-
-        return newProject;
+        List<ProjectDto> result = new();
+        data.ForEach(e => {
+            result.Add(e.ToDto());
+        });
+        return result;
     }
-
-    #endregion
 }

@@ -5,13 +5,13 @@ using MongoDB.Driver;
 
 namespace Fictichos.Constructora.Repository;
 
-internal class BaseService<TModel, TNewDto, TUpdateDto>
+public class BaseService<TModel, TNewDto, TUpdateDto>
     where TModel : BaseEntity, IQueryMask<TModel, TNewDto, TUpdateDto>, new()
     where TUpdateDto : DtoBase
 {
     protected readonly IMongoCollection<TModel> _mainCollection;
 
-    internal BaseService(
+    public BaseService(
         MongoSettings container, string mainCollectionName)
     {
         _mainCollection = container.Client.GetDatabase("cbs")
@@ -91,5 +91,10 @@ internal class BaseService<TModel, TNewDto, TUpdateDto>
     internal void ReplaceOne(FilterDefinition<TModel> filter, TModel data)
     {
         _mainCollection.ReplaceOne(filter, data);
+    }
+
+    internal void Update(UpdateDto<TModel> data)
+    {
+        _mainCollection.UpdateOne(data.filter, data.update);
     }
 }

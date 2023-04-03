@@ -4,11 +4,11 @@ using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Repository;
 
-internal class AccountService
+public class AccountService
     : BaseService<Account, NewAccountDto, UpdatedAccountDto>
 {
     private const string MAINCOLLECTION = "accounts";
-    internal AccountService(MongoSettings container)
+    public AccountService(MongoSettings container)
         : base(container, MAINCOLLECTION) { }
 
     internal List<IndexedObjectUpdate<NewPaymentDto, UpdatedPaymentDto>>?
@@ -34,7 +34,7 @@ internal class AccountService
         return true;
     }
 
-    internal HTTPResult<Account> ValidateNew(
+    internal HTTPResult<NewAccountDto> ValidateNew(
         List<Account> accounts,
         NewAccountDto data,
         Project? owner)
@@ -43,9 +43,7 @@ internal class AccountService
         if (!NameIsUnique(data.Name, accounts.Select(x => x.Id).ToList()))
             return new() { Code = 409 };
         
-        Account item = new(data);
-        
-        return new() { Code = 200, Value = item };
+        return new() { Code = 200, Value = data };
     }
 
     internal UpdatedAccountDto ValidateUpdate(
