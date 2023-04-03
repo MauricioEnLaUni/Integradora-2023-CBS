@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'ftasks_model.dart';
 
 @JsonSerializable()
 class UserInfoDto {
