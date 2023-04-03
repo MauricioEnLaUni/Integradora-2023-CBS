@@ -1,9 +1,9 @@
-using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Model;
 
 namespace Fictichos.Constructora.Abstraction
 {
     public interface IJwtProvider
     {
-        public string Generate(LoginResponseDto usr);
+        public string Generate(User usr);
     }
 }

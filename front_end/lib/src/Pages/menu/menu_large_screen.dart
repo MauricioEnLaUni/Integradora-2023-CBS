@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/icon.dart';
 import 'package:front_end/src/Pages/material/material_page.dart';
 import 'package:front_end/src/Pages/person/person_page.dart';
 
@@ -23,11 +22,11 @@ class LargeScreen extends StatelessWidget {
             icon: const Icon(
               Icons.person,
             ),
-            onPressed: () {  
-              Navigator.push(  
-                context,  
-                MaterialPageRoute(builder: (context) => person_page()),  
-              );  
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => person_page()),
+              );
             },
             tooltip: 'persona',
           ),
@@ -36,11 +35,11 @@ class LargeScreen extends StatelessWidget {
             icon: const Icon(
               Icons.construction,
             ),
-            onPressed: () {  
-              Navigator.push(  
-                context,  
-                MaterialPageRoute(builder: (context) => FMaterialPage()),  
-              );  
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FMaterialPage()),
+              );
             },
             tooltip: 'material',
           ),

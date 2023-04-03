@@ -75,12 +75,17 @@ public class UserController : ControllerBase
         if (!passwordMatches) return BadRequest();
 
         if (!raw.Active) return Forbid();
-        
-        LoginResponseDto response = new(raw, string.Empty);
 
-        response.token = _jwtProvider.Generate(response);
+        string token = _jwtProvider.Generate(raw);
+        CookieOptions cookieOptions = new()
+        {
+            HttpOnly = true,
+            Expires = DateTime.Now.AddMinutes(30),
+            Secure = true
+        };
+        Response.Cookies.Append("Fictichos_Login_Token", token, cookieOptions);
 
-        return Ok(response);
+        return Ok();
     }
     
     [HttpPatch("self")]

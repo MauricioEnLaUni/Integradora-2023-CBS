@@ -1,8 +1,4 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
-import 'package:front_end/src/Pages/menu/menu_large_screen.dart';
-import 'package:front_end/src/Pages/menu/menu_small_screen.dart';
 
 const int largeScreenSize = 800;
 const int smallScreenSize = 360;
@@ -12,9 +8,7 @@ class ResponsiveWidget extends StatelessWidget {
   final Widget smallScreen;
 
   const ResponsiveWidget(
-      {super.key,
-      required this.largeScreen,
-      required this.smallScreen});
+      {super.key, required this.largeScreen, required this.smallScreen});
 
   static bool isSmallScreen(BuildContext context) =>
       MediaQuery.of(context).size.width < largeScreenSize;
@@ -24,12 +18,11 @@ class ResponsiveWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder (builder: (context, constraints) {
-      double _width = constraints.maxWidth;
-      if(_width >= largeScreenSize) {
+    return LayoutBuilder(builder: (context, constraints) {
+      double width = constraints.maxWidth;
+      if (width >= largeScreenSize) {
         return largeScreen;
-      }
-      else{
+      } else {
         return smallScreen;
       }
     });

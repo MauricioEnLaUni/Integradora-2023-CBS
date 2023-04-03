@@ -5,8 +5,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Abstraction;
+using Fictichos.Constructora.Model;
 
 namespace Fictichos.Constructora.Auth
 {
@@ -19,12 +19,12 @@ namespace Fictichos.Constructora.Auth
             _options = options.Value;
         }
 
-        public string Generate(LoginResponseDto usr)
+        public string Generate(User usr)
         {
             List<Claim> claims = new()
             {
-                new(JwtRegisteredClaimNames.Sub, usr.id.ToString()),
-                new(JwtRegisteredClaimNames.UniqueName, usr.name.ToString())
+                new(JwtRegisteredClaimNames.Sub, usr.Id),
+                new(JwtRegisteredClaimNames.UniqueName, usr.Name)
             };
 
             var signingCredentials = new SigningCredentials(
