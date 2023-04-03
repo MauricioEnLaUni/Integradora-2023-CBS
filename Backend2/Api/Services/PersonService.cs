@@ -15,7 +15,7 @@ public class PersonService
     public PersonService(MongoSettings container, EmailService email, TimeTrackerService time)
         : base(container, MAINCOLLECTION) { }
     
-    public async Task<NewPersonDto?> ValidateNewPerson(NewPersonDto data)
+    public NewPersonDto? ValidateNewPerson(NewPersonDto data)
     {
         if (data is null) return null;
 
