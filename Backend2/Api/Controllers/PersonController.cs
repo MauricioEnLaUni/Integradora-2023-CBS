@@ -1,6 +1,10 @@
-using Fictichos.Constructora.Model;
 using Microsoft.AspNetCore.Mvc;
+
 using MongoDB.Driver;
+
+using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Model;
+using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository;
 
@@ -10,22 +14,31 @@ public class PersonController : ControllerBase
 {
     private readonly PersonService _personService;
     private readonly ProjectService _projectService;
+    private readonly TimeTrackerService _time;
+    private readonly EmailService _emailService;
 
     public PersonController(
         PersonService person,
-        ProjectService project)
+        ProjectService project,
+        EmailService email,
+        TimeTrackerService time)
     {
         _personService = person;
         _projectService = project;
+        _time = time;
+        _emailService = email;
     }
 
     [HttpGet]
-    public List<Person> GetAll()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetAll()
     {
-        FilterDefinition<Person> filter = Builders<Person>
-        .Filter
-        .Where(_ => true);
-        return _personService.GetBy(filter);
+        List<Person> raw = _personService.GetBy(Filter.Empty<Person>());
+        List<PersonDto> result = new();
+        raw.ForEach(e => {
+            result.Add(e.ToDto());
+        });
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
@@ -33,13 +46,11 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(string id)
     {
-        FilterDefinition<Person> filter = Builders<Person>
-            .Filter
-            .Eq(x => x.Id, id);
-        Person? output = _personService.GetOneBy(filter);
+        Person? output = _personService
+            .GetOneBy(Filter.ById<Person>(id));
         if (output is null) return NotFound();
 
-        return Ok(output);
+        return Ok(output.ToDto());
     }
 
     [HttpGet("employee")]
@@ -48,7 +59,7 @@ public class PersonController : ControllerBase
     {
         FilterDefinition<Person> filter = Builders<Person>
             .Filter
-            .Where(x => x.Employed != null);
+            .Exists(x => x.Employed);
         return Ok(_personService.GetBy(filter));
     }
 
@@ -57,13 +68,21 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetByProject(string id)
     {
-        FilterDefinition<Project> projectFilter = Builders<Project>
-            .Filter
-            .Eq(x => x.Id, id);
-        Project? project = _projectService.GetOneBy(projectFilter);
+        Project? project = _projectService
+            .GetOneBy(Filter.ById<Project>(id));
         if (project is null) return NotFound();
 
-        return Ok();
+        FilterDefinition<Person> filter = Builders<Person>
+            .Filter
+            .ElemMatch(x => x.Employed!.Assignments, project.Id);
+        List<Person> raw = _personService
+            .GetBy(filter);
+        List<PersonDto> result = new();
+        raw.ForEach(e => {
+            result.Add(e.ToDto());
+        });
+
+        return Ok(result);
     }
 
     [HttpGet("{relation}")]

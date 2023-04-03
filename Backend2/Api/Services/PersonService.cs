@@ -7,18 +7,13 @@ using Fictichos.Constructora.Dto;
 
 namespace Fictichos.Constructora.Repository;
 
-public class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDto>
+public class PersonService
+    : BaseService<Person, NewPersonDto, UpdatedPersonDto>
 {
     private const string MAINCOLLECTION = "people";
-    private readonly TimeTrackerService timeService;
-    private readonly EmailService emailService;
 
     public PersonService(MongoSettings container, EmailService email, TimeTrackerService time)
-        : base(container, MAINCOLLECTION)
-    {
-        timeService = time;
-        emailService = email;
-    }
+        : base(container, MAINCOLLECTION) { }
     
     public async Task<NewPersonDto?> ValidateNewPerson(NewPersonDto data)
     {
@@ -26,31 +21,14 @@ public class PersonService : BaseService<Person, NewPersonDto, UpdatedPersonDto>
 
         NewPersonDto result = data;
         
-        if (result.Email is not null)
-        {
-            FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
-                .Filter
-                .Eq(x => x.value, result.Email);
-            result.Email = await emailService
-                .GetByAsync(filter) is null ? result.Email : null;
-        }
-        if (result.Email is null && result.Phone is null) return null;
-        
 
 
         return result;
     }
 
-    public bool IsLegal(DateTime DOB)
-    {
-        return timeService.Over(0, DOB);
-    }
-
     public NewEmployeeDto? ValidateEmployee(NewEmployeeDto data)
     {
         if (data is null) return null;
-
-        if (!IsLegal(data.DOB)) return null;
 
         return data;
     }
