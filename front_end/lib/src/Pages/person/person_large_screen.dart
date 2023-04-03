@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide State;
+import 'package:http/http.dart' as http;
 
 class person_large_Screen extends StatefulWidget {
   const person_large_Screen({Key? key}) : super(key: key);
   @override
   _person_large_ScreenState createState() => _person_large_ScreenState();
+}
+
+class PersonController {
+  static getPerson() async {
+    const String url = 'localhost:5236';
+
+    var res = await http.get(Uri.http(url, 'Person'),
+        headers: {"Content-type": "application/json"});
+    if (res.statusCode == 200) return res.body;
+    return res.statusCode;
+  }
 }
 
 class _person_large_ScreenState extends State<person_large_Screen> {
@@ -17,21 +29,6 @@ class _person_large_ScreenState extends State<person_large_Screen> {
   @override
   void initState() {
     super.initState();
-    _connectToDb();
-  }
-
-  void _connectToDb() async {
-    await _db.open();
-    print('Connected to database');
-    final collection = _db.collection('personas');
-    final results = await collection.find().toList();
-    setState(() {
-      _data = results.map((result) => result).toList();
-      _controllers = List.generate(
-        _data.length,
-        (index) => TextEditingController(),
-      );
-    });
   }
 
   void _toggleEditing() {

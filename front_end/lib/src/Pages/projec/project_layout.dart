@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide State;
+import 'package:http/http.dart' as http;
 
-class person_large_Screen extends StatefulWidget {
-  const person_large_Screen({Key? key}) : super(key: key);
+class project_large_Screen extends StatefulWidget {
+  const project_large_Screen({Key? key}) : super(key: key);
   @override
-  _person_large_ScreenState createState() => _person_large_ScreenState();
+  _project_large_ScreenState createState() => _project_large_ScreenState();
 }
 
-class _person_large_ScreenState extends State<person_large_Screen> {
+class ProjectController {
+  static getProject() async {
+    const String url = 'localhost:5236';
+
+    var res = await http.get(Uri.http(url, 'Project'),
+        headers: {"Content-type": "application/json"});
+    if (res.statusCode == 200) return res.body;
+    return res.statusCode;
+  }
+}
+
+class _project_large_ScreenState extends State<project_large_Screen> {
   final Db _db = Db('mongodb://localhost:27017/prueba');
   List<Map<String, dynamic>> _data = [];
   bool _editingEnabled = false;
@@ -22,7 +34,7 @@ class _person_large_ScreenState extends State<person_large_Screen> {
 
   void _connectToDb() async {
     await _db.open();
-    final collection = _db.collection('personas');
+    final collection = _db.collection('project');
     final results = await collection.find().toList();
     setState(() {
       _data = results.map((result) => result).toList();
@@ -40,7 +52,7 @@ class _person_large_ScreenState extends State<person_large_Screen> {
   }
 
   Future<void> _updateDocument(int index) async {
-    final collection = _db.collection('personas');
+    final collection = _db.collection('project');
     final document = _data[index];
     final updatedDocument = {
       ...document,
@@ -57,10 +69,10 @@ class _person_large_ScreenState extends State<person_large_Screen> {
     return DataTable(
       columns: const [
         DataColumn(label: Text('Nombre')),
-        DataColumn(label: Text('Proyecto')),
+        DataColumn(label: Text('persona a cargo')),
         DataColumn(label: Text('puesto')),
         DataColumn(label: Text('No se')),
-        DataColumn(label: Text('No se')),
+        DataColumn(label: Text('Cuentas +-')),
         DataColumn(label: Text('Acciones')),
       ],
       rows: _data.asMap().entries.map((entry) {

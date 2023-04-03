@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:front_end/src/Pages/material/material_page.dart';
+import '../material/material_page.dart';
+import 'package:front_end/src/Pages/menu/menu_page.dart';
 import 'package:front_end/src/Pages/person/person_page.dart';
+import '../projec/project_page.dart';
 
 const IconData person = IconData(0xe491, fontFamily: 'MaterialIcons');
 const IconData construction = IconData(0xe189, fontFamily: 'MaterialIcons');
@@ -49,19 +51,12 @@ class LargeScreen extends StatelessWidget {
               Icons.book_sharp,
             ),
             onPressed: () {
-              //
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => project_page()),
+              );
             },
             tooltip: 'proyectos',
-          ),
-          IconButton(
-            iconSize: 60,
-            icon: const Icon(
-              Icons.account_balance_wallet,
-            ),
-            onPressed: () {
-              //
-            },
-            tooltip: 'cuentas',
           ),
         ],
       ),

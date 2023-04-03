@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Pages/material/material_page.dart';
+import 'package:front_end/src/Pages/menu/menu_page.dart';
 import 'package:front_end/src/Pages/person/person_page.dart';
 
 class SmallScreen extends StatelessWidget {
@@ -43,19 +44,12 @@ class SmallScreen extends StatelessWidget {
               Icons.book_sharp,
             ),
             onPressed: () {
-              //
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => project_page()),
+              );
             },
             tooltip: 'proyectos',
-          ),
-          IconButton(
-            iconSize: 90,
-            icon: const Icon(
-              Icons.account_balance_wallet,
-            ),
-            onPressed: () {
-              //
-            },
-            tooltip: 'cuentas',
           ),
         ],
       ),

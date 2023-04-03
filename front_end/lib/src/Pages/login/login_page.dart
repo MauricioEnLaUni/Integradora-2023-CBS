@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../controllers/auth_controller.dart';
 import '../../models/user_dto.dart';
 import '../dashboard.dart';
+import '../menu/menu_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -92,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                                       width: 20,
                                       margin: const EdgeInsets.only(left: 20),
                                       child: const CircularProgressIndicator(),
-                                    )
+                                    ),
                                 ],
                               ),
                             ),
@@ -100,6 +101,18 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(
                             height: 20,
                           ),
+                          Container(
+                              margin: const EdgeInsets.only(top: 30.0),
+                              child: ElevatedButton(
+                                  child: const Text('Navigate to a new screen'),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              projectLayout()),
+                                    );
+                                  }))
                         ],
                       ),
                     ),

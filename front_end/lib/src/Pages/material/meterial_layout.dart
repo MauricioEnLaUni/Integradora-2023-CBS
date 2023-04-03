@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide State;
 
-class person_large_Screen extends StatefulWidget {
-  const person_large_Screen({Key? key}) : super(key: key);
+class material_large_Screen extends StatefulWidget {
+  const material_large_Screen({Key? key}) : super(key: key);
   @override
-  _person_large_ScreenState createState() => _person_large_ScreenState();
+  _material_large_ScreenState createState() => _material_large_ScreenState();
 }
 
-class _person_large_ScreenState extends State<person_large_Screen> {
+class _material_large_ScreenState extends State<material_large_Screen> {
   final Db _db = Db('mongodb://localhost:27017/material');
   List<Map<String, dynamic>> _data = [];
   bool _editingEnabled = false;
