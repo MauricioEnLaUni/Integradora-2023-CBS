@@ -35,4 +35,19 @@ public class EmailService
                 data.Remove(email);
         }
     }
+
+    internal bool EmailIsAvailable(string value)
+    {
+        FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
+            .Filter
+            .Eq(x => x.value, value);
+        EmailContainer? document = _mainCollection
+            .Find(filter)
+            .SingleOrDefault();
+        if (document is null) return true;
+
+        if (document.owner is null) return true;
+        
+        return false;
+    }
 }

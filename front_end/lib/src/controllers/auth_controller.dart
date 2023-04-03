@@ -19,7 +19,7 @@ class ServerController {
   static loginWithServer(LoginDto data) async {
     const url = "localhost:5236";
 
-    var res = await http.post(Uri.http(url, 'u/login'),
+    var res = await http.post(Uri.http(url, 'User/login'),
         body: jsonEncode({'name': data.name, 'password': data.password}),
         headers: {"Content-type": "application/json"});
     print(res.statusCode);

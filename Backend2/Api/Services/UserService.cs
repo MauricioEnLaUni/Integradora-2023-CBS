@@ -17,7 +17,7 @@ public class UserService
         FilterDefinition<User> filter = Builders<User>
             .Filter
             .Eq(x => x.Name, name);
-        if (GetBy(filter) is not null)
+        if (GetOneBy(filter) is not null)
             return false;
         return true;
     }

@@ -44,12 +44,8 @@ public class UserController : ControllerBase
         string newEmail = payload.Email;
         if (!newEmail.IsEmailFormatted()) return BadRequest();
 
-        var emailFilter = Builders<EmailContainer>
-            .Filter
-            .Eq(e => e.value, newEmail);
-        bool emailIsTaken = await _emailService
-            .GetByAsync(emailFilter) is not null;
-        if (emailIsTaken) return Conflict();
+        if (!_emailService.EmailIsAvailable(newEmail))
+            return Conflict();
 
         User raw = await _userService.InsertOneAsync(payload);
         
