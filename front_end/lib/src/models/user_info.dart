@@ -18,7 +18,7 @@ class UserInfoDto {
   Uint8List? avatar;
 
   factory UserInfoDto.fromJson(Map<String, dynamic> jsonString) {
-    const String format = 'yMd\'T\'H:m:s';
+    const String format = 'yyyy-MM-dd\'T\'HH:mm:ss\'';
 
     return UserInfoDto(
         name: jsonString['name'],

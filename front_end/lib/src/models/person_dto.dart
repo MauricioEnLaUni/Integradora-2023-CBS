@@ -8,38 +8,26 @@ class PersonDto {
   PersonDto(
       {required this.id,
       required this.name,
-      required this.lastName,
-      required this.relation,
       required this.contacts,
       this.employed});
 
   String id;
   String name;
-  String lastName;
-  String relation;
   ContactDto contacts;
   EmployeeDto? employed;
 
   factory PersonDto.fromJson(Map<String, dynamic> jsonString) {
-    Map<String, dynamic>? employed = jsonString['employed'];
+    Map<String, dynamic>? employed = jsonString['employee'];
 
     return PersonDto(
         id: jsonString['id'],
         name: jsonString['name'],
-        lastName: jsonString['lastName'],
-        relation: jsonString['relation'],
-        contacts: ContactDto.fromJson(jsonString['contacts']),
+        contacts: ContactDto.fromJson(jsonString['contact']),
         employed: employed != null
-            ? EmployeeDto.fromJson(jsonString['employed'])
+            ? EmployeeDto.fromJson(jsonString['employee'])
             : null);
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'lastName': lastName,
-        'relation': relation,
-        'contacts': contacts,
-        'employed': employed
-      };
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'contact': contacts, 'employee': employed};
 }

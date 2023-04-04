@@ -91,7 +91,7 @@ public class SerializerTest
             },
             ScheduleHistory = new()
             {
-                new() { Id = ObjectId.GenerateNewId().ToString(), Period = "sdfidf", Hours = new() { { new TimeSpan(), 10 }}, Location = new() { Street = "asda" }}
+                new() { Id = ObjectId.GenerateNewId().ToString(), Period = "sdfidf", Location = new() { Street = "asda" }}
             }
         }
     };

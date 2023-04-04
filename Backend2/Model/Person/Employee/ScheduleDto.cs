@@ -15,7 +15,6 @@ namespace Fictichos.Constructora.Dto
     {
         public string Id { get; set; } = string.Empty;
         public string Period { get; set; } = string.Empty;
-        public Dictionary<TimeSpan, int> Hours { get; set; } = new();
         public AddressDto? Location { get; set; }
     }
 

@@ -35,7 +35,6 @@ namespace Fictichos.Constructora.Model
             {
                 Id = Id,
                 Period = Period,
-                Hours = Hours,
                 Location = loc
             };
         }

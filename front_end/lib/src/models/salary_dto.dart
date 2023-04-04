@@ -22,7 +22,7 @@ class SalaryDto {
 
   factory SalaryDto.fromJson(Map<String, dynamic> jsonString) {
     const String format = 'yyyy-MM-dd\'T\'HH:mm:ss\'';
-    Map<String, double> d = jsonString['reductions'];
+    Map<String, dynamic> d = jsonString['reductions'];
     Map<String, double> reductionsLocal = {};
     d.forEach((key, value) => {reductionsLocal[key] = value.toDouble()});
 
