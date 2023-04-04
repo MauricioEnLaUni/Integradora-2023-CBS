@@ -5,7 +5,6 @@ import './src/app.dart';
 
 void main() async {
   List<ProjectDto> data = await ProjectController.getProjects();
-  print(data[0].starts);
   runApp(const FictichosBuilderCRM());
 }
 

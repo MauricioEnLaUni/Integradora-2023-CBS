@@ -4,7 +4,12 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class UserInfoDto {
-  UserInfoDto({ required this.name, required this.createdAt, required this.roles, required this.email, this.avatar });
+  UserInfoDto(
+      {required this.name,
+      required this.createdAt,
+      required this.roles,
+      required this.email,
+      this.avatar});
 
   String name;
   DateTime createdAt;
@@ -13,12 +18,15 @@ class UserInfoDto {
   Uint8List? avatar;
 
   factory UserInfoDto.fromJson(Map<String, dynamic> jsonString) {
+    const String format = 'yMd\'T\'H:m:s';
+
     return UserInfoDto(
-      name: jsonString['name'],
-      createdAt: DateFormat('yyyy-MM-dd').parse(jsonString['createdAt']),
-      roles: List<String>.from(jsonString['roles']),
-      email: List<String>.from(jsonString['email']),
-      avatar: jsonString['avatar'] != null ? Uint8List.fromList(jsonString['avatar']) : null
-    );
+        name: jsonString['name'],
+        createdAt: DateFormat(format).parse(jsonString['createdAt']),
+        roles: List<String>.from(jsonString['roles']),
+        email: List<String>.from(jsonString['email']),
+        avatar: jsonString['avatar'] != null
+            ? Uint8List.fromList(jsonString['avatar'])
+            : null);
   }
 }
