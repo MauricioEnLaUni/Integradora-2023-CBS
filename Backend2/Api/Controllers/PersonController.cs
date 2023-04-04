@@ -41,7 +41,7 @@ public class PersonController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("id/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(string id)
@@ -59,11 +59,17 @@ public class PersonController : ControllerBase
     {
         FilterDefinition<Person> filter = Builders<Person>
             .Filter
-            .Exists(x => x.Employed);
-        return Ok(_personService.GetBy(filter));
+            .Where(x => x.Employed != null);
+        List<Person> raw = _personService.GetBy(filter);
+
+        List<PersonDto> output = new();
+        raw.ForEach(e => {
+            output.Add(e.ToDto());
+        });
+        return Ok(output);
     }
 
-    [HttpGet("{project}")]
+    [HttpGet("project/{project}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetByProject(string id)
@@ -85,7 +91,7 @@ public class PersonController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{relation}")]
+    [HttpGet("relation/{relation}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetByRelations(string relation)
@@ -94,5 +100,31 @@ public class PersonController : ControllerBase
             .Filter
             .Eq(x => x.Relation, relation);
         return Ok(_personService.GetBy(filter));
+    }
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public IActionResult CreateUser(NewPersonDto data)
+    {
+        Person? newItem = _personService.InsertOne(data);
+
+        return CreatedAtAction(
+            actionName: nameof(GetById),
+            routeValues: new { id = newItem },
+            value: newItem.ToDto()
+        );
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public IActionResult UpdatePerson(UpdatedPersonDto data)
+    {
+        Person? item = _personService
+            .GetOneBy(Filter.ById<Person>(data.Id));
+        if (item is null) return NotFound();
+
+        item.Update(data);
+
+        return NoContent();
     }
 }

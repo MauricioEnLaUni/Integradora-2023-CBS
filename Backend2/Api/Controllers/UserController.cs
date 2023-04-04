@@ -10,6 +10,7 @@ using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Middleware;
 using System.Security.Claims;
 using Fictichos.Constructora.Utilities.MongoDB;
+using Fictichos.Constructora.Auth;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -20,14 +21,17 @@ public class UserController : ControllerBase
     private readonly IJwtProvider _jwtProvider;
     private readonly UserService _userService;
     private readonly EmailService _emailService;
+    private readonly TokenService _tokenService;
 
     public UserController(
         UserService repo,
         EmailService email,
+        TokenService tokens,
         IJwtProvider jwtProvider)
     {
         _userService = repo;
         _emailService = email;
+        _tokenService = tokens;
         _jwtProvider = jwtProvider;
     }
 
@@ -80,14 +84,17 @@ public class UserController : ControllerBase
         CookieOptions cookieOptions = new()
         {
             HttpOnly = true,
-            Expires = DateTime.Now.AddMinutes(30)
+            Expires = DateTime.Now.AddMinutes(1)
         };
+
         Response.Cookies.Append("Fictichos_Session", token, cookieOptions);
         Response.Cookies.Append("Fictichos_Claims", token, new()
         {
             HttpOnly = false,
             Expires = DateTime.Now.AddMinutes(30)
         });
+        
+        _tokenService.AddToken(token);
 
         return Ok(token);
     }

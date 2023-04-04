@@ -13,7 +13,7 @@ namespace Fictichos.Constructora.Model
         public string LastName { get;  set; } = string.Empty;
         public string Relation { get; private set; } = string.Empty;
         public Contact Contacts { get; set; } = new();
-        public Employee? Employed { get;  set; } = new();
+        public Employee? Employed { get;  set; }
 
         public Person() { }
 
