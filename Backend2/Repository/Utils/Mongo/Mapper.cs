@@ -267,7 +267,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Active).SetElementName("active");
                     classMap.MapMember(p => p.Email).SetElementName("email");
                     classMap.MapMember(p => p.Credentials).SetElementName("credentials");
-                    classMap.MapMember(p => p.Credentials).SetElementName("credentials");
+                    classMap.MapMember(p => p.Owner).SetElementName("owner");
                 });
             }
         }

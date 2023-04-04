@@ -46,6 +46,7 @@ dependencies:
   json_annotation: ^4.8.0
   intl: ^0.18.0
   service_worker: ^0.3.0
+  path_provider: ^2.0.14
 
 dev_dependencies:
   flutter_test:

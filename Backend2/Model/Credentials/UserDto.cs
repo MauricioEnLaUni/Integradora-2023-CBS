@@ -17,6 +17,7 @@ namespace Fictichos.Constructora.Dto
     {
         public string Name { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public string Owner { get; set; } = string.Empty;
         public List<string> Roles { get; set; } = new();
         public List<string> Email { get; set; } = new();
         public byte[]? Avatar { get; set; }
@@ -32,6 +33,8 @@ namespace Fictichos.Constructora.Dto
         public string Password { get; set; } = string.Empty;
         [Required]
         public string Email { get; set; } = string.Empty;
+        [Required]
+        public string Owner { get; set; } = string.Empty;
     }
 
     public record UpdatedUserDto : DtoBase

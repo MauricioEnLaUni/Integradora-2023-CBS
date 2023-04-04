@@ -19,6 +19,7 @@ namespace Fictichos.Constructora.Model
         public List<string> Email { get; set; } = new();
         public List<string> Roles { get; private set; } = new();
         public List<ICredentials> Credentials { get; private set; } = new();
+        public string Owner { get; set; } = string.Empty;
 
         public User() { }
         public User(NewUserDto data)

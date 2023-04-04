@@ -75,5 +75,10 @@ namespace Fictichos.Constructora.Model
             data.Charges?.ForEach(Charges.UpdateObjectWithIndex<Job, NewJobDto, UpdatedJobDto>);
             data.ScheduleHistory?.ForEach(ScheduleHistory.UpdateObjectWithIndex<Schedule, NewScheduleDto, UpdatedScheduleDto>);
         }
+
+        internal Job? Current()
+        {
+            return Charges.MaxBy(x => x.CreatedAt);
+        }
     }
 }

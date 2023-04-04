@@ -14,6 +14,8 @@ namespace Fictichos.Constructora.Dto
         public string Parent { get; set; } = string.Empty;
         [Required]
         public List<string> Responsibilities { get; set; } = new();
+        [Required]
+        public bool Active { get; set; }
     }
 
     public record JobDto : DtoBase
@@ -22,6 +24,7 @@ namespace Fictichos.Constructora.Dto
         public string InternalKey { get; set; } = string.Empty;
         public List<SalaryDto> SalaryHistory { get; set; } = new();
         public string Role { get; set; } = string.Empty;
+        public bool Active { get; set; }
     }
 
     public record UpdatedJobDto : DtoBase
@@ -32,5 +35,6 @@ namespace Fictichos.Constructora.Dto
         public string? Parent { get; set; }
         public List<UpdateList<string>>? Responsibilities { get; set; }
         public List<UpdateList<string>>? Material { get; set; }
+        public bool Active { get; set; }
     }
 }

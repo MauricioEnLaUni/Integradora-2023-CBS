@@ -21,6 +21,7 @@ namespace Fictichos.Constructora.Model
         [BsonRepresentation(BsonType.ObjectId)]
         public string Parent { get; set; } = string.Empty;
         public List<string> Responsibilities { get;  set; } = new();
+        public bool Active { get; set; }
 
         public Job(NewJobDto data)
         {
@@ -29,6 +30,7 @@ namespace Fictichos.Constructora.Model
             Area = data.Area;
             Parent = data.Parent;
             Responsibilities = data.Responsibilities;
+            Active = Active;
         }
         public Job() { }
         
@@ -42,7 +44,8 @@ namespace Fictichos.Constructora.Model
             {
                 Id = Id,
                 SalaryHistory = list,
-                Role = Role
+                Role = Role,
+                Active = Active
             };
         }
         public string Serialize()
@@ -61,6 +64,7 @@ namespace Fictichos.Constructora.Model
             Role = data.Role ?? Role;
             Area = data.Area ?? Area;
             Parent = data.Parent ?? Parent;
+            Active = data.Active;
 
             data.Oversees?.ForEach(Oversees.UpdateWithIndex);
             data.Responsibilities?.ForEach(Responsibilities.UpdateWithIndex);
