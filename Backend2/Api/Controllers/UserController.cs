@@ -80,11 +80,30 @@ public class UserController : ControllerBase
         CookieOptions cookieOptions = new()
         {
             HttpOnly = true,
-            Expires = DateTime.Now.AddMinutes(30),
-            Secure = true
+            Expires = DateTime.Now.AddMinutes(30)
         };
-        Response.Cookies.Append("Fictichos_Login_Token", token, cookieOptions);
+        Response.Cookies.Append("Fictichos_Session", token, cookieOptions);
+        Response.Cookies.Append("Fictichos_Claims", token, new()
+        {
+            HttpOnly = false,
+            Expires = DateTime.Now.AddMinutes(30)
+        });
 
+        return Ok(token);
+    }
+
+    [HttpPost("logout")]
+    public IActionResult LogOut()
+    {
+        Response.Cookies.Append("Fictichos_Session", "", new() {
+            HttpOnly = true,
+            Expires = DateTime.Now.AddMinutes(-10)
+        });
+        Response.Cookies.Append("Fictichos_Claims", "", new()
+        {
+            HttpOnly = false,
+            Expires = DateTime.Now.AddMinutes(-10)
+        });
         return Ok();
     }
     

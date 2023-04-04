@@ -1,19 +1,22 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:path_provider/path_provider.dart';
 
-class AuthMiddleware {
-  Future<void> prepareJar() async {
-    final dio = Dio();
-    final CookieJar = CookieJar();
-    final Directory appDocDir = await getApplicationDocumentsDirectory();
-    final String appDocPath = appDocDir.path;
-    final jar = PersistCookieJar(
-      ignoreExpires: false,
-      storage: FileStorage("$appDocPath/cookies"),
-    );
-    dio.interceptors.add(CookieManager(jar));
+class ApiService {
+  static Dio dio = Dio();
+
+  static void init() {
+    var cookieJar = CookieJar();
+    dio.interceptors.add(CookieManager(cookieJar));
+  }
+
+  static Future<Response> fetchData() async {
+    var response = await dio.get('https://example.com');
+    return response;
+  }
+
+  static Future<Response> sendData(Map<String, dynamic> data) async {
+    var response = await dio.post('https://example.com', data: data);
+    return response;
   }
 }

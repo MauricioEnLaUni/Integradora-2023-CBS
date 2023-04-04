@@ -41,12 +41,14 @@ dependencies:
   bloc: ^8.1.1
   http: ^0.13.5
   mongo_dart: ^0.8.2
-  cookie_jar: ^4.0.1
+  cookie_jar: ^3.0.1
   dio: ^5.1.1
   json_annotation: ^4.8.0
   intl: ^0.18.0
   service_worker: ^0.3.0
   path_provider: ^2.0.14
+  dio_cookie_manager: ^2.1.4
+  
 
 dev_dependencies:
   flutter_test:
