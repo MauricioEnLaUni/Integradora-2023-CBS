@@ -28,37 +28,31 @@ class FTasksDto {
   });
 
   factory FTasksDto.fromJson(Map<String, dynamic> jsonString) {
-    const String format = 'yyyy-MM-dd\'T\'HH:mm:ss\'';
     List<dynamic> subtasks = jsonString['subtasks'] ?? [];
-    List<dynamic> employeesAssigned = jsonString['employeesAssigned'] ?? [];
-    List<dynamic> material = jsonString['material'] ?? [];
+    List<dynamic> employeesAssigned= jsonString['employeesAssigned'] ?? [];
+    List<dynamic> material= jsonString['material'] ?? [];
     Map<String, dynamic>? addressJson = jsonString['address'];
 
     return FTasksDto(
       id: jsonString['id'] ?? '',
-      startDate: DateFormat(format).parse(jsonString['startDate']),
-      ends: DateFormat(format).parse(jsonString['ends']),
+      startDate: DateFormat('yyyy-MM-dd').parse(jsonString['startDate']),
+      ends: DateFormat('yyyy-MM-dd').parse(jsonString['ends']),
       parent: jsonString['parent'] ?? '',
-      subtasks:
-          List<String>.from(subtasks.map((dynamic item) => item.toString())),
-      employeesAssigned: List<String>.from(
-          employeesAssigned.map((dynamic item) => item.toString())),
-      material:
-          List<String>.from(material.map((dynamic item) => item.toString())),
-      address: addressJson != null
-          ? AddressDto.fromJson(jsonString['address'])
-          : null,
+      subtasks: List<String>.from(subtasks.map((dynamic item) => item.toString())),
+      employeesAssigned: List<String>.from(employeesAssigned.map((dynamic item) => item.toString())),
+      material: List<String>.from(material.map((dynamic item) => item.toString())),
+      address: addressJson != null ? AddressDto.fromJson(jsonString['address']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'startDate': startDate,
-        'ends': ends,
-        'parent': parent,
-        'subtasks': subtasks,
-        'employeesAssigned': employeesAssigned,
-        'material': material,
-        'address': address
-      };
+    'id' : id,
+    'startDate' : startDate,
+    'ends' : ends,
+    'parent' : parent,
+    'subtasks' : subtasks,
+    'employeesAssigned' : employeesAssigned,
+    'material' : material,
+    'address' : address
+  };
 }

@@ -28,17 +28,10 @@ namespace Fictichos.Constructora.Model
 
         public ProjectDto ToDto()
         {
-            FTasksDto? last = Tasks
-                .Where(x => !x.Complete)
-                .MaxBy(x => x.Ends)?
-                .ToDto();
             return new()
             {
                 Id = Id,
-                Name = Name,
-                Starts = Starts,
-                Ends = Ends,
-                LastTask = last
+                Name = Name
             };
         }
 

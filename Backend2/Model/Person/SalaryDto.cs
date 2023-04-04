@@ -21,7 +21,6 @@ namespace Fictichos.Constructora.Dto
         public string Period { get; set; } = string.Empty;
         public string Due { get; set; } = string.Empty;
         public int? HoursWeeklyCap { get; set; }
-        public DateTime Closed { get; set; }
     }
 
     public record UpdatedSalaryDto : DtoBase
