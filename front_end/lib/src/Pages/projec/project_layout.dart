@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' hide State;
-import 'package:http/http.dart' as http;
 
 class project_large_Screen extends StatefulWidget {
   const project_large_Screen({Key? key}) : super(key: key);
@@ -8,19 +7,8 @@ class project_large_Screen extends StatefulWidget {
   _project_large_ScreenState createState() => _project_large_ScreenState();
 }
 
-class ProjectController {
-  static getProject() async {
-    const String url = 'localhost:5236';
-
-    var res = await http.get(Uri.http(url, 'Project'),
-        headers: {"Content-type": "application/json"});
-    if (res.statusCode == 200) return res.body;
-    return res.statusCode;
-  }
-}
-
 class _project_large_ScreenState extends State<project_large_Screen> {
-  final Db _db = Db('mongodb://localhost:27017/prueba');
+  final Db _db = Db('mongodb://localhost:27017/material');
   List<Map<String, dynamic>> _data = [];
   bool _editingEnabled = false;
   List<TextEditingController> _controllers = [];
@@ -56,7 +44,7 @@ class _project_large_ScreenState extends State<project_large_Screen> {
     final document = _data[index];
     final updatedDocument = {
       ...document,
-      'nombre': _controllers[index].text,
+      'project': _controllers[index].text,
     };
     await collection.update(
       where.eq('_id', document['_id']),
@@ -66,72 +54,49 @@ class _project_large_ScreenState extends State<project_large_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: const [
-        DataColumn(label: Text('Nombre')),
-        DataColumn(label: Text('Fecha de Inicio')),
-        DataColumn(label: Text('Fecha de Finalizacion')),
-        DataColumn(label: Text('No se')),
-        DataColumn(label: Text('Cuentas +-')),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        DataTable(
+          columns: const [
+            DataColumn(label: Text('proyecto')),
+            DataColumn(label: Text('Fecha de inicio')),
+            DataColumn(label: Text('Fecha de cierre')),
+            DataColumn(label: Text('No se')),
+          ],
+          rows: _data.asMap().entries.map((entry) {
+            final index = entry.key;
+            final data = entry.value;
+            return DataRow(cells: [
+              DataCell(
+                TextField(
+                        controller: _controllers[index],
+                        decoration: InputDecoration(
+                          hintText: data['proyecto'],
+                        ),
+                      )
+              ),
+              DataCell(
+                TextField(
+                        controller: _controllers[index],
+                        decoration: InputDecoration(
+                          hintText: data['Fecha Inicio'],
+                        ),
+                      ),
+              ),
+              DataCell(TextField(
+                      controller: _controllers[index],
+                      decoration: InputDecoration(
+                        hintText: data['FechaCierre'],
+                      ),
+                    ),),
+            ]);
+          }).toList(),
+          sortColumnIndex: 0,
+          sortAscending: true,
+        ),
       ],
-      rows: _data.asMap().entries.map((entry) {
-        final index = entry.key;
-        final data = entry.value;
-        return DataRow(cells: [
-          DataCell(
-            _editingEnabled
-                ? TextField(
-                    controller: _controllers[index],
-                    decoration: InputDecoration(
-                      hintText: data['nombre'],
-                    ),
-                  )
-                : Text(data['nombre']),
-          ),
-          DataCell(
-            _editingEnabled
-                ? TextField(
-                    controller: _controllers[index],
-                    decoration: InputDecoration(
-                      hintText: data['proyecto'],
-                    ),
-                  )
-                : Text(data['proyecto']),
-          ),
-          DataCell(_editingEnabled
-              ? TextField(
-                  controller: _controllers[index],
-                  decoration: InputDecoration(
-                    hintText: data['puesto'],
-                  ),
-                )
-              : Text(data['puesto'])),
-          DataCell(_isEditing
-              ? TextField(
-                  controller:
-                      TextEditingController(text: data['no_se_1'].toString()),
-                  onChanged: (value) {
-                    setState(() {
-                      data['no_se_1'] = int.parse(value);
-                    });
-                  },
-                )
-              : Text(data['no_se_1'].toString())),
-          DataCell(_isEditing
-              ? TextField(
-                  controller:
-                      TextEditingController(text: data['no_se_2'].toString()),
-                  onChanged: (value) {
-                    setState(() {
-                      data['no_se_2'] = int.parse(value);
-                    });
-                  },
-                )
-              : Text(data['no_se_2'].toString())),
-        ]);
-      }).toList(),
-      sortColumnIndex: 0,
-      sortAscending: true,
     );
   }
 }

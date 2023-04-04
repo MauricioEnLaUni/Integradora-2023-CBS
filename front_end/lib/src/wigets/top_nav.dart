@@ -17,9 +17,11 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
           ),
           Expanded(
             child: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {},
-            ),
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            )
           )
         ],
       ),

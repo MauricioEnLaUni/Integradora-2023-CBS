@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/src/Pages/material/material_page.dart';
+import '../projec/project_page.dart';
 import 'package:front_end/src/Pages/menu/menu_page.dart';
 import 'package:front_end/src/Pages/person/person_page.dart';
 
@@ -46,7 +47,7 @@ class SmallScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => project_page()),
+                MaterialPageRoute(builder: (context) => projectsPage()),
               );
             },
             tooltip: 'proyectos',

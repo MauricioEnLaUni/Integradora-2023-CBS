@@ -53,7 +53,7 @@ class LargeScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => project_page()),
+                MaterialPageRoute(builder: (context) => projectsPage()),
               );
             },
             tooltip: 'proyectos',

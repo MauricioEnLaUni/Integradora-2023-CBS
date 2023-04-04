@@ -64,63 +64,31 @@ class _material_large_ScreenState extends State<material_large_Screen> {
             DataColumn(label: Text('cantidad')),
             DataColumn(label: Text('no se')),
             DataColumn(label: Text('No se')),
-            DataColumn(label: Text('No se')),
-            DataColumn(label: Text('Acciones')),
           ],
           rows: _data.asMap().entries.map((entry) {
             final index = entry.key;
             final data = entry.value;
             return DataRow(cells: [
-              DataCell(
-                _editingEnabled
-                    ? TextField(
+              DataCell(TextField(
                         controller: _controllers[index],
                         decoration: InputDecoration(
                           hintText: data['nombre'],
                         ),
-                      )
-                    : Text(data['nombre']),
+                      ),
               ),
-              DataCell(
-                _editingEnabled
-                    ? TextField(
+              DataCell( TextField(
                         controller: _controllers[index],
                         decoration: InputDecoration(
-                          hintText: data['proyecto'],
+                          hintText: data['cantidad'],
                         ),
                       )
-                    : Text(data['proyecto']),
               ),
-              DataCell(_editingEnabled
-                  ? TextField(
+              DataCell(TextField(
                       controller: _controllers[index],
                       decoration: InputDecoration(
-                        hintText: data['puesto'],
+                        hintText: data['no se'],
                       ),
-                    )
-                  : Text(data['puesto'])),
-              DataCell(_isEditing
-                  ? TextField(
-                      controller: TextEditingController(
-                          text: data['no_se_1'].toString()),
-                      onChanged: (value) {
-                        setState(() {
-                          data['no_se_1'] = int.parse(value);
-                        });
-                      },
-                    )
-                  : Text(data['no_se_1'].toString())),
-              DataCell(_isEditing
-                  ? TextField(
-                      controller: TextEditingController(
-                          text: data['no_se_2'].toString()),
-                      onChanged: (value) {
-                        setState(() {
-                          data['no_se_2'] = int.parse(value);
-                        });
-                      },
-                    )
-                  : Text(data['no_se_2'].toString())),
+                    ),)
             ]);
           }).toList(),
           sortColumnIndex: 0,
