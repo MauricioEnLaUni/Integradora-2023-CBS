@@ -1,4 +1,3 @@
-using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Dto
