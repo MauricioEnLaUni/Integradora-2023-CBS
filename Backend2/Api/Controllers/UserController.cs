@@ -11,6 +11,7 @@ using Fictichos.Constructora.Middleware;
 using System.Security.Claims;
 using Fictichos.Constructora.Utilities.MongoDB;
 using Fictichos.Constructora.Auth;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -99,6 +100,15 @@ public class UserController : ControllerBase
         _tokenService.AddToken(token);
 
         return Ok(token);
+    }
+
+    [HttpGet("refresh")]
+    public IActionResult Refresh()
+    {
+        var token = Request.Headers["Authorization"].ToString().Replace("Bearer ","");
+        var jwtHandler = new JwtSecurityTokenHandler();
+        var jwtToken = jwtHandler.ReadJwtToken(token);
+        return Ok();
     }
 
     [HttpPost("logout")]

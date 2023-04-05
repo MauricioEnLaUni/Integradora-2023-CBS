@@ -17,30 +17,32 @@ const Item = styled(Paper)(({ theme } : { theme: any }) => ({
 
 const ProjectListItem = ({item} : {item: ProjectDto}) => {
   return (
-    <div key={item.Id}>
+    item != null
+    ?
+    (<div key={item.id}>
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>{item.Name}</Typography>
+          <Typography>{item.name}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Stack direction="row" spacing={2}>
-            <Item>{item.Starts.toDateString()}</Item>
-            <Item>{item.Ends.toDateString()}</Item>
+            <Item>{item.starts}</Item>
+            <Item>{item.ends}</Item>
             <Item>
               <Stack direction="row" spacing={2}>
-                <Item>{item.LastTask.Name}</Item>
-                <Item>{item.LastTask.StartDate.toDateString()}</Item>
-                <Item>{item.LastTask.Ends.toDateString()}</Item>
+                <Item>{item.lastTask?.Name}</Item>
+                <Item>{item.lastTask?.StartDate}</Item>
+                <Item>{item.lastTask?.Ends}</Item>
               </Stack>
             </Item>
           </Stack>
         </AccordionDetails>
       </Accordion>
-    </div>
+    </div>) : <></>
   );
 }
 

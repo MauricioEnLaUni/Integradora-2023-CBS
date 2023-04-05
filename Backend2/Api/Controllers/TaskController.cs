@@ -93,7 +93,7 @@ public class TaskController : ControllerBase
         return result;
     }
 
-    [HttpGet("{project}")]
+    [HttpGet("project/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetByProject(string id)

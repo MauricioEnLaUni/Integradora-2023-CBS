@@ -1,14 +1,13 @@
 import Container from '@mui/material/Container';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import ProjectListItem from '../components/ProjectListItem';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import axios from '../api/axios';
 
 const Project = () => {
   const [projects, setProjects] = useState<Array<ProjectDto>>();
-  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,7 +18,7 @@ const Project = () => {
     const getAllProjects = async () => {
       try
       {
-        const response = await axiosPrivate.get('/project', {
+        const response = await axios.get('/project', {
           signal: controller.signal
         });
         isMounted && setProjects(response.data);
@@ -45,10 +44,12 @@ const Project = () => {
         {projects?.length
           ? (
             <List>
-                <ListItem>
-                  {projects.map((e) => <ProjectListItem item={e} key={e.Id}></ProjectListItem>)}
-                </ListItem>,
-              </List>
+              {projects.map((e) => (
+              <ListItem key={e.id}>
+                <ProjectListItem item={e}/>
+              </ListItem>
+              ))}
+          </List>
               ) : <p>¡No hay proyectos registrados!</p>}
       </Container>
     </>

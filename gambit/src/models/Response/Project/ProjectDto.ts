@@ -1,16 +1,16 @@
 class ProjectDto {
-  Id: string;
-  Name: string;
-  Starts: Date;
-  Ends: Date;
-  LastTask: FTasksDto;
+  id: string;
+  name: string;
+  starts: Date;
+  ends: Date;
+  lastTask?: FTasksDto;
 
-  constructor(id: string, name: string, starts: Date, ends: Date, lastTask: FTasksDto)
+  constructor(id: string, name: string, starts: Date, ends: Date, lastTask?: FTasksDto)
   {
-    this.Id = id;
-    this.Name = name;
-    this.Starts = starts;
-    this.Ends = ends;
-    this.LastTask = lastTask;
+    this.id = id;
+    this.name = name;
+    this.starts = starts;
+    this.ends = ends;
+    this.lastTask = lastTask;
   }
 }
