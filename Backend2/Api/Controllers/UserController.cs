@@ -62,7 +62,7 @@ public class UserController : ControllerBase
             { StatusCode = StatusCodes.Status201Created };
     }
 
-    [HttpPost("login")]
+    [HttpPost("auth")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext } from 'react';
-import AuthContext from "../context/AuthProvider";
+import AuthContext from '../context/AuthProvider';
 
 import axios from '../api/axios';
 const LOGIN_URL = '/auth';
@@ -20,8 +20,9 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      const DTO: LoginDto = new LoginDto(user, pwd);
       const response = await axios.post(LOGIN_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify(DTO),
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true
@@ -34,7 +35,7 @@ const Login = () => {
     setUser('');
     setPwd('');
     setSuccess(true);
-  } catch (err: any) {
+    } catch (err: any) {
       if (!err?.response) {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 400) {
@@ -50,45 +51,45 @@ const Login = () => {
   return (
     <>
     {success ? (
-        <section>
-            <h1>You are logged in!</h1>
-            <br />
-            <p>
-                <a href="#">Dashboard</a>
-            </p>
-        </section>
+      <section>
+        <h1>You are logged in!</h1>
+        <br />
+        <p>
+          <a href="#">Dashboard</a>
+        </p>
+      </section>
     ) : (
         <section>
-            <p  className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-            <h1>Acceder</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="username">Usuario:</label>
-                <input
-                    type="text"
-                    id="username"
-                    autoComplete="off"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={user}
-                    required
-                />
+          <p  className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+          <h1>Acceder</h1>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="username">Usuario:</label>
+            <input
+              type="text"
+              id="username"
+              autoComplete="off"
+              onChange={(e) => setUser(e.target.value)}
+              value={user}
+              required
+            />
 
-                <label htmlFor="password">Contraseña:</label>
-                <input
-                    type="password"
-                    id="password"
-                    onChange={(e) => setPwd(e.target.value)}
-                    value={pwd}
-                    required
-                />
-                <button>Acceder</button>
-            </form>
-            <p>
-                ¿No tiene cuenta?<br />
-                <span className="line">
-                    {/*put router link here*/}
-                    <a href="#">¡Inscíbase!</a>
-                </span>
-            </p>
+            <label htmlFor="password">Contraseña:</label>
+            <input
+              type="password"
+              id="password"
+              onChange={(e) => setPwd(e.target.value)}
+              value={pwd}
+              required
+            />
+            <button>Acceder</button>
+          </form>
+          <p>
+            ¿No tiene cuenta?<br />
+            <span className="line">
+              {/*put router link here*/}
+              <a href="#">¡Inscíbase!</a>
+            </span>
+          </p>
         </section>
       )}
     </>

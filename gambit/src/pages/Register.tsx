@@ -57,7 +57,7 @@ const Register = () => {
             setErrMsg("Bad Request");
             return;
         }
-        const DTO = new LoginDto(user, pwd, email, owner);
+        const DTO = new RegisterDto(user, pwd, email, owner);
         try {
             const response = await axios.post(REGISTER_URL,
                 JSON.stringify(DTO),
@@ -181,14 +181,14 @@ const Register = () => {
                             onFocus={() => setEmailFocus(true)}
                             onBlur={() => setEmailFocus(false)}
                         />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
+                        <p id="confirmnote" className={emailFocus && !validEmail ? "instructions" : "offscreen"}>
                             <Info />
                             Correo electrónico de la empresa.
                         </p>
                         <label htmlFor="confirm_pwd">
                             Id del empleado:
-                            <CheckCircle className={validMatch && matchPwd ? "valid" : "hide"} />
-                            <Close className={validMatch || !matchPwd ? "hide" : "invalid"} />
+                            <CheckCircle className={owner != '' ? "valid" : "hide"} />
+                            <Close className={owner == '' ? "hide" : "invalid"} />
                         </label>
                         <input
                             type="text"
