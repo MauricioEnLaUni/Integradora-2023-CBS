@@ -84,140 +84,130 @@ const Register = () => {
 
     return (
         <>
-            {success ? (
-                <section>
-                    <h1>¡Éxito!</h1>
-                    <p>
-                        Por favor espere a que su Cuenta de Usuario sea activada por el administrador del sitio.
-                        <a href="#">Acceder</a>
-                    </p>
-                </section>
-            ) : (
-                <section>
-                    <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <h1>Registro</h1>
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="username">
-                            Usuario:
-                            <CheckCircle className={validName ? "valid" : "hide"} />
-                            <Close className={validName || !user ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="text"
-                            id="username"
-                            autoComplete="off"
-                            onChange={(e) => setUser(e.target.value)}
-                            value={user}
-                            required
-                            aria-invalid={validName ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setUserFocus(true)}
-                            onBlur={() => setUserFocus(false)}
-                        />
-                        <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
-                            <Info />
-                            4 a 24 caracteres.<br />
-                            Debe empezar con letra.<br />
-                            Letras, números, guiones y guiones bajos permitidos.
-                        </p>
+        <section>
+            <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+            <h1>Registro</h1>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="username">
+                    Usuario:
+                    <CheckCircle className={validName ? "valid" : "hide"} />
+                    <Close className={validName || !user ? "hide" : "invalid"} />
+                </label>
+                <input
+                    type="text"
+                    id="username"
+                    autoComplete="off"
+                    onChange={(e) => setUser(e.target.value)}
+                    value={user}
+                    required
+                    aria-invalid={validName ? "false" : "true"}
+                    aria-describedby="uidnote"
+                    onFocus={() => setUserFocus(true)}
+                    onBlur={() => setUserFocus(false)}
+                />
+                <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
+                    <Info />
+                    4 a 24 caracteres.<br />
+                    Debe empezar con letra.<br />
+                    Letras, números, guiones y guiones bajos permitidos.
+                </p>
 
 
-                        <label htmlFor="password">
-                            Contraseña:
-                            <CheckCircle className={validPwd ? "valid" : "hide"} />
-                            <Close className={validPwd || !pwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            onChange={(e) => setPwd(e.target.value)}
-                            value={pwd}
-                            required
-                            aria-invalid={validPwd ? "false" : "true"}
-                            aria-describedby="pwdnote"
-                            onFocus={() => setPwdFocus(true)}
-                            onBlur={() => setPwdFocus(false)}
-                        />
-                        <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
-                            <Info />
-                            8 a 24 caracteres.<br />
-                            Debe contener mayúscula, minúscula, un número y un caracter especial.<br />
-                            Se permiten: <span aria-label="signo de exclamación">!</span> <span aria-label="arroba">@</span> <span aria-label="gato">#</span> <span aria-label="signo de dolar">$</span> <span aria-label="porcentaje">%</span>
-                        </p>
+                <label htmlFor="password">
+                    Contraseña:
+                    <CheckCircle className={validPwd ? "valid" : "hide"} />
+                    <Close className={validPwd || !pwd ? "hide" : "invalid"} />
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    onChange={(e) => setPwd(e.target.value)}
+                    value={pwd}
+                    required
+                    aria-invalid={validPwd ? "false" : "true"}
+                    aria-describedby="pwdnote"
+                    onFocus={() => setPwdFocus(true)}
+                    onBlur={() => setPwdFocus(false)}
+                />
+                <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
+                    <Info />
+                    8 a 24 caracteres.<br />
+                    Debe contener mayúscula, minúscula, un número y un caracter especial.<br />
+                    Se permiten: <span aria-label="signo de exclamación">!</span> <span aria-label="arroba">@</span> <span aria-label="gato">#</span> <span aria-label="signo de dolar">$</span> <span aria-label="porcentaje">%</span>
+                </p>
 
 
-                        <label htmlFor="confirm_pwd">
-                            Repita su password:
-                            <CheckCircle className={validMatch && matchPwd ? "valid" : "hide"} />
-                            <Close className={validMatch || !matchPwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="password"
-                            id="confirm_pwd"
-                            onChange={(e) => setMatchPwd(e.target.value)}
-                            value={matchPwd}
-                            required
-                            aria-invalid={validMatch ? "false" : "true"}
-                            aria-describedby="confirmnote"
-                            onFocus={() => setMatchFocus(true)}
-                            onBlur={() => setMatchFocus(false)}
-                        />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                            <Info />
-                            Debe coincidir con el campo anterior.
-                        </p>
-                        <label htmlFor="confirm_pwd">
-                            Email:
-                            <CheckCircle className={validMatch && matchPwd ? "valid" : "hide"} />
-                            <Close className={validMatch || !matchPwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            onChange={(e) => setEmail(e.target.value)}
-                            value={email}
-                            required
-                            aria-describedby="emailnote"
-                            onFocus={() => setEmailFocus(true)}
-                            onBlur={() => setEmailFocus(false)}
-                        />
-                        <p id="confirmnote" className={emailFocus && !validEmail ? "instructions" : "offscreen"}>
-                            <Info />
-                            Correo electrónico de la empresa.
-                        </p>
-                        <label htmlFor="confirm_pwd">
-                            Id del empleado:
-                            <CheckCircle className={owner != '' ? "valid" : "hide"} />
-                            <Close className={owner == '' ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="text"
-                            id="owner"
-                            onChange={(e) => setOwner(e.target.value)}
-                            value={owner}
-                            required
-                            aria-describedby="ownernote"
-                            onFocus={() => setOwnerFocus(true)}
-                            onBlur={() => setOwnerFocus(false)}
-                        />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                            <Info />
-                            Introduzca su Id de empleado aquí.
-                        </p>
+                <label htmlFor="confirm_pwd">
+                    Repita su password:
+                    <CheckCircle className={validMatch && matchPwd ? "valid" : "hide"} />
+                    <Close className={validMatch || !matchPwd ? "hide" : "invalid"} />
+                </label>
+                <input
+                    type="password"
+                    id="confirm_pwd"
+                    onChange={(e) => setMatchPwd(e.target.value)}
+                    value={matchPwd}
+                    required
+                    aria-invalid={validMatch ? "false" : "true"}
+                    aria-describedby="confirmnote"
+                    onFocus={() => setMatchFocus(true)}
+                    onBlur={() => setMatchFocus(false)}
+                />
+                <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
+                    <Info />
+                    Debe coincidir con el campo anterior.
+                </p>
+                <label htmlFor="confirm_pwd">
+                    Email:
+                    <CheckCircle className={validMatch && matchPwd ? "valid" : "hide"} />
+                    <Close className={validMatch || !matchPwd ? "hide" : "invalid"} />
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    required
+                    aria-describedby="emailnote"
+                    onFocus={() => setEmailFocus(true)}
+                    onBlur={() => setEmailFocus(false)}
+                />
+                <p id="confirmnote" className={emailFocus && !validEmail ? "instructions" : "offscreen"}>
+                    <Info />
+                    Correo electrónico de la empresa.
+                </p>
+                <label htmlFor="confirm_pwd">
+                    Id del empleado:
+                    <CheckCircle className={owner != '' ? "valid" : "hide"} />
+                    <Close className={owner == '' ? "hide" : "invalid"} />
+                </label>
+                <input
+                    type="text"
+                    id="owner"
+                    onChange={(e) => setOwner(e.target.value)}
+                    value={owner}
+                    required
+                    aria-describedby="ownernote"
+                    onFocus={() => setOwnerFocus(true)}
+                    onBlur={() => setOwnerFocus(false)}
+                />
+                <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
+                    <Info />
+                    Introduzca su Id de empleado aquí.
+                </p>
 
-                        <button disabled={!validName || !validPwd || !validEmail
-                            || !validMatch ? true : false
-                            || owner == ''}>Inscribirse</button>
-                    </form>
-                    <p>
-                        ¿Tiene cuenta?<br />
-                        <span className="line">
-                            {/*put router link here*/}
-                            <a href="#">Acceder</a>
-                        </span>
-                    </p>
-                </section>
-            )}
+                <button disabled={!validName || !validPwd || !validEmail
+                    || !validMatch ? true : false
+                    || owner == ''}>Inscribirse</button>
+            </form>
+            <p>
+                ¿Tiene cuenta?<br />
+                <span className="line">
+                    {/*put router link here*/}
+                    <a href="#">Acceder</a>
+                </span>
+            </p>
+        </section>
         </>
     )
 }
