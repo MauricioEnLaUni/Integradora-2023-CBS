@@ -46,9 +46,11 @@ public record TaskSingleUpdate<T> : DtoBase
 public record FTasksDto
 {
     public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime Ends { get; set; }
     public string? Parent { get; set; }
+    public bool Complete { get; set; }
     public List<FTasksDto> Subtasks { get; set; } = new();
     public List<string> EmployeesAssigned { get; set; } = new();
     public List<string> Material { get; set; } = new();

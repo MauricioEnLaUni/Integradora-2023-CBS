@@ -13,6 +13,7 @@ import Unauthorized from './pages/Errors/Unauthorized';
 
 /* Components */
 import RequireAuth from './components/RequireAuth';
+import Project from './pages/Project';
 
 const App: React.FC = () => (
   <Routes>
@@ -25,6 +26,7 @@ const App: React.FC = () => (
       {/* Protected routes */}
       <Route element={<RequireAuth allowedRoles={[100]}/>}>
         <Route path="dashboard" element={<Dashboard />}/>
+        <Route path="project" element={<Project />}></Route>
       </Route>
     </Route>
   </Routes>

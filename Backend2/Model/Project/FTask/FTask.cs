@@ -52,6 +52,7 @@ namespace Fictichos.Constructora.Model
             return new()
             {
                 Id = Id,
+                Name = Name,
                 StartDate = StartDate,
                 Ends = Ends,
                 Subtasks = list,
