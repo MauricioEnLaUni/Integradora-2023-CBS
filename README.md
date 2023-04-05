@@ -4,14 +4,20 @@
 El proposito del proyecto es la entrega de un producto que ayude con la gestion de tiempos de proyectos. Se plantea la realización de un calendario que marcará las fechas de inicio y finalización de activides, tambien se tendrá el inventario de los materiales utilizados para realizar la requisicion de estos en cuanto sea necesario y tener el registro de en dónde, cómo y cuándo fueron utilizados. 
 
 #### Tecnologias utilizadas:
+Para el desarrollo de la parte de Back-End:
 - C#
-- CSS
-- TypeScript
-- JavaScript 
+- C++
+- Python
+- JavaScript
+
+Para el desarrollo del Front-End:
+- React 
 
 Estas tecnologias se han considerado usar para 
 
-### Instalacion y Ejecucion
+### Instalacion y Ejecucion.
+Precondiciones:
+- Equipo debe tener instalado el programa Docker.
 **indefinido**
 
 ### Uso
