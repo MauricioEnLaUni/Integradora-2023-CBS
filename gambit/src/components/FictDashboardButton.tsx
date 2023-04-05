@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 import * as short from 'short-uuid';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
@@ -21,8 +23,10 @@ export default class FictDashboardButton {
   
   public static DrawDashboard(buttons: Array<FictDashboardButton>)
   {
-    const handleButtonClick = (route: string) => {
+    const navigate = useNavigate();
 
+    const handleButtonClick = (route: string) => {
+      navigate(route);
     };
     
     return(

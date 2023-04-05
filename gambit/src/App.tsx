@@ -9,15 +9,23 @@ import Layout from './pages/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Unauthorized from './pages/Errors/Unauthorized';
+
+/* Components */
+import RequireAuth from './components/RequireAuth';
 
 const App: React.FC = () => (
   <Routes>
     <Route path="/" element={<Layout />}>
-      // Basics
+      {/* Public Routes */}
       <Route path="login" element={<Login />}/>
       <Route path="register" element={<Register />}/>
+      <Route path="unauthorized" element={<Unauthorized />} />
 
-      <Route path="dashboard" element={<Dashboard />}/>
+      {/* Protected routes */}
+      <Route element={<RequireAuth allowedRoles={[100]}/>}>
+        <Route path="dashboard" element={<Dashboard />}/>
+      </Route>
     </Route>
   </Routes>
 );

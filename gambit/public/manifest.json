@@ -1,0 +1,20 @@
+{
+  "name": "Lachter Client",
+  "short_name": "Lachter",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./assets/img/Oy5RQqx192.avif",
+      "sizes": "192x192",
+      "type": "image/avif"
+    },
+    {
+      "src": "./assets/img/Oy5RQqx512.avif",
+      "sizes": "512x512",
+      "type": "image/avif"
+    }
+  ]
+}

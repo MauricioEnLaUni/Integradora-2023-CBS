@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && workbox generateSW --config=workbox-config.js && sw-precache --config=sw-precache-config.js",
     "preview": "vite preview"
   },
   "dependencies": {
