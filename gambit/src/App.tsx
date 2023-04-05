@@ -22,11 +22,12 @@ const App: React.FC = () => (
       <Route path="login" element={<Login />}/>
       <Route path="register" element={<Register />}/>
       <Route path="unauthorized" element={<Unauthorized />} />
+      <Route path="dashboard" element={<Dashboard />}/>
+      <Route path="projects" element={<Project />}></Route>
 
       {/* Protected routes */}
       <Route element={<RequireAuth allowedRoles={[100]}/>}>
-        <Route path="dashboard" element={<Dashboard />}/>
-        <Route path="project" element={<Project />}></Route>
+        
       </Route>
     </Route>
   </Routes>

@@ -16,3 +16,5 @@ class UserInfoDto {
     this.Avatar = avatar;
   }
 }
+
+export default UserInfoDto;

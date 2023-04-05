@@ -9,3 +9,5 @@ class LoginDto
     this.Password = password;
   }
 }
+
+export default LoginDto;

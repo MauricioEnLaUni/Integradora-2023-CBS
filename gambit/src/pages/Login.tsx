@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
-import useAuth from '../hooks/useAuth';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import LoginDto from '../models/Requests/LoginDto';
 
 import axios from '../api/axios';
-const LOGIN_URL = '/auth';
+import AuthContext from '../context/AuthProvider';
+const LOGIN_URL = 'User/auth';
 
 const Login = () => {
-  const { setAuth } = useAuth();
+  const { setAuth } = useContext(AuthContext);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,9 +34,10 @@ const Login = () => {
         }
     );
 
-    const accessToken = response?.data?.accessToken;
-    const roles = response?.data?.roles;
-    setAuth({ user, pwd, roles, accessToken });
+    console.log(response);
+
+    const accessToken = response?.data;
+    setAuth({ user, pwd, accessToken });
     setUser('');
     setPwd('');
     navigate(from, { replace: true });

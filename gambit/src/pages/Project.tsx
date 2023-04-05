@@ -32,13 +32,12 @@ const Project = () => {
     }
 
     getAllProjects();
+    console.log(projects);
     return () => {
       isMounted = false;
       controller.abort();
     }
   }, []);
-
-
 
   return(
     <>
@@ -47,7 +46,7 @@ const Project = () => {
           ? (
             <List>
                 <ListItem>
-                  {projects.map((e) => <ProjectListItem item={e} ></ProjectListItem>)}
+                  {projects.map((e) => <ProjectListItem item={e} key={e.Id}></ProjectListItem>)}
                 </ListItem>,
               </List>
               ) : <p>¡No hay proyectos registrados!</p>}

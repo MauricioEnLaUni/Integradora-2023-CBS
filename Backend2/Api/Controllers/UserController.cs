@@ -84,14 +84,16 @@ public class UserController : ControllerBase
         CookieOptions cookieOptions = new()
         {
             HttpOnly = true,
-            Expires = DateTime.Now.AddMinutes(1)
+            Expires = DateTime.Now.AddMinutes(1),
+            SameSite = SameSiteMode.Strict
         };
 
         Response.Cookies.Append("Fictichos_Session", token, cookieOptions);
         Response.Cookies.Append("Fictichos_Claims", token, new()
         {
             HttpOnly = false,
-            Expires = DateTime.Now.AddMinutes(30)
+            Expires = DateTime.Now.AddMinutes(1),
+            SameSite = SameSiteMode.Strict
         });
         
         _tokenService.AddToken(token);
