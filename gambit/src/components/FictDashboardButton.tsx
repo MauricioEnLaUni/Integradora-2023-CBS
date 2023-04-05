@@ -1,5 +1,6 @@
 import * as short from 'short-uuid';
 import Button from '@mui/material/Button';
+import Icon from '@mui/material/Icon';
 
 interface DashboardButtonIcon {
   muiName: string;
@@ -32,8 +33,8 @@ export default class FictDashboardButton {
             variant="contained"
             onClick={() => handleButtonClick(button.Route)}
             aria-label={button.Text}
-            startIcon={<span className={`test icon-${button.Icon.muiName}`} />}
           >
+            <Icon>{button.Icon.muiName}</Icon>
             {button.Text}
           </Button>
         ))}
