@@ -1,20 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Routes, Route } from 'react-router-dom';
-import { ColorModeContext, useMode } from './Theme';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
 import './index.css';
+import Layout from './pages/Layout';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import RequireAuth from './components/RequireAuth';
+import Project from './pages/Material';
 
 function App() {
-  const [theme, colorMode] = useMode();
+  const ROLES = {
+    'User': 200,
+    'Owner': 150,
+    'Admin': 100
+  }
 
-  return(
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <div className='app'></div>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/* public routes */}
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="dashboard" element={<Dashboard />} />
+
+        {/* we want to protect these routes */}
+        <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
+          <Route path="projects" element={<Project />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 
