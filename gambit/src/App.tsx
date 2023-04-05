@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -20,8 +21,9 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 const App: React.FC = () => (
-  <App>
-  </App>
+  <Routes>
+    <Route path="/" element={<Layout />}/>
+  </Routes>
 );
 
 export default App;
