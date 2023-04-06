@@ -24,11 +24,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="dashboard" element={<Dashboard />} />
-
-        {/* we want to protect these routes */}
-        <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
-          <Route path="projects" element={<Project />} />
-        </Route>
+        <Route path="projects" element={<Project />} />
       </Route>
     </Routes>
   );

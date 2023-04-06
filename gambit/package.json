@@ -30,6 +30,7 @@
     "react-pro-sidebar": "^0.7.1",
     "react-router-dom": "^6.10.0",
     "short-uuid": "^4.2.2",
+    "swr": "^2.1.2",
     "yup": "^1.0.2"
   },
   "devDependencies": {
