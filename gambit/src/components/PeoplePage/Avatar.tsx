@@ -1,31 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
 const Avatar = ({ buffer }: { buffer: ArrayBuffer }) => {
   const [src, setSrc] = useState<string | undefined>(
-    buffer ? URL.createObjectURL(new Blob([buffer], { type: 'image/avif' }))
+    buffer ? URL.createObjectURL(new Blob([buffer], { type: 'image/*' }))
       : undefined
   );
   const [imgFile, setImgFile] = useState<File | undefined>();
   
-  const handleChanges = () => {
-    
+  const handleChanges = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    setSrc(URL.createObjectURL(file));
+    setImgFile(file);
   }
 
-  return <img src={src} />
+  return(
+    <div>
+      <img src={src} width={'296px'} height={'296px'} />
+      <input type="file" accept="image/*" onChange={handleChanges} />
+    </div>
+  );
 };
 
 export default Avatar;
-    
-  
-    return (
-        <div className="App">
-            <h2>Add Image:</h2>
-            <input type="file" onChange={handleChange} />
-            <img src={file} />
-  
-        </div>
-  
-    );
-}
-  
-export default App;

@@ -11,6 +11,7 @@ import PeopleCondensed from '../models/Display/PeopleCondensed';
 import { Link } from 'react-router-dom';
 import AddressTab from '../components/Contacts/ContactContainer';
 import PeopleTitle from '../components/PeoplePage/TitleContainer';
+import Profile from '../components/PeoplePage/AvatarBox';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -111,7 +112,7 @@ const Test = () => (
       <Grid xs={9}>
         <Grid direction={'column'}>
           <ProfileBlock>
-            <img src={IMAGE}/>
+            <Profile />
           </ProfileBlock>
           <TitleContainer>
             <PeopleTitle title={DUMMY.Name} relation={DUMMY.Relation}/>

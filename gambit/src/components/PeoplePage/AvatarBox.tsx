@@ -1,6 +1,8 @@
 import { styled } from '@mui/material/styles';
 import Card, { CardTypeMap } from "@mui/material/Card";
 import { OverridableComponent } from '@mui/material/OverridableComponent';
+import Avatar from './Avatar';
+import TestImage from '../../test/TestImage';
 
 const ImgContainer: OverridableComponent<CardTypeMap<{}, "div">> =
 styled(Card)(({ theme }) => ({
@@ -12,9 +14,9 @@ styled(Card)(({ theme }) => ({
   borderRadius: '100vh'
 }));
 
-const Profile = (profilePicture: string) => (
+const Profile = () => (
   <ImgContainer>
-    <img src={profilePicture}/>
+    <Avatar buffer={TestImage} />
   </ImgContainer>
 );
 
