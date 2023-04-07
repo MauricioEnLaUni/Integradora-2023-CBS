@@ -16,6 +16,10 @@ namespace Fictichos.Constructora.Model
         public string PayHistory { get; private set; } = string.Empty;
         public List<FTasks> Tasks { get; private set; } = new();
 
+        /// Owner
+        /// Client
+        /// 
+
         public Project() { }
         public Project(string data)
         {

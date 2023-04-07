@@ -1,22 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
-import './index.css';
 import Layout from './pages/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import RequireAuth from './components/RequireAuth';
 import Project from './pages/Material';
+import Test from './pages/Test';
 
 function App() {
-  const ROLES = {
-    'User': 200,
-    'Owner': 150,
-    'Admin': 100
-  }
-
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -25,6 +16,7 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="projects" element={<Project />} />
+        <Route path="test" element={<Test />} />
       </Route>
     </Routes>
   );
