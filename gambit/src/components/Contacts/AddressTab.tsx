@@ -27,8 +27,8 @@ const AddressTab = ({addresses}: {addresses: Array<AddressDto>}) => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box sx={{ width: '100%' }} >
+      <Box sx={{ borderBottom: 1 }} >
         <Tabs value={value} onChange={handleChange} aria-label="address container">
           {addresses.map((e, i) => (
             <Tab {...a11yProps(i)} />

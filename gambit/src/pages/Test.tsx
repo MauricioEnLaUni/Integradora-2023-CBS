@@ -127,6 +127,12 @@ const Test = () => (
       <Grid xs={23}>
         <ContactContainer contact={CONTACTDUMMY} />
       </Grid>
+      <Grid xs={15}>
+
+      </Grid>
+      <Grid xs={8}>
+
+      </Grid>
     </Grid>
   </Box>
 );

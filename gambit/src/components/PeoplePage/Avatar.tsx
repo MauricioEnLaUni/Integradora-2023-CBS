@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 const Avatar = ({ buffer }: { buffer: ArrayBuffer }) => {
   const [src, setSrc] = useState<string | undefined>(

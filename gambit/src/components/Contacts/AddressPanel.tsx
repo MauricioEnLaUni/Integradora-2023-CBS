@@ -1,5 +1,5 @@
 // React
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 //MUI
 import Grid from "@mui/material/Grid";
@@ -77,6 +77,8 @@ const AddressPanel = ({address, tab}: {address: AddressDto, tab: number}) => {
     latitude,
     longitude
   ]);
+
+  const memoizedValue: any = useMemo(() => display, [display]);
 
   return(
     <Grid container columns={3}>

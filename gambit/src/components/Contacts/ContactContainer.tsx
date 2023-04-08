@@ -6,6 +6,9 @@ import Box from '@mui/material/Box';
 import ContactDto from '../../models/Response/Contact/ContactDto';
 import StringTab from './StringTab';
 import AddressTab from './AddressTab';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -37,6 +40,7 @@ const ContactContainer = ({ contact }: { contact: ContactDto }) => {
   const [value, setValue] = useState(0);
 
   const handleChanges = (event: React.SyntheticEvent, newValue: number) => {
+    event.stopPropagation();
     setValue(newValue);
   }
 
@@ -51,24 +55,26 @@ const ContactContainer = ({ contact }: { contact: ContactDto }) => {
   }
 
   return(
-    <Box>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Accordion sx={{ display: 'block', overflow: 'auto', maxHeight: '450px' }}>
+      <AccordionSummary sx={{ borderBottom: 1 }}>
         <Tabs value={value} onChange={handleChanges} aria-label="contact container">
             <Tab {...a11yProps(0)} />
             <Tab {...a11yProps(1)} />
             <Tab {...a11yProps(2)} />
         </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <AddressTab addresses={contact.Addresses} />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <StringTab data={contact.Phones} name={"Phone"}/>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <StringTab data={contact.Emails} name={"Email"}/>
-      </TabPanel>
-    </Box>
+      </AccordionSummary>
+      <AccordionDetails>
+        <TabPanel value={value} index={0}>
+          <AddressTab addresses={contact.Addresses} />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <StringTab data={contact.Phones} name={"Phone"}/>
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <StringTab data={contact.Emails} name={"Email"}/>
+        </TabPanel>
+      </AccordionDetails>
+    </Accordion>
   );
 }
 
