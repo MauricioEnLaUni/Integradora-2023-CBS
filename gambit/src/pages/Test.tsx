@@ -11,6 +11,11 @@ import PeopleCondensed from '../models/Display/PeopleCondensed';
 import PeopleTitle from '../components/PeoplePage/TitleContainer';
 import Profile from '../components/PeoplePage/AvatarBox';
 import ContactContainer from '../components/Contacts/ContactContainer';
+import ProjectSummary from '../components/Projects/ProjectDataGrid';
+import TaskCondensed from '../models/Display/TaskCondensed';
+import ProjectCondensed from '../models/Display/ProjectCondensed';
+import AccountInOut from '../models/Display/AccountInOut';
+import AccountChart from '../components/PeoplePage/AccountChart';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -110,6 +115,19 @@ const PHONEDUMMY = ["4494494499", "4494494499", "4494494499", "4494494499", "449
 
 const CONTACTDUMMY: ContactDto = new ContactDto(AddressExample, EMAILDUMMY, PHONEDUMMY);
 
+const PROJECTSDUMMY = [
+  new ProjectCondensed("0", 'Venta', new Date("2023-11-18"), new TaskCondensed("123", "Clean", new Date("2023-04-09"), "Active", "Johnny"), "Bobby"),
+  new ProjectCondensed("1", 'Venta', new Date("2023-11-18"), new TaskCondensed("123", "Clean", new Date("2023-04-09"), "Active", "Johnny"), "Bobby"),
+  new ProjectCondensed("2", 'Venta', new Date("2023-11-18"), new TaskCondensed("123", "Clean", new Date("2023-04-09"), "Active", "Johnny"), "Bobby"),
+  new ProjectCondensed("3", 'Venta', new Date("2023-11-18"), new TaskCondensed("123", "Clean", new Date("2023-04-09"), "Active", "Johnny"), "Bobby"),
+  new ProjectCondensed("4", 'Venta', new Date("2023-11-18"), new TaskCondensed("123", "Clean", new Date("2023-04-09"), "Active", "Johnny"), "Bobby")
+];
+
+const ACCOUNTDUMMY: Array<AccountInOut> = [
+  new AccountInOut("1", "Testor", 1340.14, 759.15),
+  new AccountInOut("2", "Hello", 1988.10, 6075.10)
+];
+
 const Test = () => (
   <Box sx={{ flexGrow: 12 }}>
     <Grid container spacing={2} columns={32}>
@@ -124,14 +142,16 @@ const Test = () => (
           <Subordinates rows={subordinateRow} columns={gridDef}/>
         </Grid>
       </Grid>
-      <Grid xs={23}>
-        <ContactContainer contact={CONTACTDUMMY} />
-      </Grid>
-      <Grid xs={15}>
-
-      </Grid>
-      <Grid xs={8}>
-
+      <Grid xs={23} container columns={7}>
+        <Grid xs={7}>
+          <ContactContainer contact={CONTACTDUMMY} />
+        </Grid>
+        <Grid xs={5} sx={{ overflow: 'auto' }}>
+          <ProjectSummary projects={PROJECTSDUMMY}/>
+        </Grid>
+        <Grid xs={2}>
+          <AccountChart accounts={ACCOUNTDUMMY}/>
+        </Grid>
       </Grid>
     </Grid>
   </Box>
