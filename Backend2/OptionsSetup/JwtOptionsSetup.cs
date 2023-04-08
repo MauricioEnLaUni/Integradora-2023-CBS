@@ -7,7 +7,7 @@ namespace Fictichos.Constructora.Options;
 public class JwtOptionsSetup : IConfigureOptions<JwtOptions>
 {
     private readonly IConfiguration _configuration;
-    private const string SECTIONNAME = "Jwt";
+    private const string SECTIONNAME = "JWT:ACCESS";
 
     public JwtOptionsSetup(IConfiguration configuration)
     {

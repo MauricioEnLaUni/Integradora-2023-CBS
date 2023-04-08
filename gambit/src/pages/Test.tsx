@@ -142,7 +142,7 @@ const Test = () => (
           <Subordinates rows={subordinateRow} columns={gridDef}/>
         </Grid>
       </Grid>
-      <Grid xs={23} container columns={7}>
+      <Grid xs={23} container columns={7} >
         <Grid xs={7}>
           <ContactContainer contact={CONTACTDUMMY} />
         </Grid>

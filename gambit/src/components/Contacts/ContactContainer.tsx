@@ -55,7 +55,7 @@ const ContactContainer = ({ contact }: { contact: ContactDto }) => {
   }
 
   return(
-    <Accordion sx={{ display: 'block', overflow: 'auto', maxHeight: '450px' }}>
+    <Accordion sx={{ display: 'block', overflow: 'auto', maxHeight: '400px' }} disableGutters>
       <AccordionSummary sx={{ borderBottom: 1 }}>
         <Tabs value={value} onChange={handleChanges} aria-label="contact container">
             <Tab {...a11yProps(0)} />
