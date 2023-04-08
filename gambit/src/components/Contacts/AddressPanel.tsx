@@ -98,14 +98,14 @@ const AddressPanel = ({address, tab}: {address: AddressDto, tab: number}) => {
           </Grid>
         </Grid>
       ))}
-      <Grid xs={1}>
+      <Grid xs={1} display='flex' alignItems='center'>
         <IconButton>
-          <SaveIcon sx={{fontSize: 48}} color="primary" />
+          <SaveIcon sx={{fontSize: 42}} color="primary"/>
         </IconButton>
       </Grid>
-      <Grid xs={1}>
+      <Grid xs={1} display='flex' alignItems='center'>
         <IconButton>
-          <DeleteForeverIcon sx={{fontSize: 48, color: pink[500]}} />
+          <DeleteForeverIcon sx={{fontSize: 42, color: pink[500]}}/>
         </IconButton>
       </Grid>
     </Grid>

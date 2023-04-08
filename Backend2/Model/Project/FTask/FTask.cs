@@ -20,6 +20,10 @@ namespace Fictichos.Constructora.Model
         public List<string> Material { get; set; } = new();
         public Address? Address { get; set; }
         public string Owner { get; set; } = string.Empty;
+        // Siblings
+        // Status
+        // Children
+        // Required
 
         public FTasks() { }
         public FTasks(NewFTaskDto newTask)
