@@ -5,13 +5,12 @@ import Grid from '@mui/material/Unstable_Grid2';
 import PersonDto from '../models/Response/People/PersonDto';
 import ContactDto from '../models/Response/Contact/ContactDto';
 import { Card, Typography } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import Subordinates from '../components/PeoplePage/PeopleList';
 import PeopleCondensed from '../models/Display/PeopleCondensed';
-import { Link } from 'react-router-dom';
-import AddressTab from '../components/Contacts/ContactContainer';
 import PeopleTitle from '../components/PeoplePage/TitleContainer';
 import Profile from '../components/PeoplePage/AvatarBox';
+import ContactContainer from '../components/Contacts/ContactContainer';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -104,7 +103,12 @@ const AddressExample = [{
   State: "abs",
   Country: "abs",
   Coordinates: {Latitude: "12346", Longitude: "123456"}
-}]
+}];
+
+const EMAILDUMMY = [ "mauricio@cbs.com" ];
+const PHONEDUMMY = ["4494494499", "4494494499", "4494494499", "4494494499", "4494494499",];
+
+const CONTACTDUMMY: ContactDto = new ContactDto(AddressExample, EMAILDUMMY, PHONEDUMMY);
 
 const Test = () => (
   <Box sx={{ flexGrow: 12 }}>
@@ -121,7 +125,7 @@ const Test = () => (
         </Grid>
       </Grid>
       <Grid xs={23}>
-        <AddressTab addresses={AddressExample}></AddressTab>
+        <ContactContainer contact={CONTACTDUMMY} />
       </Grid>
     </Grid>
   </Box>
