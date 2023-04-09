@@ -135,15 +135,12 @@ public class TaskController : ControllerBase
         Project? owner = await _projectService
             .GetOneByAsync(Filter.ById<Project>(original.Owner));
         if (owner is null) return NotFound();
-
-        List<string> employees = new();
+        
         List<string> materials = new();
-        FilterDefinition<Person> employeeFilter = Builders<Person>
-            .Filter
-            .Exists(x => x.Employed);
+        List<string> employees = new();
 
         employees = (await _peopleService
-                .GetByAsync(employeeFilter))
+                .GetByAsync(Filter.Empty<Person>()))
                 .Select(x => x.Id)
                 .ToList();
         
@@ -199,11 +196,8 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> UpdateOverseer(
         TaskSingleUpdate<string> data)
     {
-        FilterDefinition<Person> employeeFilter = Builders<Person>
-            .Filter
-            .Exists(x => x.Employed);
         List<string> employees = (await _peopleService
-            .GetByAsync(employeeFilter))
+            .GetByAsync(Filter.Empty<Person>()))
             .Select(x => x.Id)
             .ToList();
 
@@ -220,7 +214,12 @@ public class TaskController : ControllerBase
             UpdateDefinition<Person> empUpdate = Builders<Person>
                 .Update
                 .Set(x => x.ModifiedAt, DateTime.Now)
-                .AddToSet(x => x.Employed!.Oversees, data.Id);
+                .AddToSet(x => x.Charges
+                    .Where(y => y.Active)
+                    .SingleOrDefault()!
+                    .Oversees,
+                data.Id);
+
             UpdateDto<Person> empUpdateWrapper =
                 new(Filter.ById<Person>(data.Id), empUpdate);
             _peopleService.Update(empUpdateWrapper);
@@ -244,11 +243,8 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> UpdateAssigned(
         TaskSingleUpdateList<string> data)
     {
-        FilterDefinition<Person> employeeFilter = Builders<Person>
-            .Filter
-            .Exists(x => x.Employed);
         List<string> employees = (await _peopleService
-            .GetByAsync(employeeFilter))
+            .GetByAsync(Filter.Empty<Person>()))
             .Select(x => x.Id)
             .ToList();
 
@@ -269,12 +265,19 @@ public class TaskController : ControllerBase
             if (!original.EmployeesAssigned.Contains(e))
             {
                 update = update
-                    .AddToSet(x => x.Employed!.Assignments, data.Id);
+                    .AddToSet(x => x.Charges
+                        .Where(y => y.Active)
+                        .SingleOrDefault()!
+                        .Oversees,
+                    data.Id);
             }
             else
             {
                 update = update
-                    .Pull(x => x.Employed!.Assignments, data.Id);
+                    .Pull(x => x.Charges
+                        .Where(y => y.Active)
+                        .SingleOrDefault()!
+                        .Oversees, data.Id);
             }
             UpdateDto<Person> wrapper =
                 new(Filter.ById<Person>(e), update);
