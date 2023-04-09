@@ -27,7 +27,6 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             MapSalary();
             MapPerson();
             MapJob();
-            MapEmployee();
             MapSchedule();
             MapEducation();
             MapGrade();
@@ -180,9 +179,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                 BsonClassMap.RegisterClassMap<Person>(classMap => {
                     classMap.MapMember(p => p.Name).SetElementName("name");
                     classMap.MapMember(p => p.LastName).SetElementName("lastName");
-                    classMap.MapMember(p => p.Relation).SetElementName("relation");
                     classMap.MapMember(p => p.Contacts).SetElementName("contacts");
-                    classMap.MapMember(p => p.Employed).SetElementName("employed");
                 });
             }
         }
@@ -198,25 +195,6 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Material).SetElementName("material");
                     classMap.MapMember(p => p.Parent).SetElementName("parent");
                     classMap.MapMember(p => p.Responsibilities).SetElementName("responsibilities");
-                });
-            }
-        }
-
-        public static void MapEmployee()
-        {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Employee)))
-            {
-                BsonClassMap.RegisterClassMap<Employee>(classMap => {
-                    classMap.MapMember(p => p.Active).SetElementName("active");
-                    classMap.MapMember(p => p.DOB).SetElementName("DOB");
-                    classMap.MapMember(p => p.RFC).SetElementName("RFC");
-                    classMap.MapMember(p => p.CURP).SetElementName("CURP");
-                    classMap.MapMember(p => p.Documents).SetElementName("docs");
-                    classMap.MapMember(p => p.Oversees).SetElementName("oversees");
-                    classMap.MapMember(p => p.InternalKey).SetElementName("key");
-                    classMap.MapMember(p => p.Charges).SetElementName("charges");
-                    classMap.MapMember(p => p.ScheduleHistory).SetElementName("scheduleHistory");
-                    classMap.MapMember(p => p.Assignments).SetElementName("assignments");
                 });
             }
         }

@@ -22,6 +22,7 @@ builder.Services.AddSingleton(serviceProvider =>
 
 builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddSingleton<AreaService>();
 builder.Services.AddSingleton<FTaskService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<ProjectService>();

@@ -12,50 +12,38 @@ namespace Fictichos.Constructora.Model
     {
         public List<Claim> Claims { get; set; } = new();
         public ClaimsIdentity Identity { get; set; }
+        public List<Claim> Ownership { get; set; } = new();
+        public List<Claim> Membership { get; set; } = new();
 
-        Credentials(User data, Employee employee)
+        Credentials(User user, Person employee)
         {
-            Claims.Add(new Claim(ClaimTypes.Name, data.Name));
-            ClaimEmails(data);
+            Claims.Add(new Claim(ClaimTypes.Name, user.Name));
             Claims.Add(new Claim("employee", employee.Id));
-            ClaimProjects(employee.Oversees);
-            ClaimMaterial(employee);
+            Claims.Add(new Claim("internalKey", employee.InternalKey));
+            SetRole(employee.Charges);
             
 
             Identity = new ClaimsIdentity(Claims, Constants.COOKIENAME);
         }
 
-        internal void ClaimProjects(List<string> data)
+        internal void Subscribe(List<string> data)
         {
             data.ForEach(e => {
-                Claims.Add(new Claim("project-owner", e));
+                Membership.Add(new Claim("member", e));
             });
         }
-
-        internal void ClaimMaterial(Employee data)
+        
+        internal void Claim()
         {
-            List<string>? mats = data.Charges.MaxBy(x => x.CreatedAt)?.Material;
-            mats?.ForEach(e => {
-                Claims.Add(new Claim("material-owner", e));
-            });
+
         }
 
-        internal void ClaimMembership(Employee data)
+        internal void SetRole(List<Job> data)
         {
-            data.Assignments.ForEach(e => {
-                Claims.Add(new Claim("project-member", e));
-            });
-            if (data.Current() is not null)
-            {
-                Claims.Add(new Claim("area-member", data.Current()!.Id));
-            }
-        }
+            Job? current = data.Where(x => x.Active).SingleOrDefault();
+            if (current is null) return;
 
-        internal void ClaimEmails(User data)
-        {
-            data.Email.ForEach(e => {
-                Claims.Add(new Claim(ClaimTypes.Email, e));
-            });
+            Claims.Add(new Claim("role", current.Role));
         }
     }
 

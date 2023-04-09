@@ -9,16 +9,17 @@ namespace Fictichos.Constructora.Model;
 public class Area : BaseEntity,
         IQueryMask<Area, NewAreaDto, UpdatedAreaDto>
 {
-    public string Name { get; set; } = string.Empty;
-    public string Head { get; set; } = string.Empty;
-    public string Collection { get; set; } = string.Empty;
+    internal string Name { get; set; } = string.Empty;
+    internal string? Parent { get; set; }
+    internal string? Head { get; set; } = string.Empty;
+    internal List<string> Children { get; set; } = new();
 
     public Area() { }
     private Area(NewAreaDto data)
     {
         Name = data.Name;
-        Head = data.Head;
-        Collection = data.Collection;
+        Parent = data.Parent ?? null;
+        Head = data.Head ?? null;
     }
 
     public Area Instantiate(NewAreaDto data)
@@ -44,7 +45,7 @@ public class Area : BaseEntity,
     public void Update(UpdatedAreaDto data)
     {
         Name = data.Name ?? Name;
+        Parent = data.Parent ?? Parent;
         Head = data.Head ?? Head;
-        Collection = data.Collection ?? Collection;
     }
 }

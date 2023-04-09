@@ -16,17 +16,20 @@ public class PersonController : ControllerBase
     private readonly ProjectService _projectService;
     private readonly TimeTrackerService _time;
     private readonly EmailService _emailService;
+    private readonly AreaService _areaService;
 
     public PersonController(
         PersonService person,
         ProjectService project,
         EmailService email,
-        TimeTrackerService time)
+        TimeTrackerService time,
+        AreaService area)
     {
         _personService = person;
         _projectService = project;
         _time = time;
         _emailService = email;
+        _areaService = area;
     }
 
     [HttpGet]
@@ -41,7 +44,7 @@ public class PersonController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("id/{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(string id)
@@ -53,23 +56,7 @@ public class PersonController : ControllerBase
         return Ok(output.ToDto());
     }
 
-    [HttpGet("employee")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult GetEmployees()
-    {
-        FilterDefinition<Person> filter = Builders<Person>
-            .Filter
-            .Where(x => x.Employed != null);
-        List<Person> raw = _personService.GetBy(filter);
-
-        List<PersonDto> output = new();
-        raw.ForEach(e => {
-            output.Add(e.ToDto());
-        });
-        return Ok(output);
-    }
-
-    [HttpGet("project/{project}")]
+    [HttpGet("project/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetByProject(string id)
@@ -80,7 +67,7 @@ public class PersonController : ControllerBase
 
         FilterDefinition<Person> filter = Builders<Person>
             .Filter
-            .ElemMatch(x => x.Employed!.Assignments, project.Id);
+            .AnyEq("Charges.Assignments", project.Id);
         List<Person> raw = _personService
             .GetBy(filter);
         List<PersonDto> result = new();
@@ -91,21 +78,19 @@ public class PersonController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("relation/{relation}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetByRelations(string relation)
-    {
-        FilterDefinition<Person> filter = Builders<Person>
-            .Filter
-            .Eq(x => x.Relation, relation);
-        return Ok(_personService.GetBy(filter));
-    }
-
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public IActionResult CreateUser(NewPersonDto data)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public IActionResult CreateEmployee(NewPersonDto data)
     {
+        if (!_time.Over(0, data.DOB)) return BadRequest("Employee must be at least over 16 years old.");
+        if (data.Email is not null && !_emailService.EmailIsAvailable(data.Email))
+            return Conflict("Email already in use.");
+        
+        NewPersonDto? validated = _personService.ValidateNewPerson(data);
+
+
         Person? newItem = _personService.InsertOne(data);
 
         return CreatedAtAction(

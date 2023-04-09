@@ -69,31 +69,6 @@ public class SerializerTest
             Phones = new() { "1694894", "8743169" },
             Emails = new() { "64941@axpfa.com" }
         },
-        Employee = new()
-        {
-            Id = ObjectId.GenerateNewId().ToString(),
-            Name = "10",
-            DOB = DateTime.Now,
-            CURP = "684431321231",
-            RFC = "ASIDBNASPDA",
-            Charges = new()
-            {
-                new()
-                { 
-                    Id = ObjectId.GenerateNewId().ToString(),
-                    Name = "asfashf",
-                    SalaryHistory = new()
-                    {
-                        new() { Id = ObjectId.GenerateNewId().ToString(), Reductions = new() { { "sdasnd", 10.0 } }, HourlyRate = 193.00, Period = "semana", Due = "asdasd1a", HoursWeeklyCap = 48, Closed = DateTime.Now }
-                    },
-                    Role = "asdaspnda"
-                },
-            },
-            ScheduleHistory = new()
-            {
-                new() { Id = ObjectId.GenerateNewId().ToString(), Period = "sdfidf", Location = new() { Street = "asda" }}
-            }
-        }
     };
 
     public LoginSuccessDto UserInfo { get; set; } = new()

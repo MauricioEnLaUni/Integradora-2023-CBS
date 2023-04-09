@@ -10,9 +10,16 @@ namespace Fictichos.Constructora.Model
         IQueryMask<Salary, NewSalaryDto, UpdatedSalaryDto>
     {
         public string Period { get; set; } = string.Empty;
-        public string Due { get; set; } = string.Empty;
+        public bool Due { get; set; } // false = weekly, true = biweekly
         public Dictionary<string, double> Reductions { get; set; } = new();
         public double HourlyRate { get; set; }
+        internal int Vacation { get; set; }
+        internal double VacationBonus { get; set; }
+        internal double Aguinaldo { get; set; }
+        internal double Bonuses { get; set; }
+        internal double Comission { get; set; }
+        internal double Royalties { get; set; }
+        internal double Equity { get; set; }
         public int? HoursWeeklyCap { get; set; }
         public DateTime? Closed { get; set; }
 

@@ -11,17 +11,17 @@ namespace Fictichos.Constructora.Model
 {
     public class Job : BaseEntity, IQueryMask<Job, NewJobDto, UpdatedJobDto>
     {
-        public List<Salary> SalaryHistory { get; set; } = new();
-        public string Role { get; set; } = string.Empty;
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Area { get; set; } = string.Empty;
-        [BsonRepresentation(BsonType.ObjectId)]
-        public List<string> Oversees { get; set; } = new();
-        public List<string> Material { get; set; } = new();
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Parent { get; set; } = string.Empty;
-        public List<string> Responsibilities { get;  set; } = new();
-        public bool Active { get; set; }
+        internal List<Salary> SalaryHistory { get; private set; } = new();
+        internal string Name { get; private set; } = string.Empty;
+        internal string Role { get; private set; } = string.Empty;
+        internal string Area { get; private set; } = string.Empty;
+        internal List<string> Oversees { get; private set; } = new();
+        internal List<string> Leads { get; private set; } = new();
+        internal List<string> Material { get; private set; } = new();
+        internal string Parent { get; private set; } = string.Empty;
+        internal List<string> Responsibilities { get;  private set; } = new();
+        internal bool Active { get; private set; }
+        internal List<string> Assignments { get; private set; } = new();
 
         public Job(NewJobDto data)
         {
