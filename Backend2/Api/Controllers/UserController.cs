@@ -10,7 +10,6 @@ using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Abstraction;
 using Fictichos.Constructora.Utilities;
-using Fictichos.Constructora.Middleware;
 using Fictichos.Constructora.Auth;
 using Fictichos.Constructora.Utilities.MongoDB;
 
