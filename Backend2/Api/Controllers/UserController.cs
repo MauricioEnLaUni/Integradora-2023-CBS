@@ -12,6 +12,7 @@ using Fictichos.Constructora.Abstraction;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Middleware;
 using Fictichos.Constructora.Auth;
+using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -55,7 +56,8 @@ public class UserController : ControllerBase
         User raw = await _userService.InsertOneAsync(payload);
         
         NewEmailDto wrapper = new() { owner = raw.Id, value = newEmail };
-        await _emailService.InsertOneAsync(wrapper);
+        EmailContainer mail = await _emailService.InsertOneAsync(wrapper);
+        _userService.GrantEmail(mail.Id, raw.Id);
         
         LoginSuccessDto data = raw.ToDto();
 
@@ -102,40 +104,58 @@ public class UserController : ControllerBase
     [HttpPost("logout")]
     public IActionResult LogOut()
     {
-        Response.Cookies.Append("Fictichos_Session", "", new() {
-            HttpOnly = true,
-            Expires = DateTime.Now.AddMinutes(-10)
-        });
-        Response.Cookies.Append("Fictichos_Claims", "", new()
-        {
-            HttpOnly = false,
-            Expires = DateTime.Now.AddMinutes(-10)
-        });
-        return Ok();
+        string accessToken = HttpContext.Request.Headers["Authorization"]
+            .ToString()
+            .Replace("Bearer ", "");
+        FilterDefinition<TokenContainer> filter = Builders<TokenContainer>
+            .Filter.Eq(x => x.Token, accessToken);
+        _tokenService.DeleteOne(filter);
+        
+        return NoContent();
     }
     
     [HttpPatch("self")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> SelfUpdate(
+    public IActionResult SelfUpdate(
         [FromBody] UserSelfUpdateDto data)
     {
-        IEnumerable<Claim> claims = TokenValidator.GetClaims(data.token);
-        string? name = claims.Where(x => x.Type == "unique_name")
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
             .Select(x => x.Value)
             .SingleOrDefault();
-        if (name is null) return BadRequest();
+        if (idCredential is null) return BadRequest();
 
-        var filter = Builders<User>.Filter.Eq(x => x.Name, name);
-        User? usr = await _userService.GetOneByAsync(filter);
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
+
+        // BUG: Doesn't validate if you can remove an email
+        Dictionary<string, string> policy =
+            new() {{ "unique_name", data.Name }};
+        if (data.email is not null)
+        {
+            data.email.ForEach(e => {
+                if (e.Operation != 1 && e.NewItem is null)
+                {
+                    data.email.Remove(e);
+                } else if (e.Operation != 1)
+                {
+                    policy.Add("owner", e.NewItem! );
+                }
+            });
+        }
+
+        bool? validation = _tokenService
+            .AuthorizeAll(usr.Credentials, header, policy);
+        if (validation is not true) return Forbid();
 
         if (data.email is not null) _emailService.ValidateEmailUpdate(data.email);
 
         usr.UserSelfUpdate(data);
-        _userService.ReplaceOne(filter, usr);
+        _userService.ReplaceOne(Filter.ById<User>(usr.Id), usr);
         
         return NoContent();
     }
@@ -144,12 +164,19 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> UpdateUser([FromBody] UserAdminUpdateDto data)
+    public IActionResult UpdateUser([FromBody] UserAdminUpdateDto data)
     {
-        var filter = Builders<User>.Filter
-            .Eq(x => x.Name, data.name);
-        User? usr = await _userService.GetOneByAsync(filter);
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+        if (!usr.IsAdmin()) return Forbid();
 
         if (data.basicFields.email is not null)
         {
@@ -157,6 +184,7 @@ public class UserController : ControllerBase
         }
 
         usr.Update(data);
+        _userService.ReplaceOne(Filter.ById<User>(usr.Id), usr);
         return NoContent();
     }
     
@@ -168,9 +196,19 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetEmails(string id)
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
-        header = header.Replace("Bearer ", "");
-        Dictionary<string, string> policy = new() {{ "owner", "642c89b1ba3c9c320c132bfa" }};
-        _tokenService.Authorize(header, policy);
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+
+        Dictionary<string, string> policy = new() {{ "owner", id }};
+        bool? validation = _tokenService
+            .AuthorizeAll(usr.Credentials, header, policy);
+        if (validation is not true) return Forbid();
 
         FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
             .Filter
@@ -189,16 +227,42 @@ public class UserController : ControllerBase
     [HttpGet("userInfo")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetUser(string name)
     {
-        var filter = Builders<User>.Filter.Eq(x => x.Name, name);
-        User? info = _userService.GetOneBy(filter);
-        return Ok(info);
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return Unauthorized();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (usr.Name != claims
+            .SingleOrDefault(x => x.Type == "unique_name")?.Value)
+                return Forbid();
+        
+        return Ok(usr.ToDto());
     }
 
     [HttpDelete("collection")]
     public IActionResult DeleteCollection()
     {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+        if (!usr.IsAdmin()) return Forbid();
+        
         _userService.Clear();
         return NoContent();
     }

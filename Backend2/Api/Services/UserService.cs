@@ -4,6 +4,7 @@ using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Utilities.MongoDB;
+using System.Security.Claims;
 
 namespace Fictichos.Constructora.Repository;
 
@@ -31,5 +32,14 @@ public class UserService
         if (usr is null) return false;
         
         return usr.Active;
+    }
+
+    public void GrantEmail(string id, string email)
+    {
+        Claim toAdd = new("owner", email);
+        UpdateDefinition<User> update = Builders<User>
+            .Update
+            .AddToSet(x => x.Credentials, toAdd);
+        _mainCollection.UpdateOne(Filter.ById<User>(id), update);
     }
 }

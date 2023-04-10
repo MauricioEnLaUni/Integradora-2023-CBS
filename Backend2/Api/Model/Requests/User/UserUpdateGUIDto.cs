@@ -5,6 +5,7 @@ namespace Fictichos.Constructora.Dto;
 public record UserSelfUpdateDto
 {
     public string token = string.Empty;
+    public string Name = string.Empty;
     public string? password;
     public byte[]? avatar;
     public List<UpdateList<string>>? email;

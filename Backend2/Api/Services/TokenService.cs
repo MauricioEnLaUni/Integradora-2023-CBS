@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 
 using MongoDB.Driver;
@@ -5,6 +6,7 @@ using MongoDB.Driver;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
+using Fictichos.Constructora.Middleware;
 
 namespace Fictichos.Constructora.Auth;
 
@@ -43,19 +45,20 @@ public class TokenService
         return(output);
     }
 
-    public bool? Authorize(string? cookie, Dictionary<string, string> claims)
+    public bool? AuthorizeAll(
+        List<Claim> claims, string cookie, Dictionary<string, string> policy)
     {
-        if (cookie is null) return null;
+        if (claims is null) return null;
         JwtSecurityToken jwt = ParseToken(cookie);
         
         if (jwt.ValidFrom > jwt.ValidTo) return null;
         if (jwt.ValidTo < DateTime.UtcNow) return null;
         
-        if (jwt.Payload is null) return false;
+        if (jwt.Payload is null || claims is null) return false;
 
-        foreach (KeyValuePair<string, string> e in claims)
+        foreach (KeyValuePair<string, string> e in policy)
         {
-            var claim = jwt.Claims.Where(c => c.Type == e.Key)
+            var claim = claims.Where(c => c.Type == e.Key)
                 .Select(c => c.Value)
                 .ToList();
             if (!claim.Contains(e.Value))
@@ -65,5 +68,36 @@ public class TokenService
         }
 
         return true;
+    }
+
+    public bool? AuthorizeAny(
+        List<Claim> claims, string cookie, Dictionary<string, string> policy)
+    {
+        if (claims is null) return null;
+        JwtSecurityToken jwt = ParseToken(cookie);
+        
+        if (jwt.ValidFrom > jwt.ValidTo) return null;
+        if (jwt.ValidTo < DateTime.UtcNow) return null;
+        
+        if (jwt.Payload is null || claims is null) return false;
+
+        foreach (KeyValuePair<string, string> e in policy)
+        {
+            var claim = claims.Where(c => c.Type == e.Key)
+                .Select(c => c.Value)
+                .ToList();
+            if (claim.Contains(e.Value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public IEnumerable<Claim> GetClaimsFromHeader(string header)
+    {
+        header = header.Replace("Bearer ", "");
+        return TokenValidator.GetClaims(header);
     }
 }

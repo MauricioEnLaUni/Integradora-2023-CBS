@@ -121,5 +121,17 @@ namespace Fictichos.Constructora.Model
             UserSelfUpdate(data.basicFields);
             data.roles?.ForEach(Roles.UpdateWithIndex);
         }
+
+        internal bool IsAdmin()
+        {
+            Claim? claims = Credentials
+                .Where(x => x.Type == "is_admin")
+                .SingleOrDefault();
+            if (claims?.Value != "yes")
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }
