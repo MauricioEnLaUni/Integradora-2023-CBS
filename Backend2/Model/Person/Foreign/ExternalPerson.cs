@@ -16,6 +16,8 @@ namespace Fictichos.Constructora.Model
         public (string Role, string Project) Involvement { get; private set; } = new();
         public Contact Contacts { get; set; } = new();
 
+        // Subcontractors
+
         public ExternalPerson() { }
 
         public ExternalPerson(NewExPersonDto data)

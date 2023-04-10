@@ -34,8 +34,6 @@ const Login = () => {
         }
     );
 
-    console.log(response);
-
     const accessToken = response?.data;
     setAuth({ user, pwd, accessToken });
     setUser('');

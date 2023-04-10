@@ -14,63 +14,22 @@ namespace Fictichos.Constructora.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CompaniesController : ControllerBase
+public class ForeignController : ControllerBase
 {
     private readonly CompanyService _companyService;
     private readonly ExternalPersonService _foreignService;
     private readonly TokenService _tokenService;
     private readonly UserService _userService;
     private readonly EmailService _emailService;
-    private readonly FilterDefinition<Company> empty = Filter.Empty<Company>();
+    private readonly FilterDefinition<ExternalPerson> empty = Filter.Empty<ExternalPerson>();
 
-    public CompaniesController(CompanyService company, ExternalPersonService foreign, TokenService token, UserService users, EmailService email)
+    public ForeignController(CompanyService company, ExternalPersonService foreign, TokenService token, UserService users, EmailService email)
     {
         _companyService = company;
         _foreignService = foreign;
         _tokenService = token;
         _userService = users;
         _emailService = email;
-    }
-
-    [HttpPost]
-    public IActionResult Create(
-        [FromBody] NewCompanyDto data)
-    {
-        string header = HttpContext.Request.Headers["Authorization"]!;
-        if (header is null) return Unauthorized();
-        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
-        string? idCredential = claims.Where(x => x.Type == "sub")
-            .Select(x => x.Value)
-            .SingleOrDefault();
-        if (idCredential is null) return BadRequest();
-
-        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
-        if (usr is null) return NotFound();
-        if (!usr.Active) return Forbid();
-
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
-        {
-            return Forbid();
-        }
-
-        Company cmp = _companyService.InsertOne(data);
-
-        if (data.Email is not null)
-        {
-            _emailService.EmailIsAvailable(data.Email);
-            _emailService
-                .InsertOne(new() { owner = cmp.Id, value = data.Email });
-        }
-        return CreatedAtAction(
-            actionName: nameof(GetById),
-            routeValues: new { id = cmp.Id },
-            value: cmp.ToDto()
-        );
     }
 
     [HttpGet]
@@ -98,8 +57,7 @@ public class CompaniesController : ControllerBase
             return Forbid();
         }
 
-
-        return Ok(_companyService.GetBy(empty));
+        return Ok(_foreignService.GetOneBy(empty));
     }
 
     [HttpGet("{id}")]
@@ -127,51 +85,23 @@ public class CompaniesController : ControllerBase
             return Forbid();
         }
 
-        return Ok(_companyService.GetBy(id));
+        return Ok(_foreignService.GetOneBy(Filter.ById<ExternalPerson>(id)));
     }
 
+    [HttpPost]
+    public IActionResult Create(NewExPersonDto data)
+    {
+        if (!_emailService.EmailIsAvailable(data.Email)) return BadRequest("Email is invalid");
+        ExternalPerson result = new ExternalPerson().Instantiate(data);
+        return CreatedAtAction(
+            actionName: nameof(GetById),
+            routeValues: new { id = result.Id},
+            value: result.ToDto()
+        );
+    }
 
     [HttpPut]
-    public IActionResult Update([FromBody] UpdatedCompanyDto data)
-    {
-        string header = HttpContext.Request.Headers["Authorization"]!;
-        if (header is null) return Unauthorized();
-        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
-        string? idCredential = claims.Where(x => x.Type == "sub")
-            .Select(x => x.Value)
-            .SingleOrDefault();
-        if (idCredential is null) return BadRequest();
-
-        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
-        if (usr is null) return NotFound();
-        if (!usr.Active) return Forbid();
-
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
-        {
-            return Forbid();
-        }
-
-        Company? original = _companyService
-            .GetOneBy(Filter.ById<Company>(data.Id));
-        if (original is null) return NotFound();
-
-        if (data.Contacts is not null && data.Contacts.Emails is not null)
-        {
-            _emailService.ValidateEmailUpdate(data.Contacts.Emails);
-        }
-        original.Update(data);
-        _companyService.ReplaceOne(Filter.ById<Company>(data.Id), original);
-
-        return NoContent();
-    }
-
-    [HttpDelete]
-    public IActionResult Delete(string id)
+    public IActionResult Update(UpdatedExPersonDto data)
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
         if (header is null) return Unauthorized();
@@ -194,10 +124,42 @@ public class CompaniesController : ControllerBase
         {
             return Forbid();
         }
+        ExternalPerson? person = _foreignService
+            .GetOneBy(Filter.ById<ExternalPerson>(data.Id));
+        if (person is null) return NotFound();
+        if (data.Contacts is not null && data.Contacts.Emails is not null)
+        {
+            _emailService.ValidateEmailUpdate(data.Contacts.Emails);
+        }
+        
+        person.Update(data);
+        _foreignService.ReplaceOne(Filter.ById<ExternalPerson>(data.Id), person);
 
-        Company? cmp = _companyService
-            .GetOneBy(Filter.ById<Company>(id));
-        // REVISIT
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(string id)
+    {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+        if (usr.Credentials.SingleOrDefault(x => x.Type == "admin")?.Value != "yes")
+            return Forbid();
+
+        ExternalPerson? person = _foreignService
+            .GetOneBy(Filter.ById<ExternalPerson>(id));
+        if (person is null) return NotFound();
+
+        await _companyService.RemovePerson(id, person);
 
         return NoContent();
     }
