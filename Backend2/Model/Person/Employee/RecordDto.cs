@@ -1,5 +1,3 @@
-using Fictichos.Constructora.Repository;
-
 namespace Fictichos.Constructora.Dto;
 
 public record NewRecordDto

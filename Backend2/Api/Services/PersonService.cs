@@ -1,9 +1,10 @@
+using System.Text.RegularExpressions;
+
 using MongoDB.Driver;
 
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Dto;
-using System.Text.RegularExpressions;
 using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository;

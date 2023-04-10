@@ -1,4 +1,5 @@
 using System.Reflection;
+
 namespace Fictichos.Constructora.Utilities;
 
 public abstract class Enumeration<TEnum> : IEquatable<Enumeration<TEnum>>

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 using Fictichos.Constructora.Utilities;
 
 namespace Fictichos.Constructora.Dto

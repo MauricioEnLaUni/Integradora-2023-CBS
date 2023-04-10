@@ -1,6 +1,7 @@
-using Fictichos.Constructora.Repository;
 using MongoDB.Bson;
 using MongoDB.Driver;
+
+using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Utilities.MongoDB
 {

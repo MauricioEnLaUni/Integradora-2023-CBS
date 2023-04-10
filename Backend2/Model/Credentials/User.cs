@@ -1,12 +1,14 @@
+using System.Security.Claims;
+using System.Text.RegularExpressions;
+using System.IdentityModel.Tokens.Jwt;
+
 using Isopoh.Cryptography.Argon2;
+
 using Newtonsoft.Json;
 
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
-using System.Text.RegularExpressions;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Fictichos.Constructora.Model
 {

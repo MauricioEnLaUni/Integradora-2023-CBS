@@ -1,7 +1,8 @@
+using Newtonsoft.Json;
+
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Dto;
-using Newtonsoft.Json;
 
 namespace Fictichos.Constructora.Auth;
 

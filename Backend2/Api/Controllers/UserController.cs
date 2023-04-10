@@ -2,8 +2,6 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
 
 using MongoDB.Driver;
 
@@ -13,9 +11,7 @@ using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Abstraction;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Middleware;
-using Fictichos.Constructora.Utilities.MongoDB;
 using Fictichos.Constructora.Auth;
-using Microsoft.AspNetCore.Http;
 
 namespace Fictichos.Constructora.Controllers;
 

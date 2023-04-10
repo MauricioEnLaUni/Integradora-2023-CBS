@@ -1,9 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+
+using MongoDB.Driver;
+
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
-using MongoDB.Driver;
 
 namespace Fictichos.Constructora.Auth;
 
