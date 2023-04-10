@@ -64,6 +64,32 @@ public class UserController : ControllerBase
             { StatusCode = StatusCodes.Status201Created };
     }
 
+    [HttpPost("a/7AS02ZHGKZnP")]
+    public async Task<IActionResult> CreateAdminAccount(
+        [FromBody] NewUserDto payload)
+    {
+        var filter = Builders<User>.Filter.Eq(e => e.Name, payload.Name);
+        if (!_userService.NameIsUnique(payload.Name)) return Conflict();
+        
+        string newEmail = payload.Email;
+        if (!newEmail.IsEmailFormatted()) return BadRequest();
+
+        if (!_emailService.EmailIsAvailable(newEmail))
+            return Conflict();
+
+        User raw = await _userService.InsertOneAsync(payload);
+        raw.Credentials.Add(new("is_admin", "yes"));
+        
+        NewEmailDto wrapper = new() { owner = raw.Id, value = newEmail };
+        EmailContainer mail = await _emailService.InsertOneAsync(wrapper);
+        _userService.GrantEmail(mail.Id, raw.Id);
+        
+        LoginSuccessDto data = raw.ToDto();
+
+        return new ObjectResult(data)
+            { StatusCode = StatusCodes.Status201Created };
+    }
+
     [HttpPost("auth")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -121,6 +147,7 @@ public class UserController : ControllerBase
         [FromBody] UserSelfUpdateDto data)
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
         IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
         string? idCredential = claims.Where(x => x.Type == "sub")
             .Select(x => x.Value)
@@ -166,6 +193,7 @@ public class UserController : ControllerBase
     public IActionResult UpdateUser([FromBody] UserAdminUpdateDto data)
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
         IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
         string? idCredential = claims.Where(x => x.Type == "sub")
             .Select(x => x.Value)
@@ -192,9 +220,10 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetEmails(string id)
+    public async Task<IActionResult> GetEmails()
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
         IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
         string? idCredential = claims.Where(x => x.Type == "sub")
             .Select(x => x.Value)
@@ -204,14 +233,9 @@ public class UserController : ControllerBase
         User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
 
-        Dictionary<string, string> policy = new() {{ "owner", id }};
-        bool? validation = _tokenService
-            .AuthorizeAll(usr.Credentials, header, policy);
-        if (validation is not true) return Forbid();
-
         FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
             .Filter
-            .Eq(x => x.owner, id);
+            .Eq(x => x.owner, usr.Id);
         List<EmailContainer> result = await _emailService.GetByAsync(filter);
 
         List<string> output = new();
@@ -220,7 +244,28 @@ public class UserController : ControllerBase
             output.Add(e.value);
         });
 
-        return Ok();
+        return Ok(output);
+    }
+
+    [HttpDelete]
+    public IActionResult KillOwnAccount()
+    {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        usr.KillOwnAccount();
+        _userService.ReplaceOne(Filter.ById<User>(usr.Id), usr);
+
+        return NoContent();
     }
 
     [HttpGet("userInfo")]
@@ -232,6 +277,7 @@ public class UserController : ControllerBase
     public IActionResult GetUser(string name)
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
         IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
         string? idCredential = claims.Where(x => x.Type == "sub")
             .Select(x => x.Value)
@@ -251,6 +297,7 @@ public class UserController : ControllerBase
     public IActionResult DeleteCollection()
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
         IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
         string? idCredential = claims.Where(x => x.Type == "sub")
             .Select(x => x.Value)

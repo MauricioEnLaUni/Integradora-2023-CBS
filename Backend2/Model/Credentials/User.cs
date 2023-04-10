@@ -87,17 +87,15 @@ namespace Fictichos.Constructora.Model
         {
             Active = false;
             Closed = DateTime.Now;
+            ModifiedAt = DateTime.Now;
             return new List<(int, int)>{ (0, 0) };
         }
 
         public List<(int, int)> UserSelfUpdate(UserSelfUpdateDto data)
         {
             List<(int, int)> results = new();
+            ModifiedAt = DateTime.Now;
 
-            if (data.killAccount is not null)
-            {
-                results.AddRange(KillOwnAccount());
-            }
             if (data.password is not null)
             {
                 results.AddRange(SetPassword(data.password));

@@ -46,9 +46,9 @@ public class TokenService
     }
 
     public bool? AuthorizeAll(
-        List<Claim> claims, string cookie, Dictionary<string, string> policy)
+        List<Claim> claims, string header, Dictionary<string, string> policy)
     {
-        if (claims is null) return null;
+        string cookie = header.Replace("Bearer ", "");
         JwtSecurityToken jwt = ParseToken(cookie);
         
         if (jwt.ValidFrom > jwt.ValidTo) return null;
@@ -71,9 +71,9 @@ public class TokenService
     }
 
     public bool? AuthorizeAny(
-        List<Claim> claims, string cookie, Dictionary<string, string> policy)
+        List<Claim> claims, string header, Dictionary<string, string> policy)
     {
-        if (claims is null) return null;
+        string cookie = header.Replace("Bearer ", "");
         JwtSecurityToken jwt = ParseToken(cookie);
         
         if (jwt.ValidFrom > jwt.ValidTo) return null;

@@ -9,7 +9,6 @@ public record UserSelfUpdateDto
     public string? password;
     public byte[]? avatar;
     public List<UpdateList<string>>? email;
-    public bool? killAccount;
 }
 
 public record UserAdminUpdateDto
