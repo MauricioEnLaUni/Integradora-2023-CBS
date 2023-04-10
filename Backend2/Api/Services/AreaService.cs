@@ -191,4 +191,19 @@ public class AreaService
             .Pull(x => x.Children, id);
         await _mainCollection.UpdateManyAsync(filter, update);
     }
+
+    public List<AreaDto> GetByMembers(List<string> data)
+    {
+        FilterDefinition<Area> filter = Builders<Area>
+            .Filter
+            .In(x => x.Id, data);
+        List<AreaDto> result = new();
+        _mainCollection
+            .Find(filter)
+            .ToList()
+                .ForEach(e => {
+                    result.Add(e.ToDto());
+                });
+        return result;
+    }
 }
