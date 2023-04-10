@@ -3,25 +3,24 @@ using MongoDB.Driver;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Dto;
+using Fictichos.Constructora.Utilities.MongoDB;
 
 namespace Fictichos.Constructora.Repository;
 
 public class MaterialCategoryService
+    : BaseService<MaterialCategory, NewMaterialCategoryDto, UpdatedMatCategoryDto>
 {
-    private readonly IMongoCollection<MaterialCategory> _categoryCollection;
+    private const string MAINCOLLECTION = "categories";
     
     public MaterialCategoryService(MongoSettings container)
-    {
-        _categoryCollection = container.Client.GetDatabase("cbs")
-            .GetCollection<MaterialCategory>("categories");
-    }
+        : base(container, MAINCOLLECTION) { }
 
     public HTTPResult<string> ValidateDelete(string data)
     {
         FilterDefinition<MaterialCategory> filter = Builders<MaterialCategory>
             .Filter
             .Eq(x => x.Id, data);
-        MaterialCategory? candidate = _categoryCollection
+        MaterialCategory? candidate = _mainCollection
             .Find(filter)
             .SingleOrDefault();
         if (candidate is null) return new() { Code = 404 };
@@ -37,15 +36,24 @@ public class MaterialCategoryService
         return result;
     }
 
-    public HTTPResult<MaterialCategory> GetCategory(string data)
+    // Gets all members without a parent
+    public List<MaterialCategory> GetRoots()
     {
-        FilterDefinition<MaterialCategory> filter =
-            Builders<MaterialCategory>.Filter.Eq(x => x.Id, data);
-        MaterialCategory? category = _categoryCollection.Find(filter)
-            .SingleOrDefault();
-        if (category is null) return new() { Code = 404 };
+        List<MaterialCategory> result = new();
+        FilterDefinition<MaterialCategory> filter = Builders<MaterialCategory>
+            .Filter
+            .Where(x => x.Parent == null);
+        result = GetBy(filter).ToList();
+        return result;
+    }
 
-        return new() { Code = 200, Value = category };
+    public MaterialCategory? GetCategory(string data)
+    {
+        MaterialCategory? category =
+            GetOneBy(Filter.ById<MaterialCategory>(data));
+        if (category is null) return null;
+
+        return category;
     }
 
     #region Validate Update
@@ -57,23 +65,23 @@ public class MaterialCategoryService
         return parent;
     }
 
-    private HTTPResult<string>
+    private string?
         GetParent(string? oldParent, string? newParent)
     {
-        HTTPResult<MaterialCategory> d;
+        MaterialCategory? element;
         if (newParent is null && oldParent is null)
-            return new() { Code = 200, Value = "root" };
+            return "root";
         else if (oldParent is not null)
         {
-            d = GetCategory(oldParent);
-            if (d.Value is null) return new() { Code = 404 };
-            return new() { Code = 200, Value = d.Value.Id };
+            element = GetCategory(oldParent);
+            if (element is null) return null;
+            return element.Id;
         }
         else
         {
-            d = GetCategory(newParent!);
-            if (d.Value is null) return new() { Code = 404 };
-            return new() { Code = 200, Value = d.Value.Id };
+            element = GetCategory(newParent!);
+            if (element is null) return null;
+            return element.Id;
         }
     }
 
@@ -83,7 +91,7 @@ public class MaterialCategoryService
             Builders<MaterialCategory>.Filter
                 .Eq(x => x.Name, data[0]) & Builders<MaterialCategory>.Filter
                 .Eq(x => x.Parent, data[1]);
-        List<MaterialCategory> raw = await _categoryCollection.Find(filter)
+        List<MaterialCategory> raw = await _mainCollection.Find(filter)
             .ToListAsync();
         if (raw.Count > 0) return false;
 
@@ -111,20 +119,18 @@ public class MaterialCategoryService
         return result;
     }
 
-    public async Task<HTTPResult<UpdatedMatCategoryDto>>
+    public async Task<UpdatedMatCategoryDto?>
         ValidateUpdate(UpdatedMatCategoryDto data)
     {
         if (data.Name is null && data.Parent is null
             && data.SubCategory is null && data.Children is null)
-                return new() { Code = 400 };
+                return null;
         
-        HTTPResult<MaterialCategory> oldDocument = GetCategory(data.Id);
-        if (oldDocument.Code != 200) return new() { Code = oldDocument.Code };
-        MaterialCategory oldData = oldDocument.Value!;
+        MaterialCategory? oldDocument = GetCategory(data.Id);
+        if (oldDocument is null) return null;
         
-        string? parent = GetParent(oldData.Parent, data.Parent)
-            .Value;
-        if (parent is null) return new() { Code = 400 };
+        string? parent = GetParent(oldDocument.Parent, data.Parent);
+        if (parent is null) return null;
         
         UpdatedMatCategoryDto sanitized = data;
 
@@ -135,9 +141,9 @@ public class MaterialCategoryService
 
         if (sanitized.SubCategory is not null)
             sanitized.SubCategory =
-                ValidateSubcategory(sanitized.SubCategory, oldData.Id);
+                ValidateSubcategory(sanitized.SubCategory, oldDocument.Id);
 
-        return new() { Code = 200, Value = sanitized };
+        return sanitized;
     }
     
     #endregion ValidateUpdate
@@ -147,8 +153,7 @@ public class MaterialCategoryService
     public async Task<HTTPResult<NewMaterialCategoryDto>>
         ValidateNew(NewMaterialCategoryDto data, string oldParent)
     {
-        string? parent = GetParent(oldParent, data.Parent)
-            .Value;
+        string? parent = GetParent(oldParent, data.Parent);
         if (parent is null) return new() { Code = 400 };
         
         if (!await NameIsUnique(

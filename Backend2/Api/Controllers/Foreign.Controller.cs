@@ -47,14 +47,17 @@ public class ForeignController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
         return Ok(_foreignService.GetOneBy(empty));
@@ -75,14 +78,17 @@ public class ForeignController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
         return Ok(_foreignService.GetOneBy(Filter.ById<ExternalPerson>(id)));
@@ -91,8 +97,35 @@ public class ForeignController : ControllerBase
     [HttpPost]
     public IActionResult Create(NewExPersonDto data)
     {
-        if (!_emailService.EmailIsAvailable(data.Email)) return BadRequest("Email is invalid");
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
+
+        if (!_emailService.EmailIsAvailable(data.Email))
+            return BadRequest("Email is invalid");
         ExternalPerson result = new ExternalPerson().Instantiate(data);
+
         return CreatedAtAction(
             actionName: nameof(GetById),
             routeValues: new { id = result.Id},
@@ -124,6 +157,7 @@ public class ForeignController : ControllerBase
         {
             return Forbid();
         }
+        
         ExternalPerson? person = _foreignService
             .GetOneBy(Filter.ById<ExternalPerson>(data.Id));
         if (person is null) return NotFound();

@@ -88,14 +88,17 @@ public class CompaniesController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
 
@@ -117,14 +120,17 @@ public class CompaniesController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
         return Ok(_companyService.GetBy(id));
@@ -146,14 +152,17 @@ public class CompaniesController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
         Company? original = _companyService
@@ -185,14 +194,17 @@ public class CompaniesController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
         Company? cmp = _companyService

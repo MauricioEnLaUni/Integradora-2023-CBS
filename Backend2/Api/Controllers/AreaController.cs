@@ -156,7 +156,7 @@ public class AreaController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        if (!admin)
+        if (!usr.IsAdmin())
         {
             List<string> member = usr
                 .Credentials
@@ -176,6 +176,7 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> DeleteOne(string id)
     {
         await _areaService.CleanDependencies(id);
+        await _areaService.DeleteOneAsync(id);
         return NoContent();
     }
 }
