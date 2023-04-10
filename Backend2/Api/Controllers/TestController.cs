@@ -13,7 +13,7 @@ public class TestController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetAllTypes()
     {
-        SerializerTest ex = new SerializerTest();
+        SerializerTest ex = new();
         return Ok(ex);
     }
 }

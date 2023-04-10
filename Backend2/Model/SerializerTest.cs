@@ -5,7 +5,7 @@ namespace Fictichos.Constructora.Utilities;
 
 public class SerializerTest
 {
-    public ProjectDto projectDto { get; set; } = new()
+    public ProjectDto ProjectDto { get; set; } = new()
     {
         Id = ObjectId.GenerateNewId().ToString(),
         Name = "whatever",

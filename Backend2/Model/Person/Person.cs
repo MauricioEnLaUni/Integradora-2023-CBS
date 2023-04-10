@@ -32,7 +32,7 @@ namespace Fictichos.Constructora.Model
             DOB = data.DOB;
             RFC = data.RFC;
             CURP = data.CURP;
-            InternalKey = GenerateKey();
+            GenerateKey();
             Charges.Add(new(data.Job));
             if (data.Email is not null) Contacts.Emails.Add(data.Email);
             if (data.Phone is not null) Contacts.Phones.Add(data.Phone);
@@ -79,9 +79,9 @@ namespace Fictichos.Constructora.Model
             if (data.Contacts is not null) Contacts.Update(data.Contacts);
         }
 
-        private string GenerateKey()
+        private void GenerateKey()
         {
-            return "";
+            InternalKey = "";
         }
 
         public Job? GetCurrentJob()

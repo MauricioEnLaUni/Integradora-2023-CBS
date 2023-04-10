@@ -161,9 +161,7 @@ public class UserController : ControllerBase
         // BUG: Doesn't validate if you can remove an email
         Dictionary<string, string> policy =
             new() {{ "unique_name", data.Name }};
-        if (data.email is not null)
-        {
-            data.email.ForEach(e => {
+        data.email?.ForEach(e => {
                 if (e.Operation != 1 && e.NewItem is null)
                 {
                     data.email.Remove(e);
@@ -172,7 +170,6 @@ public class UserController : ControllerBase
                     policy.Add("owner", e.NewItem! );
                 }
             });
-        }
 
         bool? validation = _tokenService
             .AuthorizeAll(usr.Credentials, header, policy);
@@ -274,7 +271,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetUser(string name)
+    public IActionResult GetUser()
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
         if (header is null) return Unauthorized();

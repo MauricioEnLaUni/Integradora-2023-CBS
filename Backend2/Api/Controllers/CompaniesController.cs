@@ -171,7 +171,7 @@ public class CompaniesController : ControllerBase
     }
 
     [HttpDelete]
-    public IActionResult Delete(string id)
+    public async Task<IActionResult> Delete(string id)
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
         if (header is null) return Unauthorized();
@@ -197,7 +197,11 @@ public class CompaniesController : ControllerBase
 
         Company? cmp = _companyService
             .GetOneBy(Filter.ById<Company>(id));
-        // REVISIT
+        if (cmp is null) return NotFound();
+        FilterDefinition<ExternalPerson> filter = Builders<ExternalPerson>
+            .Filter
+            .Where(x => cmp.Members.Contains(x));
+        await _foreignService.DeleteManyAsync(filter);
 
         return NoContent();
     }

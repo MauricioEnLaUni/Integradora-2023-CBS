@@ -27,7 +27,7 @@ namespace Fictichos.Constructora.Model
             Area = data.Area;
             Parent = data.Parent;
             Responsibilities = data.Responsibilities;
-            Active = Active;
+            Active = data.Active;
         }
         public Job() { }
         
