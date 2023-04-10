@@ -50,7 +50,7 @@ public class CompaniesController : ControllerBase
         User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
-        
+
         List<string> roles = usr
             .Credentials
             .Where(x => x.Type == "role")
@@ -90,7 +90,7 @@ public class CompaniesController : ControllerBase
         User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
-        
+
         List<string> roles = usr
             .Credentials
             .Where(x => x.Type == "role")
@@ -119,7 +119,7 @@ public class CompaniesController : ControllerBase
         User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
-        
+
         List<string> roles = usr
             .Credentials
             .Where(x => x.Type == "role")
@@ -133,4 +133,75 @@ public class CompaniesController : ControllerBase
         return Ok(_companyService.GetBy(id));
     }
 
+
+    [HttpPut]
+    public IActionResult Update([FromBody] UpdatedCompanyDto data)
+    {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        List<string> roles = usr
+            .Credentials
+            .Where(x => x.Type == "role")
+            .Select(x => x.Value)
+            .ToList();
+        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+        {
+            return Forbid();
+        }
+
+        Company? original = _companyService
+            .GetOneBy(Filter.ById<Company>(data.Id));
+        if (original is null) return NotFound();
+
+        if (data.Contacts is not null && data.Contacts.Emails is not null)
+        {
+            _emailService.ValidateEmailUpdate(data.Contacts.Emails);
+        }
+        original.Update(data);
+        _companyService.ReplaceOne(Filter.ById<Company>(data.Id), original);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public IActionResult Delete(string id)
+    {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        List<string> roles = usr
+            .Credentials
+            .Where(x => x.Type == "role")
+            .Select(x => x.Value)
+            .ToList();
+        if (!roles.Contains("overseer") && !roles.Contains("manager"))
+        {
+            return Forbid();
+        }
+
+        Company? cmp = _companyService
+            .GetOneBy(Filter.ById<Company>(id));
+        // REVISIT
+
+        return NoContent();
+    }
 }
