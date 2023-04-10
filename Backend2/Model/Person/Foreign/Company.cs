@@ -6,7 +6,7 @@ using Fictichos.Constructora.Repository;
 
 namespace Fictichos.Constructora.Model
 {
-    internal class Company : BaseEntity,
+    public class Company : BaseEntity,
         IQueryMask<Company, NewCompanyDto, UpdatedCompanyDto>
     {
         internal string Name { get; set; } = string.Empty;

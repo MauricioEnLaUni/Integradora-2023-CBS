@@ -38,14 +38,16 @@ public class EmailService
 
     internal bool EmailIsAvailable(string value)
     {
+        if (!value.IsEmailFormatted()) return false;
+
         FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
             .Filter
             .Eq(x => x.value, value);
         EmailContainer? document = _mainCollection
             .Find(filter)
             .SingleOrDefault();
-        if (document is null) return true;
 
+        if (document is null) return true;
         if (document.owner is null) return true;
         
         return false;
