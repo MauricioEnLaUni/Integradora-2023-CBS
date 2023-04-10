@@ -5,6 +5,8 @@ using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Utilities;
 using System.Text.RegularExpressions;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Fictichos.Constructora.Model
 {
@@ -18,7 +20,7 @@ namespace Fictichos.Constructora.Model
         public bool Active { get; private set; } = false;
         public List<string> Email { get; set; } = new();
         public List<string> Roles { get; private set; } = new();
-        public List<ICredentials> Credentials { get; private set; } = new();
+        public List<Claim> Credentials { get; private set; } = new();
         public string Owner { get; set; } = string.Empty;
 
         public User() { }
@@ -27,6 +29,10 @@ namespace Fictichos.Constructora.Model
             Name = data.Name;
             Password = Argon2.Hash(data.Password);
             Email.Add(data.Email);
+            Owner = data.Owner;
+            Credentials.Add(new(JwtRegisteredClaimNames.Sub, Id));
+            Credentials.Add(new(JwtRegisteredClaimNames.UniqueName, Name));
+            Credentials.Add(new("owner", Owner));
         }
 
         public bool ValidatePassword(string pwd)

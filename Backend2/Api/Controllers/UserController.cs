@@ -1,6 +1,11 @@
-using MongoDB.Driver;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+
+using MongoDB.Driver;
 
 using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
@@ -8,10 +13,9 @@ using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Abstraction;
 using Fictichos.Constructora.Utilities;
 using Fictichos.Constructora.Middleware;
-using System.Security.Claims;
 using Fictichos.Constructora.Utilities.MongoDB;
 using Fictichos.Constructora.Auth;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Http;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -82,24 +86,11 @@ public class UserController : ControllerBase
         if (!raw.Active) return Forbid();
 
         string token = _jwtProvider.Generate(raw);
-        CookieOptions cookieOptions = new()
-        {
-            HttpOnly = true,
-            Expires = DateTime.Now.AddMinutes(1),
-            SameSite = SameSiteMode.Strict
-        };
-
-        Response.Cookies.Append("Fictichos_Session", token, cookieOptions);
-        Response.Cookies.Append("Fictichos_Claims", token, new()
-        {
-            HttpOnly = false,
-            Expires = DateTime.Now.AddMinutes(1),
-            SameSite = SameSiteMode.Strict
-        });
-        
         _tokenService.AddToken(token);
+        
+        HttpContext.Response.Headers.Add("Authorization", "Bearer " + token);
 
-        return Ok(token);
+        return Ok();
     }
 
     [HttpGet("refresh")]
@@ -108,7 +99,8 @@ public class UserController : ControllerBase
         var token = Request.Headers["Authorization"].ToString().Replace("Bearer ","");
         var jwtHandler = new JwtSecurityTokenHandler();
         var jwtToken = jwtHandler.ReadJwtToken(token);
-        return Ok();
+        
+        return Ok(jwtToken);
     }
 
     [HttpPost("logout")]
@@ -171,16 +163,19 @@ public class UserController : ControllerBase
         usr.Update(data);
         return NoContent();
     }
-
+    
     [HttpGet("emails")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetEmails(string id)
     {
-        User? test = await _userService.GetOneByAsync(Filter.ById<User>(id));
-        if (test is null) return NotFound();
-        
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        header = header.Replace("Bearer ", "");
+        Dictionary<string, string> policy = new() {{ "owner", "642c89b1ba3c9c320c132bfa" }};
+        _tokenService.Authorize(header, policy);
+
         FilterDefinition<EmailContainer> filter = Builders<EmailContainer>
             .Filter
             .Eq(x => x.owner, id);
@@ -192,7 +187,7 @@ public class UserController : ControllerBase
             output.Add(e.value);
         });
 
-        return Ok(output);
+        return Ok();
     }
 
     [HttpGet("userInfo")]

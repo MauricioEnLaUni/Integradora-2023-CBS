@@ -44,7 +44,6 @@ namespace Fictichos.Constructora.Dto
         public bool? Active { get; set; }
         public List<UpdateList<string>>? Email { get; set; }
         public List<UpdateList<string>>? Roles { get; set; }
-        public UpdatedCredentialsDto? Credentials { get; set; }
         public byte[]? Avatar { get; set; }
         public DateTime? Closed { get; set; }
     }

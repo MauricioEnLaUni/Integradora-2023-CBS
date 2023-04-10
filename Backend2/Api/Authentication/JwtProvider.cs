@@ -21,12 +21,6 @@ namespace Fictichos.Constructora.Auth
 
         public string Generate(User usr)
         {
-            List<Claim> claims = new()
-            {
-                new(JwtRegisteredClaimNames.Sub, usr.Id),
-                new(JwtRegisteredClaimNames.UniqueName, usr.Name)
-            };
-
             var signingCredentials = new SigningCredentials(
                 key: new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_options.Key)),
@@ -36,8 +30,8 @@ namespace Fictichos.Constructora.Auth
             var token = new JwtSecurityToken(
                 issuer: _options.Issuer,
                 audience: _options.Audience,
-                claims: claims,
-                notBefore: null,
+                claims: usr.Credentials,
+                notBefore: DateTime.UtcNow,
                 expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: signingCredentials
             );
