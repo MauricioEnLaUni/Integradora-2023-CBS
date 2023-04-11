@@ -1,21 +1,20 @@
-# Integradora-2023-CBS: PROYECTO PARA CONSTRUCTORA. 
+# Integradora-2023-CBS: Proyecto para constructora "LACHTER". 
 
-### Descripcion del proyecto
+## Descripcion del proyecto
 El proposito del proyecto es la entrega de un producto que ayude con la gestion de tiempos de proyectos. Se plantea la realización de un calendario que marcará las fechas de inicio y finalización de activides, tambien se tendrá el inventario de los materiales utilizados para realizar la requisicion de estos en cuanto sea necesario y tener el registro de en dónde, cómo y cuándo fueron utilizados. 
 
-#### Tecnologias utilizadas:
+### Tecnologias utilizadas.
+Desarrollo de Back-end:
 - C#
-- CSS
-- TypeScript
-- JavaScript 
+- Javascript
+- TypeScript.
 
-Estas tecnologias se han considerado usar para 
+Desarrollo de Front-end:
+- React
 
-### Instalacion y Ejecucion
-**indefinido**
+Se tomo la decisión de usar el framework de React para la creacion y desarrollo de pantallas por ser uno de los framewoks con los que más experiencia tiene el equipo y es facil de manejar.
 
-### Uso
-**Por redactar**
+
 
 ### Creditos
 
@@ -29,6 +28,3 @@ Estas tecnologias se han considerado usar para
 
 ### Licencia
 Licencia Proprietaria, incluida en el archivo LIC.
-
-### Pruebas
-**Por redactar**
