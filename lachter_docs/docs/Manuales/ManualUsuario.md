@@ -1,15 +1,23 @@
 # Manual de Usuarios
 
-## Introduccion
+## 1. Introduccion.
 
-## Alcance Funcional y Organizaciónal
+## 2. Alcance Funcional y Organizaciónal.
 
-## Funciones del Sistema
+## 3. Funciones del Sistema.
 
-### Requisitos para el uso del Sistema.
+Requisitos para el uso del Sistema.
+ 1.1 Requerimientos minimos de Hardware:
+- Procesador: 64 bits.
+- Memoria RAM: 4 GBS.
 
-### Funcionalidad y Servicios
+Requerimientos minimos de Software:
+- Virtualizacion de hardware habilitada en BIOS.
+- Windows 10 o superior.
+- Memoria disponible: 20 GB.
 
-### Preguntas Frecuentes.
+### 3.2. Funcionalidad y Servicios.
 
-### Datos de Contacto
+## 4. Preguntas Frecuentes.
+
+## 5. Datos de Contacto.
