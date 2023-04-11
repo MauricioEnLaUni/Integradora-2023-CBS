@@ -16,6 +16,7 @@ import TaskCondensed from '../models/Display/TaskCondensed';
 import ProjectCondensed from '../models/Display/ProjectCondensed';
 import AccountInOut from '../models/Display/AccountInOut';
 import AccountChart from '../components/PeoplePage/AccountChart';
+import useAuth from '../hooks/useAuth';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -128,33 +129,36 @@ const ACCOUNTDUMMY: Array<AccountInOut> = [
   new AccountInOut("2", "Hello", 1988.10, 6075.10)
 ];
 
-const Test = () => (
-  <Box sx={{ flexGrow: 12 }}>
-    <Grid container spacing={2} columns={32}>
-      <Grid xs={9}>
-        <Grid direction={'column'}>
-          <ProfileBlock>
-            <Profile />
-          </ProfileBlock>
-          <TitleContainer>
-            <PeopleTitle title={DUMMY.Name} relation={DUMMY.Relation}/>
-          </TitleContainer>
-          <Subordinates rows={subordinateRow} columns={gridDef}/>
+const Test = () => {
+
+  return(
+    <Box sx={{ flexGrow: 12 }}>
+      <Grid container columns={32}>
+        <Grid xs={9}>
+          <Grid direction={'column'}>
+            <ProfileBlock>
+              <Profile />
+            </ProfileBlock>
+            <TitleContainer>
+              <PeopleTitle title={DUMMY.Name} relation={DUMMY.Relation}/>
+            </TitleContainer>
+            <Subordinates rows={subordinateRow} columns={gridDef}/>
+          </Grid>
+        </Grid>
+        <Grid xs={23} container columns={7}>
+          <Grid xs={7}>
+            <ContactContainer contact={CONTACTDUMMY} />
+          </Grid>
+          <Grid xs={5} sx={{ overflow: 'auto' }}>
+            <ProjectSummary projects={PROJECTSDUMMY}/>
+          </Grid>
+          <Grid xs={2}>
+            <AccountChart accounts={ACCOUNTDUMMY}/>
+          </Grid>
         </Grid>
       </Grid>
-      <Grid xs={23} container columns={7} >
-        <Grid xs={7}>
-          <ContactContainer contact={CONTACTDUMMY} />
-        </Grid>
-        <Grid xs={5} sx={{ overflow: 'auto' }}>
-          <ProjectSummary projects={PROJECTSDUMMY}/>
-        </Grid>
-        <Grid xs={2}>
-          <AccountChart accounts={ACCOUNTDUMMY}/>
-        </Grid>
-      </Grid>
-    </Grid>
-  </Box>
-);
+    </Box>
+  );
+}
 
 export default Test;

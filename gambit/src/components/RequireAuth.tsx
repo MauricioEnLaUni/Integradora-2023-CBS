@@ -1,15 +1,24 @@
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
-const RequireAuth = ({ allowedRoles } : { allowedRoles: any}) => {
+interface Claim {
+  type: string;
+  value: string;
+}
+
+const RequireAuth = ({ allowedRoles } : { allowedRoles: Set<string>}) => {
   const { auth } = useAuth();
   const location = useLocation();
 
+  //@ts-ignore
+  const claims = auth?.accessToken.claims?.filter((claim : { claim: Claim}) => claim.type === 'role');
+
   return(
-    auth?.roles?.find((role: any) => allowedRoles?.includes(role))
+    //@ts-ignore
+    claims.some((claim : { claim: any }) => allowedRoles.has(claim.value))
       ? <Outlet />
-      : auth?.user
-        ? <Navigate to="/unauthorized" state={{ from: location }} replace />
+      : auth?.accessToken
+      ? <Navigate to="/" state={{ from: location }} replace />
         : <Navigate to="/login" state={{ from: location }} replace />
   );
 }

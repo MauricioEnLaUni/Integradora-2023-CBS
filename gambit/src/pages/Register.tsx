@@ -1,6 +1,7 @@
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle, Close, Info } from '@mui/icons-material';
 import axios from '../api/axios';
+import { Link } from "react-router-dom";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -204,7 +205,7 @@ const Register = () => {
                 ¿Tiene cuenta?<br />
                 <span className="line">
                     {/*put router link here*/}
-                    <a href="#">Acceder</a>
+                    <Link to="http://localhost:5173/login">Acceder</Link>
                 </span>
             </p>
         </section>

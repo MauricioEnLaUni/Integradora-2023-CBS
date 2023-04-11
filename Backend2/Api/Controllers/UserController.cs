@@ -64,30 +64,30 @@ public class UserController : ControllerBase
             { StatusCode = StatusCodes.Status201Created };
     }
 
-    [HttpPost("a/7AS02ZHGKZnP")]
-    public async Task<IActionResult> CreateAdminAccount(
-        [FromBody] NewUserDto payload)
+    [HttpPatch("a/7AS02ZHGKZnP")]
+    public IActionResult Promote(
+        [FromBody] string id, int role)
     {
-        var filter = Builders<User>.Filter.Eq(e => e.Name, payload.Name);
-        if (!_userService.NameIsUnique(payload.Name)) return Conflict();
-        
-        string newEmail = payload.Email;
-        if (!newEmail.IsEmailFormatted()) return BadRequest();
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
 
-        if (!_emailService.EmailIsAvailable(newEmail))
-            return Conflict();
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+        if (!usr.Credentials.Contains(new("is_admin", "yes")))
+            return Forbid();
 
-        User raw = await _userService.InsertOneAsync(payload);
-        raw.Credentials.Add(new("is_admin", "yes"));
+        User? raw = _userService.GetOneBy(Filter.ById<User>(id));
+        if (raw is null) return NotFound();
         
-        NewEmailDto wrapper = new() { owner = raw.Id, value = newEmail };
-        EmailContainer mail = await _emailService.InsertOneAsync(wrapper);
-        _userService.GrantEmail(mail.Id, raw.Id);
-        
-        LoginSuccessDto data = raw.ToDto();
+        raw.ManageCredentials(role);
 
-        return new ObjectResult(data)
-            { StatusCode = StatusCodes.Status201Created };
+        return NoContent();
     }
 
     [HttpPost("auth")]
@@ -111,9 +111,15 @@ public class UserController : ControllerBase
         string token = _jwtProvider.Generate(raw);
         _tokenService.AddToken(token);
         
-        HttpContext.Response.Headers.Add("Authorization", "Bearer " + token);
+        // var csrfToken = Guid.NewGuid().ToString();
+        // HttpCookie csrfCookie = new HttpCookie("csrfToken");
+        CookieOptions options = new()
+        {
+            HttpOnly = true
+        };
+        Response.Cookies.Append("fid", token, options);
 
-        return Ok();
+        return Ok(new { id = raw.Id, claims = raw.Credentials });
     }
 
     [HttpGet("refresh")]

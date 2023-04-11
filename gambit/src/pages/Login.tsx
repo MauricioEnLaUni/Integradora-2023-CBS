@@ -1,17 +1,18 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import LoginDto from '../models/Requests/LoginDto';
+import useAuth from '../hooks/useAuth';
 
 import axios from '../api/axios';
-import AuthContext from '../context/AuthProvider';
+
 const LOGIN_URL = 'User/auth';
 
 const Login = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/login";
+  const from = location.state?.from?.pathname || "/";
 
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
@@ -35,7 +36,7 @@ const Login = () => {
     );
 
     const accessToken = response?.data;
-    setAuth({ user, pwd, accessToken });
+    setAuth({ accessToken });
     setUser('');
     setPwd('');
     navigate(from, { replace: true });
@@ -81,11 +82,11 @@ const Login = () => {
         ¿No tiene cuenta?<br />
         <span className="line">
           {/*put router link here*/}
-          <a href="#">¡Inscíbase!</a>
+          <Link to="http://localhost:5173/register">¡Inscríbase!</Link>
         </span>
       </p>
     </section>
-  )
+  );
 }
 
-export default Login
+export default Login;

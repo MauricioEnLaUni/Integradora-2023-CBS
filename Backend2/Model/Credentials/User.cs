@@ -35,6 +35,8 @@ namespace Fictichos.Constructora.Model
             Credentials.Add(new(JwtRegisteredClaimNames.Sub, Id));
             Credentials.Add(new(JwtRegisteredClaimNames.UniqueName, Name));
             Credentials.Add(new("owner", Owner));
+            Credentials.Add(new("member", "unassigned"));
+            Credentials.Add(new("role", "user"));
         }
 
         public bool ValidatePassword(string pwd)
@@ -118,6 +120,25 @@ namespace Fictichos.Constructora.Model
         {
             UserSelfUpdate(data.basicFields);
             data.roles?.ForEach(Roles.UpdateWithIndex);
+        }
+
+        public void ManageCredentials(int role)
+        {
+            Credentials.RemoveAll(x => x.Type == "role" && x.Value != "user");
+            switch (role)
+            {
+                // set to user
+                case 0:
+                    Credentials.Add(new("role", "overseer"));
+                    break;
+                case 1:
+                    Credentials.Add(new("role", "manager"));
+                    break;
+                case 2:
+                    Credentials.Add(new("role", "admin"));
+                    Credentials.Add(new("is_admin", "yes"));
+                    break;
+            }
         }
 
         internal bool IsAdmin()
