@@ -100,4 +100,14 @@ public class TokenService
         header = header.Replace("Bearer ", "");
         return TokenValidator.GetClaims(header);
     }
+
+    public string? CookieAuth(string? contents)
+    {
+        if (contents is null) return null;
+        JwtSecurityTokenHandler jwtHandler = new();
+        List<Claim> claims = TokenValidator.GetClaims(contents).ToList();
+        string? sub = claims.SingleOrDefault(x => x.Type == "sub")?.Value;
+
+        return sub;
+    }
 }

@@ -4,14 +4,13 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import PublicRoutes from './components/Outlet/PublicRoute';
 import Layout from './pages/Layout';
 
-import RequireAuth from './components/RequireAuth';
-
 // Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Project from './pages/Material';
 import Test from './pages/Test';
+import Protected from './components/Protected';
 
 const ROLES = {
   'User' : 200,
@@ -30,7 +29,7 @@ function App() {
 
       {/* Protected Routes */}
       <Route element={<Layout />}>
-        <Route element={<RequireAuth allowedRoles={new Set(['user'])}/>}>
+        <Route element={<Protected allowedRoles={new Set(['user'])}/>}>
           <Route path="/" element={<Dashboard />} />
           <Route path="projects" element={<Project />} />
           <Route path="gantt" element={null} />
@@ -39,16 +38,16 @@ function App() {
           <Route path="settings" element={null} />
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={new Set(['Overseer'])}/>}>
+        <Route element={<Protected allowedRoles={new Set(['Overseer'])}/>}>
           <Route path="clients" element={null} />
           <Route path="foreigner" element={null} />
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={new Set(['Manager'])}/>}>
+        <Route element={<Protected allowedRoles={new Set(['Manager'])}/>}>
           <Route path="accounts" element={null} />
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={new Set(['Admin'])}/>}>
+        <Route element={<Protected allowedRoles={new Set(['Admin'])}/>}>
           <Route path="usrManager" element={null} />
           <Route path="test" element={<Test />} />
         </Route>

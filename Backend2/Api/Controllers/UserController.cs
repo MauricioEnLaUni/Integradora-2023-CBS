@@ -118,6 +118,7 @@ public class UserController : ControllerBase
             HttpOnly = true
         };
         Response.Cookies.Append("fid", token, options);
+        Response.Cookies.Append("flc", token);
 
         return Ok(new { id = raw.Id, claims = raw.Credentials });
     }

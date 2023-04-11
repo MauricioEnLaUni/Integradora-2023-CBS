@@ -50,6 +50,16 @@ namespace Fictichos.Constructora.Model
             };
         }
 
+        internal PersonCondensedDto ToCondensed()
+        {
+            return new()
+            {
+                Id = Id,
+                Name = Name,
+                Position = Position
+            };
+        }
+
         public string Serialize()
         {
             ExternalPersonDto data = ToDto();

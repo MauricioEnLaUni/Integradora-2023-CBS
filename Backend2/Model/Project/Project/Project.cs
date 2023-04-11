@@ -15,6 +15,8 @@ namespace Fictichos.Constructora.Model
         public DateTime Ends { get; private set; }
         public string PayHistory { get; private set; } = string.Empty;
         public List<FTasks> Tasks { get; private set; } = new();
+        public string Owner { get; private set; } = string.Empty;
+        public List<string> Involved { get; private set; } = new();
 
         /// Owner
         /// Client

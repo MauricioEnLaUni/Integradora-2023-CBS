@@ -6,6 +6,7 @@ using Fictichos.Constructora.Dto;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities.MongoDB;
+using Fictichos.Constructora.Auth;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -15,13 +16,19 @@ public class AccountController : ControllerBase
 {
     private readonly AccountService _accountService;
     private readonly ProjectService _projectService;
+    private readonly TokenService _tokenService;
+    private readonly UserService _userService;
 
     public AccountController(
         AccountService accounts,
-        ProjectService projects)
+        ProjectService projects,
+        TokenService token,
+        UserService user)
     {
         _accountService = accounts;
         _projectService = projects;
+        _tokenService = token;
+        _userService = user;
     }
 
     [HttpPost]
@@ -65,6 +72,29 @@ public class AccountController : ControllerBase
         raw.ForEach(e => {
             result.Add(e.ToDto());
         });
+        return Ok(result);
+    }
+
+    [HttpPost("projects")]
+    public IActionResult AllFromProject(
+        [FromBody] List<string> ids)
+    {
+        string? token = Request.Cookies["fid"];
+        if (token is null) return Unauthorized();
+        string? sub = _tokenService.CookieAuth(token);
+        if (sub is null) return Forbid();
+        
+        User? auth = _userService
+            .AuthRoles(sub, null, new() { "user" } );
+        if (auth is null) return Forbid();
+
+        FilterDefinition<Account> filter = Builders<Account>
+            .Filter
+            .In(x => x.Owner, ids);
+        List<Account> accounts = _accountService.GetBy(filter);
+        List<AccountDto> result = new();
+        accounts.ForEach(e => result.Add(e.ToDto()));
+        
         return Ok(result);
     }
 
