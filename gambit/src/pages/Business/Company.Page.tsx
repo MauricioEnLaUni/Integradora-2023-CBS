@@ -63,8 +63,6 @@ const CompanyPage = () => {
   const [projects, setProjects] = useState<Array<ProjectCondensed>>([]);
   const [accounts, setAccounts] = useState<Array<AccountInOut>>([]);
 
-  const [err, setErrMsg] = useState('');
-
   useEffect(() => {
     const st = window.location.href;
     const id = st.substring(st.lastIndexOf('/') + 1);
@@ -78,50 +76,70 @@ const CompanyPage = () => {
           withCredentials: true
         })).data;
         setResource(data);
-        const subt = async () => {
-          const output = (await axios.get(`/foreign/${resource.id}`,{
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${auth.token}`
-            },
-            withCredentials: true
-          })).data;
-          setSubordinateRow(output);
-          const proj = async () => {
-            const output = (await axios.get(`/project/company/${resource.id}`,{
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${auth.token}`
-              },
-              withCredentials: true
-            })).data;
-            setProjects(output);
-            const acc = async () => {
-              const list = projects.map(e => e.id);
-              const output = (await axios.post(`/project/company/${resource.id}`,
-              JSON.stringify(list),
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${auth.token}`
-                },
-                withCredentials: true
-              })).data;
-            }
-          }
-        }
-        subt();
         setLoading(false);
       } catch (err)
       {
         console.error("Shit");
       }
     }
-
-
     GetData();
-    setRefresh(!refresh);
   }, []);
+
+  useEffect(() => {
+    const subt = async () => {
+      if (resource?.id != undefined)
+      {
+        const output = (await axios.get(`/foreign/company/${resource.id}`,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.token}`
+          },
+          withCredentials: true
+        })).data;
+        console.log(output);
+        setSubordinateRow(output);
+      }
+    }
+    if (resource?.id != undefined)
+    {
+      subt();
+    }
+  }, [resource]);
+
+  useEffect(() => {
+    const proj = async () => {
+      const output = (await axios.get(`/project/company/${resource.id}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`
+        },
+        withCredentials: true
+      })).data;
+      setProjects(output);
+    }
+    proj();
+    setRefresh(!refresh);
+  }, [subordinateRow]);
+
+  useEffect(() => {
+    const acc = async () => {
+      const list = projects.map(e => e.id);
+      const output = (await axios.post(`/project/company/accounts`,
+      JSON.stringify(list),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`
+        },
+        withCredentials: true
+      })).data;
+      setAccounts(output);
+    }
+    acc();
+  }, [projects]);
+
+  useEffect(() => {
+  }, [refresh]);
 
   return(
     <Box sx={{ flexGrow: 12 }}>
@@ -135,7 +153,7 @@ const CompanyPage = () => {
               { loading ? <p>Loading...</p> : <PeopleTitle title={resource.name} relation={resource.relation}/> }
             </TitleContainer>
             <Box sx={{ justifyContent: 'center' }}>
-              <AddForeignModal token={auth?.token} refresh={refresh} setRefresh={setRefresh}/>
+              { loading ? <p>Loading...</p> : <AddForeignModal token={auth?.token} refresh={refresh} setRefresh={setRefresh} owner={resource.id}/>}
             </Box>
             { loading ? <p>Loading...</p> : <Subordinates rows={subordinateRow} columns={gridDef}/> }
           </Grid>

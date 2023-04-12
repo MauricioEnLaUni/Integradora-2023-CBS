@@ -38,9 +38,9 @@ public class TokenService
 
     public JwtSecurityToken ParseToken(string token)
     {
-        JwtSecurityTokenHandler jwt = new JwtSecurityTokenHandler();
+        JwtSecurityTokenHandler jwt = new();
         JwtSecurityToken output = jwt.ReadJwtToken(token);
-        return(output);
+        return output;
     }
 
     public bool? AuthorizeAll(

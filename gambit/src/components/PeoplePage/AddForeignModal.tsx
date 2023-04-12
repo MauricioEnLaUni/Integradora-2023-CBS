@@ -20,7 +20,7 @@ const style = {
   p: 4,
 };
 
-const AddForeignModal = ({ token, refresh, setRefresh }: { token: string, refresh: boolean, setRefresh: any }) => {
+const AddForeignModal = ({ token, refresh, setRefresh, owner }: { token: string, refresh: boolean, setRefresh: any, owner: string }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -35,7 +35,7 @@ const AddForeignModal = ({ token, refresh, setRefresh }: { token: string, refres
   const [phone, setPhone] = useState('');
   
   const handleSubmit = async () => {
-    const dto: NewExtPersonDto = new NewExtPersonDto(name, lastName, area, position, role, project, email, phone);
+    const dto: NewExtPersonDto = new NewExtPersonDto(owner, name, lastName, area, position, role, project, email, phone);
     try {
       const url = '/foreign';
       const data = (await axios.post(url, 
@@ -110,6 +110,7 @@ const AddForeignModal = ({ token, refresh, setRefresh }: { token: string, refres
 export default AddForeignModal;
 
 class NewExtPersonDto {
+  owner: string;
   name: string;
   lastName: string;
   area: string;
@@ -119,8 +120,9 @@ class NewExtPersonDto {
   email: string | undefined;
   phone: string | undefined;
 
-  constructor(name:string, lastName: string, area: string, position: string, role: string, project: string, email?: string, phone?: string)
+  constructor(owner: string, name:string, lastName: string, area: string, position: string, role: string, project: string, email?: string, phone?: string)
   {
+    this.owner = owner;
     this.name = name;
     this.lastName = lastName;
     this.area = area;

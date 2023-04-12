@@ -35,6 +35,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             MapAddress();
             MapCoordinates();
             MapCompany();
+            MapForeigner();
         }
 
         public static void MapBaseEntity()
@@ -61,6 +62,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.Ends).SetElementName("ends");
                     classMap.MapMember(p => p.PayHistory).SetElementName("payments");
                     classMap.MapMember(p => p.Tasks).SetElementName("tasks");
+                    classMap.MapMember(p => p.Owner).SetElementName("owner");
                 });
             }
         }
@@ -326,8 +328,8 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.LastName).SetElementName("lastName");
                     classMap.MapMember(p => p.Position).SetElementName("position");
                     classMap.MapMember(p => p.Area).SetElementName("area");
-                    classMap.MapMember(p => p.Area).SetElementName("area");
-                    classMap.MapMember(p => p.Involvement).SetElementName("involvement");
+                    classMap.MapMember(p => p.Role).SetElementName("role");
+                    classMap.MapMember(p => p.Project).SetElementName("project");
                     classMap.MapMember(p => p.Contacts).SetElementName("Contacts");
                 });
             }

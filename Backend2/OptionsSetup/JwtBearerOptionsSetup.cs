@@ -22,10 +22,10 @@ public class JwtBearerOptionsSetup : IConfigureOptions<JwtBearerOptions>
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = _jwtOptions.Issuer,
-            ValidAudience = _jwtOptions.Audience,
+            ValidIssuer = "localhost:8008",
+            ValidAudience = "localhost:8008",
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_jwtOptions.Key)
+                Encoding.UTF8.GetBytes("8$4EF5u74sG316&0dgZNW7TY")
             )
         };
     }

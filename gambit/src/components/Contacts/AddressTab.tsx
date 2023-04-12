@@ -21,7 +21,6 @@ const a11yProps = (index: number) => {
 
 const AddressTab = ({addresses}: {addresses: Array<AddressDto>}) => {
   const [value, setValue] = useState(0);
-  console.log(addresses);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);

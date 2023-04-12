@@ -14,6 +14,7 @@ public record ExternalPersonDto
 
 public record NewExPersonDto
 {
+    public string Owner { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string Area { get; set; } = string.Empty;

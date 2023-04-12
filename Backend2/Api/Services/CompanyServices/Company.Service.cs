@@ -38,4 +38,13 @@ public class CompanyService
         await _mainCollection.UpdateOneAsync(Filter.ById<Company>(id), update);
         return true;
     }
+
+    public void AddMember(NewExPersonDto data)
+    {
+        ExternalPerson item = new ExternalPerson().Instantiate(data);
+        UpdateDefinition<Company> update = Builders<Company>
+            .Update
+            .AddToSet(x => x.Members, item);
+        _mainCollection.UpdateOne(Filter.ById<Company>(data.Owner), update);
+    }
 }

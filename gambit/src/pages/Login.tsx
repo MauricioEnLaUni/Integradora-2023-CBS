@@ -1,6 +1,6 @@
 import { useState, useEffect} from 'react';
 import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
-import LoginDto from '../models/Requests/LoginDto';
+import LoginDto from '../models/Requests/loginDto';
 
 import axios from '../api/axios';
 import useAuth from '../hooks/useAuth';

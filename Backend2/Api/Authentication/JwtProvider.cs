@@ -23,10 +23,10 @@ namespace Fictichos.Constructora.Auth
         {
             var signingCredentials = new SigningCredentials(
                 key: new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_options.Key)),
+                    Encoding.UTF8.GetBytes("8$4EF5u74sG316&0dgZNW7TY")),
                 algorithm: SecurityAlgorithms.HmacSha256
             );
-            
+
             var token = new JwtSecurityToken(
                 issuer: _options.Issuer,
                 audience: _options.Audience,

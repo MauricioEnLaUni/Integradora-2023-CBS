@@ -13,7 +13,8 @@ namespace Fictichos.Constructora.Model
         public string LastName { get;  set; } = string.Empty;
         public string Position { get; private set; } = string.Empty;
         public string Area { get; private set; } = string.Empty;
-        public (string Role, string Project) Involvement { get; private set; } = new();
+        public string Role { get; set; } = string.Empty;
+        public string Project { get; set; } = string.Empty;
         public Contact Contacts { get; set; } = new();
 
         // Subcontractors
@@ -26,7 +27,8 @@ namespace Fictichos.Constructora.Model
             LastName = data.LastName;
             Position = data.Position;
             Area = data.Area;
-            Involvement = (data.Role, data.Project);
+            Role = data.Role;
+            Project = data.Project;
 
             if (data.Email is not null) Contacts.Emails.Add(data.Email);
             if (data.Phone is not null) Contacts.Phones.Add(data.Phone);
@@ -73,7 +75,8 @@ namespace Fictichos.Constructora.Model
             if (data.Contacts is not null) Contacts.Update(data.Contacts);
             
             Area = data.Area;
-            Involvement = (data.Role, data.Project);
+            Role = data.Role;
+            Project = data.Project;
         }
     }
 }
