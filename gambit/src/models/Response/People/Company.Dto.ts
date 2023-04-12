@@ -1,19 +1,19 @@
 import ContactDto from "../Contact/ContactDto";
 
 class CompanyDto {
-  Id: string;
-  Name: string;
-  Activity: string;
-  Relation: string;
-  Contact: ContactDto;
+  id: string;
+  name: string;
+  activity: string;
+  relation: string;
+  contact: ContactDto;
 
   constructor(id: string, name: string, act: string, rel: string, contact: ContactDto)
   {
-    this.Id = id;
-    this.Name = name
-    this.Activity = act;
-    this.Relation = rel;
-    this.Contact = contact
+    this.id = id;
+    this.name = name
+    this.activity = act;
+    this.relation = rel;
+    this.contact = contact
   }
 }
 

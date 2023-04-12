@@ -12,6 +12,7 @@ import pink from "@mui/material/colors/pink";
 
 const StringTab = ({ data, name }: { data: Array<string>, name: string }) => {
   const [numbers, setNumbers] = useState<Array<string>>([]);
+  console.log();
 
   const handleUpdate = (value: string, index: number) => {
     setNumbers((numbers) => {
@@ -29,7 +30,7 @@ const StringTab = ({ data, name }: { data: Array<string>, name: string }) => {
 
   return(
     <Grid container direction={'row'} columns={8}>
-      {numbers.map((element, i) => (
+      {numbers?.map((element, i) => (
         <Grid direction={'row'} container columns={10} key={(i + 1) * 10}>
           <Grid xs={2} display='flex' alignItems='center'>
             <Typography align='center' variant='subtitle1'>

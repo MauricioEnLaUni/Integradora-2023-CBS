@@ -21,7 +21,6 @@ const handleUpdate = async (params: any, token: string) => {
         },
         withCredentials: true
       }));
-    console.log(data);
   } catch (e: any) {
     console.error(e.response);
   }

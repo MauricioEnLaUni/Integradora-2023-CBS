@@ -7,6 +7,7 @@ using Fictichos.Constructora.Auth;
 using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities.MongoDB;
+using System.Security.Claims;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -77,15 +78,31 @@ public class ProjectController : ControllerBase
     [HttpGet("company/{id}")]
     public IActionResult GetByCompany(string id)
     {
-        string? token = Request.Cookies["fid"];
-        if (token is null) return Unauthorized();
-        string? sub = _tokenService.CookieAuth(token);
-        if (sub is null) return Forbid();
-        
-        User? auth = _userService
-            .AuthRoles(sub, null, new() { "manager", "admin"} );
-        if (auth is null) return Forbid();
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
 
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
+        
         FilterDefinition<Project> filter = Builders<Project>
             .Filter
             .Eq(x => x.Owner, id);

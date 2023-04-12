@@ -21,6 +21,7 @@ const a11yProps = (index: number) => {
 
 const AddressTab = ({addresses}: {addresses: Array<AddressDto>}) => {
   const [value, setValue] = useState(0);
+  console.log(addresses);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -30,12 +31,12 @@ const AddressTab = ({addresses}: {addresses: Array<AddressDto>}) => {
     <Box sx={{ width: '100%' }} >
       <Box sx={{ borderBottom: 1 }} >
         <Tabs value={value} onChange={handleChange} aria-label="address container">
-          {addresses.map((e, i) => (
+          {addresses?.map((e, i) => (
             <Tab {...a11yProps(i)} />
           ))}
         </Tabs>
       </Box>
-      {addresses.map((e, i) => (
+      {addresses?.map((e, i) => (
         <div
           role="tabpanel"
           hidden={value !== i}

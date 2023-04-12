@@ -139,10 +139,10 @@ public class CompaniesController : ControllerBase
             }
         }
 
-        CompanyDto? result = _companyService.GetOneBy(id)?.ToDto();
+        Company? result = _companyService.GetOneBy(Filter.ById<Company>(id));
         if (result is null) return NotFound();
 
-        return Ok(result);
+        return Ok(result.ToDto());
     }
 
 

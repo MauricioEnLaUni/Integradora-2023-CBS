@@ -39,7 +39,56 @@ class Contable {
 
 const AccountChart = ({ accounts } : { accounts: Array<AccountInOut>}) => {
   const Plus = accounts.map(e => new Contable(e.name, e.entry));
+  const PlusValue = Plus.reduce((acc, item) => acc + item.value, 0);
   const Exits = accounts.map(e => new Contable(e.name, e.exit));
+  const ExitsValue = Exits.reduce((acc, item) => acc + item.value, 0);
+
+  const ChartOptions = {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      top: '5%',
+      left: 'center',
+      // doesn't perfectly work with our tricks, disable it
+      selectedMode: true
+    },
+    series: [
+      {
+        name: 'Access From',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '70%'],
+        // adjust the start angle
+        startAngle: 180,
+        label: {
+          show: true,
+          formatter(param: { name: string; percent: any; }) {
+            // correct the percentage
+            return param.name + ' (' + param.percent! * 2 + '%)';
+          }
+        },
+        data: [
+          { value: Plus, name: 'Income', itemStyle: { color: '#000'} },
+          { value: Exits, name: 'Exits', itemStyle: { color: '#c0272c'}},
+          {
+            // make an record to fill the bottom 50%
+            value: PlusValue + ExitsValue,
+            itemStyle: {
+              // stop the chart from rendering this piece
+              color: 'none',
+              decal: {
+                symbol: 'none'
+              }
+            },
+            label: {
+              show: false
+            }
+          }
+        ]
+      }
+    ]
+  }
 
   return(
     <Card>
@@ -56,53 +105,3 @@ const AccountChart = ({ accounts } : { accounts: Array<AccountInOut>}) => {
 }
 
 export default AccountChart;
-
-const ChartOptions = {
-  tooltip: {
-    trigger: 'item'
-  },
-  legend: {
-    top: '5%',
-    left: 'center',
-    // doesn't perfectly work with our tricks, disable it
-    selectedMode: true
-  },
-  series: [
-    {
-      name: 'Access From',
-      type: 'pie',
-      radius: ['40%', '70%'],
-      center: ['50%', '70%'],
-      // adjust the start angle
-      startAngle: 180,
-      label: {
-        show: true,
-        formatter(param: { name: string; percent: any; }) {
-          // correct the percentage
-          return param.name + ' (' + param.percent! * 2 + '%)';
-        }
-      },
-      data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' },
-        {
-          // make an record to fill the bottom 50%
-          value: 1048 + 735 + 580 + 484 + 300,
-          itemStyle: {
-            // stop the chart from rendering this piece
-            color: 'none',
-            decal: {
-              symbol: 'none'
-            }
-          },
-          label: {
-            show: false
-          }
-        }
-      ]
-    }
-  ]
-}

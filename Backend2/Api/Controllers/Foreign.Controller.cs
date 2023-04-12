@@ -131,15 +131,9 @@ public class ForeignController : ControllerBase
 
         if (!usr.IsAdmin())
         {
-            List<string> roles = usr
-                .Credentials
-                .Where(x => x.Type == "role")
-                .Select(x => x.Value)
-                .ToList();
-            if (!roles.Contains("overseer") && !roles.Contains("manager"))
-            {
+            List<string> roles = usr.GetRoles();
+            if (!roles.Contains("sales") && !roles.Contains("manager"))
                 return Forbid();
-            }
         }
 
         if (!_emailService.EmailIsAvailable(data.Email))
@@ -168,14 +162,11 @@ public class ForeignController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr.GetRoles();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+                return Forbid();
         }
         
         ExternalPerson? person = _foreignService
@@ -192,6 +183,34 @@ public class ForeignController : ControllerBase
         return NoContent();
     }
 
+    [HttpPatch("address")]
+    public IActionResult UpdateAddress(NewAddressDto data)
+    {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr.GetRoles();
+            if (!roles.Contains("manager"))
+                return Forbid();
+        }
+
+        ExternalPerson? raw = _foreignService.GetOneBy(Filter.ById<ExternalPerson>(data.Id));
+
+        return NoContent();
+    }
+
+
     [HttpDelete]
     public async Task<IActionResult> Delete(string id)
     {
@@ -206,7 +225,8 @@ public class ForeignController : ControllerBase
         User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
-        if (usr.Credentials.SingleOrDefault(x => x.Type == "admin")?.Value != "yes")
+
+        if (!usr.IsAdmin())
             return Forbid();
 
         ExternalPerson? person = _foreignService

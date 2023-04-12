@@ -55,26 +55,26 @@ const ContactContainer = ({ contact }: { contact: ContactDto }) => {
   }
 
   return(
-    <Accordion sx={{ display: 'block', overflow: 'auto', maxHeight: '400px' }} disableGutters>
-      <AccordionSummary sx={{ borderBottom: 1 }}>
-        <Tabs value={value} onChange={handleChanges} aria-label="contact container">
-            <Tab {...a11yProps(0)} />
-            <Tab {...a11yProps(1)} />
-            <Tab {...a11yProps(2)} />
-        </Tabs>
-      </AccordionSummary>
-      <AccordionDetails>
-        <TabPanel value={value} index={0}>
-          <AddressTab addresses={contact.Addresses} />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <StringTab data={contact.Phones} name={"Phone"}/>
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          <StringTab data={contact.Emails} name={"Email"}/>
-        </TabPanel>
-      </AccordionDetails>
-    </Accordion>
+  <Accordion sx={{ display: 'block', overflow: 'auto', maxHeight: '400px' }} disableGutters>
+    <AccordionSummary sx={{ borderBottom: 1 }}>
+      <Tabs value={value} onChange={handleChanges} aria-label="contact container">
+          <Tab {...a11yProps(0)} />
+          <Tab {...a11yProps(1)} />
+          <Tab {...a11yProps(2)} />
+      </Tabs>
+    </AccordionSummary>
+    <AccordionDetails>
+      <TabPanel value={value} index={0}>
+        <AddressTab addresses={contact.addresses} />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <StringTab data={contact.phones} name={"Phone"}/>
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <StringTab data={contact.emails} name={"Email"}/>
+      </TabPanel>
+    </AccordionDetails>
+  </Accordion>
   );
 }
 
