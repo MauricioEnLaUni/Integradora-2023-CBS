@@ -26,15 +26,18 @@ const AddForeignModal = ({ token, refresh, setRefresh }: { token: string, refres
   const handleClose = () => setOpen(false);
 
   const [name, setName] = useState('');
-  const [activity, setActivity] = useState('');
-  const [relation, setRelation] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [area, setArea] = useState('');
+  const [position, setPosition] = useState('');
+  const [role, setRole] = useState('');
+  const [project, setProject] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   
   const handleSubmit = async () => {
-    const dto: NewCompanyDto = new NewCompanyDto(name, activity, relation, email, phone);
+    const dto: NewExtPersonDto = new NewExtPersonDto(name, lastName, area, position, role, project, email, phone);
     try {
-      const url = '/Companies';
+      const url = '/foreign';
       const data = (await axios.post(url, 
         JSON.stringify(dto),
         {
@@ -69,10 +72,19 @@ const AddForeignModal = ({ token, refresh, setRefresh }: { token: string, refres
               <TextField id="company-name" label="Nombre" variant="filled" fullWidth={true} onChange={(e) => setName(e.target.value)}/>
             </Grid>
             <Grid item>
-              <TextField id="company-activity" label="Giro" variant="filled" fullWidth={true} onChange={(e) => setActivity(e.target.value)} />
+              <TextField id="company-last-name" label="Apellidos" variant="filled" fullWidth={true} onChange={(e) => setLastName(e.target.value)}/>
             </Grid>
             <Grid item>
-              <TextField id="company-relation" label="Relación" variant="filled" fullWidth={true} onChange={(e) => setRelation(e.target.value)} />
+              <TextField id="company-area" label="Area" variant="filled" fullWidth={true} onChange={(e) => setArea(e.target.value)}/>
+            </Grid>
+            <Grid item>
+              <TextField id="company-position" label="Posicion" variant="filled" fullWidth={true} onChange={(e) => setPosition(e.target.value)}/>
+            </Grid>
+            <Grid item>
+              <TextField id="company-role" label="Rol" variant="filled" fullWidth={true} onChange={(e) => setRole(e.target.value)}/>
+            </Grid>
+            <Grid item>
+              <TextField id="company-project" label="Project" variant="filled" fullWidth={true} onChange={(e) => setProject(e.target.value)}/>
             </Grid>
             <Grid item>
               <TextField id="company-relation" type={'email'} label="Email" variant="filled" fullWidth={true} onChange={(e) => setEmail(e.target.value)} />
@@ -97,18 +109,24 @@ const AddForeignModal = ({ token, refresh, setRefresh }: { token: string, refres
 
 export default AddForeignModal;
 
-class NewCompanyDto {
+class NewExtPersonDto {
   name: string;
-  activity: string;
-  relation: string;
+  lastName: string;
+  area: string;
+  position: string;
+  role: string;
+  project: string;
   email: string | undefined;
   phone: string | undefined;
 
-  constructor(name:string, activity: string, relation: string, email?: string, phone?: string)
+  constructor(name:string, lastName: string, area: string, position: string, role: string, project: string, email?: string, phone?: string)
   {
     this.name = name;
-    this.activity = activity;
-    this.relation = relation;
+    this.lastName = lastName;
+    this.area = area;
+    this.position = position;
+    this.role = role;
+    this.project = project;
     this.email = email;
     this.phone = phone;
   }

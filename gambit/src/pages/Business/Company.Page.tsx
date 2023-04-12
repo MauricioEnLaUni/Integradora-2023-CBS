@@ -110,6 +110,7 @@ const CompanyPage = () => {
             }
           }
         }
+        subt();
         setLoading(false);
       } catch (err)
       {

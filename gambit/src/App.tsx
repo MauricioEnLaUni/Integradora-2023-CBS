@@ -11,7 +11,6 @@ import Dashboard from './pages/Dashboard';
 import Project from './pages/Material';
 import Test from './pages/Test';
 import RequireAuth from './components/RequireAuth';
-import useAuth from './hooks/useAuth';
 import CompanyBrowser from './pages/Business/CompanyBrowser';
 import CompanyPage from './pages/Business/Company.Page';
 
@@ -23,8 +22,6 @@ const ROLES = {
 }
 
 function App() {
-  const { auth } = useAuth();
-
   return (
     <Routes>
       <Route element={<PublicRoutes />}>
