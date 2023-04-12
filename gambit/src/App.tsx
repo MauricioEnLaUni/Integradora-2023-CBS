@@ -30,6 +30,7 @@ function App() {
       <Route element={<PublicRoutes />}>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="clients/:clients" element={<CompanyPage />} />
       </Route>
       {/* Protected Routes */}
       <Route element={<Layout />}>
@@ -38,13 +39,13 @@ function App() {
           <Route path="projects" element={<Project />} />
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={new Set(['overseer', 'manager', 'admin'])}/>}>
-          <Route path="/clients" element={<CompanyBrowser />}>
+        <Route element={<RequireAuth allowedRoles={new Set(['manager', 'admin'])}/>}>
+          <Route path="clients" element={<CompanyBrowser />}>
             <Route path=":clients" element={<CompanyPage />} />
           </Route>
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={new Set(['manager'])}/>}>
+        <Route element={<RequireAuth allowedRoles={new Set(['manager', 'admin'])}/>}>
           <Route path="accounts" element={null} />
         </Route>
 

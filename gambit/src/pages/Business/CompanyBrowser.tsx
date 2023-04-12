@@ -12,11 +12,14 @@ import Claim from '../../api/Tokens/Claims';
 import { Authorization } from '../../context/AuthProvider';
 import axios from '../../api/axios';
 import CompanyBrowserDto from './CompanyBrowserType';
+import AddCompanyModal from '../../components/PeoplePage/AddCompanyModal';
 
 const CompanyBrowser = () => {
   const { auth }: { auth: Authorization } = useAuth();
   const allowedRoles: Set<string> = new Set(['manager', 'admin']);
   const edit: boolean = Array.from(auth?.claims).some((claim : Claim) => allowedRoles.has(claim.value));
+
+  const [refresh, setRefresh] = useState(false);
 
   const [rows, setRows] = useState<Array<CompanyBrowserDto>>([]);
 
@@ -31,7 +34,6 @@ const CompanyBrowser = () => {
           },
           withCredentials: true
         })).data;
-        console.log(t);
         setRows(t);
       } catch(e)
       {
@@ -39,14 +41,16 @@ const CompanyBrowser = () => {
       }
     }
     GetData();
-  }, []);
-
+  }, [refresh]);
 
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
+    <Box sx={{ height: 550, width: '100%' }}>
+      <Box sx={{ justifyContent: 'center' }}>
+        <AddCompanyModal token={auth?.token} refresh={refresh} setRefresh={setRefresh}/>
+      </Box>
       <DataGrid
         rows={rows}
-        columns={CompanyBrowserColumnsDef(edit)}
+        columns={CompanyBrowserColumnsDef(edit, auth.token)}
         initialState={{
           pagination: {
             paginationModel: {
@@ -55,7 +59,6 @@ const CompanyBrowser = () => {
           },
         }}
         pageSizeOptions={[5]}
-        checkboxSelection
         disableRowSelectionOnClick
       />
     </Box>

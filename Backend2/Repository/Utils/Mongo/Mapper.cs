@@ -34,6 +34,7 @@ namespace Fictichos.Constructora.Utilities.MongoDB
             MapContact();
             MapAddress();
             MapCoordinates();
+            MapCompany();
         }
 
         public static void MapBaseEntity()
@@ -298,6 +299,36 @@ namespace Fictichos.Constructora.Utilities.MongoDB
                     classMap.MapMember(p => p.owner).SetElementName("owner")
                         .SetSerializer(new StringSerializer(BsonType.ObjectId));
                     classMap.MapMember(p => p.value).SetElementName("value");
+                });
+            }
+        }
+
+        public static void MapCompany()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Company)))
+            {
+                BsonClassMap.RegisterClassMap<Company>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
+                    classMap.MapMember(p => p.Activity).SetElementName("activity");
+                    classMap.MapMember(p => p.Relation).SetElementName("relation");
+                    classMap.MapMember(p => p.Contacts).SetElementName("contacts");
+                    classMap.MapMember(p => p.Members).SetElementName("members");
+                });
+            }
+        }
+
+        public static void MapForeigner()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(ExternalPerson)))
+            {
+                BsonClassMap.RegisterClassMap<ExternalPerson>(classMap => {
+                    classMap.MapMember(p => p.Name).SetElementName("name");
+                    classMap.MapMember(p => p.LastName).SetElementName("lastName");
+                    classMap.MapMember(p => p.Position).SetElementName("position");
+                    classMap.MapMember(p => p.Area).SetElementName("area");
+                    classMap.MapMember(p => p.Area).SetElementName("area");
+                    classMap.MapMember(p => p.Involvement).SetElementName("involvement");
+                    classMap.MapMember(p => p.Contacts).SetElementName("Contacts");
                 });
             }
         }

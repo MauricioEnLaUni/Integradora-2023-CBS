@@ -17,6 +17,8 @@ public record CompanyBrowserDto
     public string Name { get; set; } = string.Empty;
     public string Activity { get; set; } = string.Empty;
     public string Relation { get; set; } = string.Empty;
+    public List<string> Emails { get; set; } = new();
+    public List<string> Phones { get; set; } = new();
 }
 
 public record NewCompanyDto

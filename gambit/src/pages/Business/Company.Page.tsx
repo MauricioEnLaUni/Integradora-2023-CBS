@@ -156,9 +156,9 @@ const CompanyPage = () => {
               <Profile />
             </ProfileBlock>
             <TitleContainer>
-              <PeopleTitle title={resource.Name} relation={resource.Relation}/>
+              { resource ? <PeopleTitle title={resource.Name} relation={resource.Relation}/> : <p>Loading...</p> }
             </TitleContainer>
-            <Subordinates rows={subordinateRow} columns={gridDef}/>
+            { subordinateRow ? <Subordinates rows={subordinateRow} columns={gridDef}/> : <p>Loading...</p> }
           </Grid>
         </Grid>
         <Grid xs={23} container columns={7}>

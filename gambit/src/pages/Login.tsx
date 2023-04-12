@@ -90,7 +90,7 @@ const Login = () => {
         ¿No tiene cuenta?<br />
         <span className="line">
           {/*put router link here*/}
-          <Link to="http://localhost:5173/register">¡Inscríbase!</Link>
+          <Link to="/register">¡Inscríbase!</Link>
         </span>
       </p>
     </section>)

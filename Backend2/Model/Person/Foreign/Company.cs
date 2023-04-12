@@ -46,12 +46,18 @@ namespace Fictichos.Constructora.Model
 
         internal CompanyBrowserDto ToBrowserDto()
         {
+            List<string> emails = new();
+            List<string> phones = new();
+            Contacts.Emails.ForEach(e => emails.Add(e));
+            Contacts.Phones.ForEach(e => phones.Add(e));
             return new()
             {
                 Id = Id,
                 Name = Name,
                 Activity = Activity,
-                Relation = Relation
+                Relation = Relation,
+                Emails = emails,
+                Phones = phones
             };
         }
 

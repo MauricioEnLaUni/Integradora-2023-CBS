@@ -48,14 +48,17 @@ public class CompaniesController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
-        List<string> roles = usr
-            .Credentials
-            .Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
-        if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+        if (!usr.IsAdmin())
         {
-            return Forbid();
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
         Company cmp = _companyService.InsertOne(data);
@@ -185,7 +188,7 @@ public class CompaniesController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
         string header = HttpContext.Request.Headers["Authorization"]!;
@@ -220,6 +223,7 @@ public class CompaniesController : ControllerBase
             .Filter
             .Where(x => cmp.Members.Contains(x));
         await _foreignService.DeleteManyAsync(filter);
+        await _companyService.DeleteOneAsync(Filter.ById<Company>(cmp.Id));
 
         return NoContent();
     }

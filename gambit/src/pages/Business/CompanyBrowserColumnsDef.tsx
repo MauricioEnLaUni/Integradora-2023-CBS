@@ -1,17 +1,107 @@
+import SaveIcon from '@mui/icons-material/Save';
+import IconButton from '@mui/material/IconButton';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+
 import CompanyBrowserDto from "./CompanyBrowserType";
+import axios from '../../api/axios';
+import { Link } from 'react-router-dom';
 
-const linkToDetails = (params: { row: CompanyBrowserDto }) =>
-  <a href={`localhost:5173/clients/${params.row.id}`}>
+const handleUpdate = async (params: any, token: string) => {
+  const put = new UpdatedCompanyDto(params.name, params.activity, params.relation);
+  try {
+    const url = `/companies/${params.id}`;
+    const data = (await axios.put(url,
+      JSON.stringify(put),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        withCredentials: true
+      }));
+    console.log(data);
+  } catch (e: any) {
+    console.error(e.response);
+  }
+}
+
+const handleDelete = async (id: string, token: string) => {
+  try {
+    const url = `/companies/${id}`;
+    const data = (await axios.delete(url,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      withCredentials: true
+    }));
+    console.log(data);
+  } catch (e: any) {
+    console.error(e.response);
+  }
+}
+
+const linkToDetails = (params: { row: CompanyBrowserDto }) => (
+  <Link to={`/clients/${params.row.id}`}>
     {params.row.name}
-  </a>
+  </Link>
+);
 
-const CompanyBrowserColumnsDef = (canEdit: boolean) => {
+
+const MultiplePhones = (params: any) => {
+  const options = params.row.phones as string[];
+  const defaultV = options.length > 0 ? options[0] : '';
+  return(
+    <Select
+      defaultValue={defaultV}
+    >
+      {params.row.phones.map((option: string) => (
+        <MenuItem key={option} value={option || ''}>
+          {option}
+        </MenuItem>
+      ))}
+    </Select>
+  );
+};
+
+const MultipleEmails = (params: any) => {
+  const options = params.row.emails as string[];
+  const defaultV = options.length > 0 ? options[0] : '';
+  return(
+    <Select
+      defaultValue={defaultV}
+    >
+      {params.row.emails.map((option: string) => (
+        <MenuItem key={option} value={option || ''}>
+          {option}
+        </MenuItem>
+      ))}
+    </Select>
+  );
+}
+
+const CompanyBrowserColumnsDef = (canEdit: boolean, token: string) => {
+  const Update = (params: any) => (
+    <IconButton color="primary" onClick={() => handleUpdate(params.row, token)}>
+      <SaveIcon/>
+    </IconButton>
+  );
+  
+  const Delete = (params: any) => (
+    <IconButton color="error" onClick={() => handleDelete(params.row.id, token)}>
+      <DeleteForeverIcon />
+    </IconButton>
+  );
+
   return [
-    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'id', headerName: 'ID', width: 160 },
     {
       field: 'name',
       headerName: 'Companía',
-      width: 200,
+      width: 300,
       editable: canEdit,
       renderCell: linkToDetails
     },
@@ -24,10 +114,50 @@ const CompanyBrowserColumnsDef = (canEdit: boolean) => {
     {
       field: 'relation',
       headerName: 'Relación',
-      width: 300,
+      width: 200,
       editable: canEdit,
+    },
+    {
+      field: 'phones',
+      headerName: 'Teléfono',
+      width: 150,
+      type: 'singleSelect',
+      renderCell: MultiplePhones
+    },
+    {
+      field: 'emails',
+      headerName: 'Email',
+      width: 150,
+      type: 'singleSelect',
+      renderCell: MultipleEmails
+    },
+    {
+      field: 'save',
+      headerName: 'Guardar',
+      width: 90,
+      renderCell: Update
+    },
+    {
+      field: 'delete',
+      headerName: 'Delete',
+      width: 90,
+      editable: canEdit,
+      renderCell: Delete
     }
   ];
 }
 
 export default CompanyBrowserColumnsDef;
+
+class UpdatedCompanyDto {
+  name: string;
+  activity: string;
+  relation: string;
+
+  constructor(name: string, activity: string, relation: string)
+  {
+    this.name = name;
+    this.activity = activity;
+    this.relation = relation;
+  }
+}

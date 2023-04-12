@@ -19,14 +19,12 @@ public class TokenService
     public TokenService(MongoSettings container)
         : base(container, MAINCOLLECTION)
     {
-        
-        IndexKeysDefinition<TokenContainer> indexKeysDefinition =
-            Builders<TokenContainer>.IndexKeys.Ascending(x => x.Expires);
-        CreateIndexOptions<TokenContainer> indexOptions =
-            new()
-            { ExpireAfter = TimeSpan.Zero };
-        _mainCollection.Indexes.CreateOne(new CreateIndexModel<TokenContainer>(indexKeysDefinition, indexOptions));
-
+        // IndexKeysDefinition<TokenContainer> indexKeysDefinition =
+        //     Builders<TokenContainer>.IndexKeys.Ascending(x => x.Expires);
+        // CreateIndexOptions<TokenContainer> indexOptions =
+        //     new()
+        //     { ExpireAfter = TimeSpan.Zero };
+        // _mainCollection.Indexes.CreateOne(new CreateIndexModel<TokenContainer>(indexKeysDefinition, indexOptions));
     }
 
     public TokenContainer AddToken(string token)

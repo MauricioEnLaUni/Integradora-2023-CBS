@@ -205,7 +205,7 @@ const Register = () => {
                 ¿Tiene cuenta?<br />
                 <span className="line">
                     {/*put router link here*/}
-                    <Link to="http://localhost:5173/login">Acceder</Link>
+                    <Link to="/login">Acceder</Link>
                 </span>
             </p>
         </section>
