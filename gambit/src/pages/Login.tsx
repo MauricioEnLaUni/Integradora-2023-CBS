@@ -1,18 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect} from 'react';
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import LoginDto from '../models/Requests/LoginDto';
-import useAuth from '../hooks/useAuth';
 
 import axios from '../api/axios';
+import useAuth from '../hooks/useAuth';
+import { Authorization } from '../context/AuthProvider';
+import getCookie from '../hooks/useCookie';
+import getClaims from '../api/Tokens/GetClaims';
+import Claim from '../api/Tokens/Claims';
 
 const LOGIN_URL = 'User/auth';
 
 const Login = () => {
-  const { setAuth } = useAuth();
+  const { auth, setAuth } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
 
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
@@ -20,7 +23,7 @@ const Login = () => {
 
   useEffect(() => {
     setErrMsg('');
-  }, [user, pwd])
+  }, [user, pwd]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -35,11 +38,15 @@ const Login = () => {
         }
     );
 
-    const accessToken = response?.data;
-    setAuth({ accessToken });
     setUser('');
     setPwd('');
-    navigate(from, { replace: true });
+    const sub = response?.data?.sub;
+    const token = response?.data?.token;
+    const claims = response?.data?.claims;
+    const auther = { sub, token, claims } as Authorization;
+    setAuth(auther);
+    document.cookie = `fid=${token}; path=/; secure; max-age=3600; SameSite=Lax`;
+    navigate('/dashboard', { replace: true });
     } catch (err: any) {
       if (!err?.response) {
         setErrMsg('No Server Response');
@@ -54,7 +61,8 @@ const Login = () => {
   }
 
   return (
-    <section>
+    auth ? <Navigate to='/dashboard' state={{ from: location }} replace />
+    : (<section>
       <p  className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
       <h1>Acceder</h1>
       <form onSubmit={handleSubmit}>
@@ -85,7 +93,7 @@ const Login = () => {
           <Link to="http://localhost:5173/register">¡Inscríbase!</Link>
         </span>
       </p>
-    </section>
+    </section>)
   );
 }
 

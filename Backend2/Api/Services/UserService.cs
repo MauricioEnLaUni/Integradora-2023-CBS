@@ -51,9 +51,7 @@ public class UserService
         if (!usr.Active) return null;
 
         if (usr.IsAdmin()) return usr;
-        List<string> claims = usr.Credentials.Where(x => x.Type == "role")
-            .Select(x => x.Value)
-            .ToList();
+        List<string> claims = usr.GetRoles();
         if (ValidateAllRoles(claims, allRoles) is false) return null;
         if (ValidateAnyRole(claims, anyRoles)) return usr;
         return null;

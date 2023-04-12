@@ -10,7 +10,10 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Project from './pages/Material';
 import Test from './pages/Test';
-import Protected from './components/Protected';
+import RequireAuth from './components/RequireAuth';
+import useAuth from './hooks/useAuth';
+import CompanyBrowser from './pages/Business/CompanyBrowser';
+import CompanyPage from './pages/Business/Company.Page';
 
 const ROLES = {
   'User' : 200,
@@ -20,35 +23,32 @@ const ROLES = {
 }
 
 function App() {
+  const { auth } = useAuth();
+
   return (
     <Routes>
       <Route element={<PublicRoutes />}>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
       </Route>
-
       {/* Protected Routes */}
       <Route element={<Layout />}>
-        <Route element={<Protected allowedRoles={new Set(['user'])}/>}>
-          <Route path="/" element={<Dashboard />} />
+        <Route element={<RequireAuth allowedRoles={new Set(['user'])}/>}>
+          <Route path="Dashboard" element={<Dashboard />} />
           <Route path="projects" element={<Project />} />
-          <Route path="gantt" element={null} />
-          <Route path="material" element={null} />
-          <Route path="user" element={null} />
-          <Route path="settings" element={null} />
         </Route>
 
-        <Route element={<Protected allowedRoles={new Set(['Overseer'])}/>}>
-          <Route path="clients" element={null} />
-          <Route path="foreigner" element={null} />
+        <Route element={<RequireAuth allowedRoles={new Set(['overseer', 'manager', 'admin'])}/>}>
+          <Route path="/clients" element={<CompanyBrowser />}>
+            <Route path=":clients" element={<CompanyPage />} />
+          </Route>
         </Route>
 
-        <Route element={<Protected allowedRoles={new Set(['Manager'])}/>}>
+        <Route element={<RequireAuth allowedRoles={new Set(['manager'])}/>}>
           <Route path="accounts" element={null} />
         </Route>
 
-        <Route element={<Protected allowedRoles={new Set(['Admin'])}/>}>
-          <Route path="usrManager" element={null} />
+        <Route element={<RequireAuth allowedRoles={new Set(['admin'])}/>}>
           <Route path="test" element={<Test />} />
         </Route>
       </Route>
@@ -58,3 +58,17 @@ function App() {
 }
 
 export default App;
+
+/*
+
+          <Route path="gantt" element={null} />
+          <Route path="material" element={null} />
+          <Route path="user" element={null} />
+          <Route path="settings" element={null} />
+
+          
+          <Route path="foreigner" element={null} />
+
+          
+          <Route path="usrManager" element={null} />
+*/

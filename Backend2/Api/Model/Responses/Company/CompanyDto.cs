@@ -11,6 +11,14 @@ public record CompanyDto
     public ContactDto Contact { get; set; } = new();
 }
 
+public record CompanyBrowserDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Activity { get; set; } = string.Empty;
+    public string Relation { get; set; } = string.Empty;
+}
+
 public record NewCompanyDto
 {
     public string Name { get; set; } = string.Empty;

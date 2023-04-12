@@ -44,6 +44,17 @@ namespace Fictichos.Constructora.Model
             };
         }
 
+        internal CompanyBrowserDto ToBrowserDto()
+        {
+            return new()
+            {
+                Id = Id,
+                Name = Name,
+                Activity = Activity,
+                Relation = Relation
+            };
+        }
+
         public string Serialize()
         {
             CompanyDto data = ToDto();

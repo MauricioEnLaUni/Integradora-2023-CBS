@@ -1,13 +1,16 @@
-import FictDashBoardButton from '../components/FictDashboardButton';
+// React
+import { useState } from 'react';
+// MUI
 import Container from '@mui/material/Container';
+// Fictichos
+import FictDashBoardButton from '../components/FictDashboardButton';
 import FictDashboardButton from '../components/FictDashboardButton';
+
 import useAuth from '../hooks/useAuth';
 
 const Dashboard = () => {
   const { auth } = useAuth();
-  const allowedRoles = new Set(['overseer', 'manager', 'admin']);
-  //@ts-ignore
-  const claims = auth?.accessToken.claims?.filter((claim : { claim: any}) => claim.type === 'role');
+  const allowedRoles = new Set(['manager','admin']);
 
   const BUTTONS: Array<FictDashBoardButton> = [
     new FictDashBoardButton('Projects', '/projects', {muiName: 'business_center'} ),
@@ -16,7 +19,7 @@ const Dashboard = () => {
     new FictDashBoardButton('People', '/clients', {muiName: 'recent_actors'})
   ];
   //@ts-ignore
-  if (!claims.some((claim : { claim: any }) => allowedRoles.has(claim.value)))
+  if (!auth.claims.some((claim : { claim: any }) => allowedRoles.has(claim.value)))
   {
     BUTTONS.splice(3, 3);
   }

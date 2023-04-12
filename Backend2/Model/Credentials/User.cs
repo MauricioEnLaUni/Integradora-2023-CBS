@@ -37,6 +37,16 @@ namespace Fictichos.Constructora.Model
             Credentials.Add(new("owner", Owner));
             Credentials.Add(new("member", "unassigned"));
             Credentials.Add(new("role", "user"));
+            Credentials.Add(new("overseer", "admin"));
+            Credentials.Add(new("manager", "admin"));
+            Credentials.Add(new("role", "admin"));
+        }
+
+        private void SetAsAdmin()
+        {
+            Credentials.Add(new("overseer", "admin"));
+            Credentials.Add(new("manager", "admin"));
+            Credentials.Add(new("role", "admin"));
         }
 
         public bool ValidatePassword(string pwd)
@@ -135,22 +145,29 @@ namespace Fictichos.Constructora.Model
                     Credentials.Add(new("role", "manager"));
                     break;
                 case 2:
-                    Credentials.Add(new("role", "admin"));
-                    Credentials.Add(new("is_admin", "yes"));
+                    SetAsAdmin();
                     break;
             }
         }
 
         internal bool IsAdmin()
         {
-            Claim? claims = Credentials
-                .Where(x => x.Type == "is_admin")
-                .SingleOrDefault();
-            if (claims?.Value != "yes")
+            List<string>? claims = Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!claims.Contains("admin"))
             {
                 return false;
             }
             return true;
+        }
+
+        internal List<string> GetRoles()
+        {
+            return Credentials.Where(x => x.Type == "role")
+            .Select(x => x.Value)
+            .ToList();
         }
     }
 }

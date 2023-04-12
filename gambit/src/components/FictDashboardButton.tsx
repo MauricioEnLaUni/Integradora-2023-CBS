@@ -24,10 +24,6 @@ export default class FictDashboardButton {
   public static DrawDashboard(buttons: Array<FictDashboardButton>)
   {
     const navigate = useNavigate();
-
-    const handleButtonClick = (route: string) => {
-      navigate(route);
-    };
     
     return(
       <div>
@@ -35,7 +31,7 @@ export default class FictDashboardButton {
           <Button
             key={button.Id}
             variant="contained"
-            onClick={() => handleButtonClick(button.Route)}
+            onClick={() => navigate(button.Route)}
             aria-label={button.Text}
           >
             <Icon>{button.Icon.muiName}</Icon>

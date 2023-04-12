@@ -16,7 +16,6 @@ import TaskCondensed from '../models/Display/TaskCondensed';
 import ProjectCondensed from '../models/Display/ProjectCondensed';
 import AccountInOut from '../models/Display/AccountInOut';
 import AccountChart from '../components/PeoplePage/AccountChart';
-import useAuth from '../hooks/useAuth';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',

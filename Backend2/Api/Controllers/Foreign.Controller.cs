@@ -63,8 +63,8 @@ public class ForeignController : ControllerBase
         return Ok(_foreignService.GetOneBy(empty));
     }
 
-    [HttpGet("{company}")]
-    public IActionResult GetByCompany(string company)
+    [HttpGet("company/{id}")]
+    public IActionResult GetByCompany(string id)
     {
         string? token = Request.Cookies["fid"];
         if (token is null) return Unauthorized();
@@ -75,7 +75,7 @@ public class ForeignController : ControllerBase
         if (auth is null) return Forbid();
         
         List<ExternalPerson>? members = _companyService
-            .GetOneBy(Filter.ById<Company>(company))?
+            .GetOneBy(Filter.ById<Company>(id))?
             .Members;
         List<PersonCondensedDto> result = new();
         members?.ForEach(e => result.Add(e.ToCondensed()));

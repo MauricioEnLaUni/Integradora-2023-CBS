@@ -113,14 +113,21 @@ public class UserController : ControllerBase
         
         // var csrfToken = Guid.NewGuid().ToString();
         // HttpCookie csrfCookie = new HttpCookie("csrfToken");
-        CookieOptions options = new()
+        Response.Cookies.Append("fid", token, new() {
+            HttpOnly = true,
+            SameSite = SameSiteMode.None,
+            Secure = false,
+            Expires = DateTime.UtcNow.AddDays(1)
+        });
+        Response.Cookies.Append("flc", token, new()
         {
-            HttpOnly = true
-        };
-        Response.Cookies.Append("fid", token, options);
-        Response.Cookies.Append("flc", token);
+            HttpOnly = false,
+            Secure = false,
+            Expires = DateTime.UtcNow.AddMinutes(30),
+            SameSite = SameSiteMode.None
+        });
 
-        return Ok(new { id = raw.Id, claims = raw.Credentials });
+        return Ok(new { sub = raw.Id, token = token, claims = raw.Credentials });
     }
 
     [HttpGet("refresh")]

@@ -22,6 +22,8 @@ builder.Services.AddSingleton(serviceProvider =>
 
 builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddSingleton<ExternalPersonService>();
+builder.Services.AddSingleton<CompanyService>();
 builder.Services.AddSingleton<AreaService>();
 builder.Services.AddSingleton<FTaskService>();
 builder.Services.AddSingleton<UserService>();
@@ -39,7 +41,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: AllowOrigins,
     policy => 
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://127.0.0.1:5173")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod();

@@ -21,6 +21,7 @@ import axios from '../../api/axios';
 import PeopleCondensed from '../../models/Display/PeopleCondensed';
 import AccountInOut from '../../models/Display/AccountInOut';
 import ProjectCondensed from '../../models/Display/ProjectCondensed';
+import useAuth from '../../hooks/useAuth';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -51,9 +52,13 @@ const ProfileBlock = styled(Card)(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
-const CompanyPage = ({company} : {company: CompanyDto}) => {
-  const SUBORDINATES = `/foreign/${company.Id}`;
-  const PROJECTS = `/project/${company.Id}`;
+const CompanyPage = () => {
+  const { auth } = useAuth();
+  const [resource, setResource] = useState({} as CompanyDto);
+
+
+  const SUBORDINATES = `/foreign/${resource.Id}`;
+  const PROJECTS = `/project/${resource.Id}`;
   const ACCOUNTS = `/account/projects`;
 
   const [subordinateRow, setSubordinateRow] = useState<Array<PeopleCondensed>>([]);
@@ -85,6 +90,28 @@ const CompanyPage = ({company} : {company: CompanyDto}) => {
       }
     }
   }
+
+  useEffect(() => {
+    const st = window.location.href;
+    const id = st.substring(st.lastIndexOf('/') + 1);
+    const GetData = async () => {
+      try {
+        const data = (await axios.get(`/companies/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.token}`
+          },
+          withCredentials: true
+        })).data.company;
+        console.log(data);
+        setResource(data);
+      } catch (err)
+      {
+        console.error("Shit");
+      }
+    }
+    GetData();
+  }, []);
 
   useEffect(() => {
     GetInfo(SUBORDINATES, setSubordinateRow);
@@ -129,14 +156,14 @@ const CompanyPage = ({company} : {company: CompanyDto}) => {
               <Profile />
             </ProfileBlock>
             <TitleContainer>
-              <PeopleTitle title={company.Name} relation={company.Relation}/>
+              <PeopleTitle title={resource.Name} relation={resource.Relation}/>
             </TitleContainer>
             <Subordinates rows={subordinateRow} columns={gridDef}/>
           </Grid>
         </Grid>
         <Grid xs={23} container columns={7}>
           <Grid xs={7}>
-            <ContactContainer contact={company.Contact} />
+            <ContactContainer contact={resource.Contact} />
           </Grid>
           <Grid xs={5} sx={{ overflow: 'auto' }}>
             <ProjectSummary projects={projects}/>

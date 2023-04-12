@@ -101,8 +101,11 @@ public class CompaniesController : ControllerBase
             }
         }
 
+        List<Company> raw = _companyService.GetBy(empty);
+        List<CompanyBrowserDto> result = new();
+        raw.ForEach(e => result.Add(e.ToBrowserDto()));
 
-        return Ok(_companyService.GetBy(empty));
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
@@ -133,7 +136,10 @@ public class CompaniesController : ControllerBase
             }
         }
 
-        return Ok(_companyService.GetBy(id));
+        CompanyDto? result = _companyService.GetOneBy(id)?.ToDto();
+        if (result is null) return NotFound();
+
+        return Ok(result);
     }
 
 
