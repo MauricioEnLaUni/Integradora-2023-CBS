@@ -74,5 +74,12 @@ namespace Fictichos.Constructora.Model
             Relation = data.Relation ?? Relation;
             if (data.Contacts is not null) Contacts.Update(data.Contacts);
         }
+
+        public void BrowserUpdate(BrowserUpdateCompanyDto data)
+        {
+            Name = data.Name ?? Name;
+            Activity = data.Activity ?? Activity;
+            Relation = data.Relation ?? Relation;
+        }
     }
 }

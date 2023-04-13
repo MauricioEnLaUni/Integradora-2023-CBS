@@ -7,13 +7,33 @@ import MenuItem from '@mui/material/MenuItem';
 import CompanyBrowserDto from "./CompanyBrowserType";
 import axios from '../../api/axios';
 import { Link } from 'react-router-dom';
+import { Dispatch, SetStateAction } from 'react';
 
-const handleUpdate = async (params: any, token: string) => {
-  const put = new UpdatedCompanyDto(params.name, params.activity, params.relation);
-  try {
-    const url = `/companies/${params.id}`;
-    const data = (await axios.put(url,
-      JSON.stringify(put),
+const CompanyBrowserColumnsDef = (canEdit: boolean, token: string, refresh: boolean, setRefresh: Dispatch<SetStateAction<boolean>>) => {
+  const handleUpdate = async (params: any, token: string) => {
+    const put = new BrowserCompanyUpdateDto(params.id, params.name, params.activity, params.relation);
+    console.log(put);
+    try {
+      const url = `/companies`;
+      const data = (await axios.patch(url,
+        JSON.stringify(put),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          withCredentials: true
+        }));
+        setRefresh(!refresh);
+    } catch (e: any) {
+      console.error(e.response);
+    }
+  }
+  
+  const handleDelete = async (id: string, token: string) => {
+    try {
+      const url = `/companies/${id}`;
+      const data = (await axios.delete(url,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -21,71 +41,54 @@ const handleUpdate = async (params: any, token: string) => {
         },
         withCredentials: true
       }));
-  } catch (e: any) {
-    console.error(e.response);
+      setRefresh(!refresh);
+    } catch (e: any) {
+      console.error(e.response);
+    }
   }
-}
-
-const handleDelete = async (id: string, token: string) => {
-  try {
-    const url = `/companies/${id}`;
-    const data = (await axios.delete(url,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      withCredentials: true
-    }));
-    console.log(data);
-  } catch (e: any) {
-    console.error(e.response);
+  
+  const linkToDetails = (params: { row: CompanyBrowserDto }) => (
+    <Link to={`/clients/${params.row.id}`}>
+      {params.row.name}
+    </Link>
+  );
+  
+  
+  const MultiplePhones = (params: any) => {
+    const options = params.row.phones as string[];
+    const defaultV = options.length > 0 ? options[0] : '';
+    return(
+      <Select
+        defaultValue={defaultV}
+      >
+        {params.row.phones.map((option: string) => (
+          <MenuItem key={option} value={option || ''}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    );
+  };
+  
+  const MultipleEmails = (params: any) => {
+    const options = params.row.emails as string[];
+    const defaultV = options.length > 0 ? options[0] : '';
+    return(
+      <Select
+        defaultValue={defaultV}
+      >
+        {params.row.emails.map((option: string) => (
+          <MenuItem key={option} value={option || ''}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    );
   }
-}
 
-const linkToDetails = (params: { row: CompanyBrowserDto }) => (
-  <Link to={`/clients/${params.row.id}`}>
-    {params.row.name}
-  </Link>
-);
-
-
-const MultiplePhones = (params: any) => {
-  const options = params.row.phones as string[];
-  const defaultV = options.length > 0 ? options[0] : '';
-  return(
-    <Select
-      defaultValue={defaultV}
-    >
-      {params.row.phones.map((option: string) => (
-        <MenuItem key={option} value={option || ''}>
-          {option}
-        </MenuItem>
-      ))}
-    </Select>
-  );
-};
-
-const MultipleEmails = (params: any) => {
-  const options = params.row.emails as string[];
-  const defaultV = options.length > 0 ? options[0] : '';
-  return(
-    <Select
-      defaultValue={defaultV}
-    >
-      {params.row.emails.map((option: string) => (
-        <MenuItem key={option} value={option || ''}>
-          {option}
-        </MenuItem>
-      ))}
-    </Select>
-  );
-}
-
-const CompanyBrowserColumnsDef = (canEdit: boolean, token: string) => {
   const Update = (params: any) => (
     <IconButton color="primary" onClick={() => handleUpdate(params.row, token)}>
-      <SaveIcon/>
+      <SaveIcon />
     </IconButton>
   );
   
@@ -148,13 +151,15 @@ const CompanyBrowserColumnsDef = (canEdit: boolean, token: string) => {
 
 export default CompanyBrowserColumnsDef;
 
-class UpdatedCompanyDto {
+class BrowserCompanyUpdateDto {
+  id: string;
   name: string;
   activity: string;
   relation: string;
 
-  constructor(name: string, activity: string, relation: string)
+  constructor(id: string, name: string, activity: string, relation: string)
   {
+    this.id = id;
     this.name = name;
     this.activity = activity;
     this.relation = relation;

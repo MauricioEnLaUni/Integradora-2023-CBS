@@ -50,7 +50,7 @@ const CompanyBrowser = () => {
       </Box>
       <DataGrid
         rows={rows}
-        columns={CompanyBrowserColumnsDef(edit, auth.token)}
+        columns={CompanyBrowserColumnsDef(edit, auth.token, refresh, setRefresh)}
         initialState={{
           pagination: {
             paginationModel: {

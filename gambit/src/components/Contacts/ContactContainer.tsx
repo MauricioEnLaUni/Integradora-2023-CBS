@@ -9,6 +9,7 @@ import AddressTab from './AddressTab';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import CompanyDto from '../../models/Response/People/Company.Dto';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,8 +37,9 @@ const TabPanel = (props: TabPanelProps) => {
   );
 }
 
-const ContactContainer = ({ contact }: { contact: ContactDto }) => {
+const ContactContainer = ({ company }: { company: CompanyDto }) => {
   const [value, setValue] = useState(0);
+  const contact = company.contact;
 
   const handleChanges = (event: React.SyntheticEvent, newValue: number) => {
     event.stopPropagation();
