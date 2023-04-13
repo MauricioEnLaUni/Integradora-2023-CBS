@@ -127,7 +127,7 @@ public class UserController : ControllerBase
             SameSite = SameSiteMode.None
         });
 
-        return Ok(new { sub = raw.Id, token = token, claims = raw.Credentials });
+        return Ok(new { sub = raw.Id, token, claims = raw.Credentials });
     }
 
     [HttpGet("refresh")]

@@ -8,6 +8,7 @@ import { Grid, Icon, IconButton, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import axios from '../../api/axios';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddressDto from '../../models/Response/Contact/AddressDto';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -35,18 +36,18 @@ const AddForeignModal = ({ token, refresh, setRefresh, owner }: { token: string,
   const [country, setCountry] = useState('');
   
   const handleSubmit = async () => {
-    const dto: AddAddressDto = new AddAddressDto(owner);
+    const dto: AddAddressDto = new AddAddressDto(owner, street, number, colony, postalCode, city, state, country);
     try {
-      const url = '/company';
-      const data = (await axios.post(url, 
+      const url = '/companies/address/add';
+      (await axios.patch(url, 
         JSON.stringify(dto),
         {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
-            'withCredentials': true
-          }
-        })).data;
+          },
+          withCredentials: true
+        }));
         setOpen(false);
         setRefresh(!refresh);
     } catch (err: any)
@@ -58,12 +59,11 @@ const AddForeignModal = ({ token, refresh, setRefresh, owner }: { token: string,
   return (
     <Box sx={{ justifyContent: 'center' }}>
       <Tooltip title={`Añadir dirección`} arrow>
-        <IconButton>
+        <IconButton onClick={handleOpen}>
           <Icon
             className={'inner-icon'}
             component={AddCircleIcon}
             sx={{ color: '#e4f1f1', fontSize: '56px' }}
-            onClick={handleOpen}
           />
         </IconButton>
       </Tooltip>

@@ -180,6 +180,37 @@ public class CompaniesController : ControllerBase
         return NoContent();
     }
 
+    [HttpPatch("address/add")]
+    public IActionResult AddAddress([FromBody] NewAddressDto data)
+    {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("manager"))
+                return Forbid();
+        }
+
+        _companyService.AddAddress(data);
+
+        return NoContent();
+    }
+
     [HttpPut]
     public IActionResult Update([FromBody] UpdatedCompanyDto data)
     {

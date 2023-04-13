@@ -160,7 +160,7 @@ const CompanyPage = () => {
         </Grid>
         <Grid xs={24} container columns={7}>
           <Grid xs={7}>
-            { loading ? <p>Loading...</p> : (<ContactContainer contact={resource.contact} />) }
+            { loading ? <p>Loading...</p> : (<ContactContainer company={resource} token={auth?.token} />) }
           </Grid>
           <Grid xs={5} sx={{ overflow: 'auto' }}>
             { loading ? <p>Loading...</p> : (<ProjectSummary projects={projects}/>)}

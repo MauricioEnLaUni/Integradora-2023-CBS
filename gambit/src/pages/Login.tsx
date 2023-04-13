@@ -43,8 +43,7 @@ const Login = () => {
     const sub = response?.data?.sub;
     const token = response?.data?.token;
     const claims = response?.data?.claims;
-    const auther = { sub, token, claims } as Authorization;
-    setAuth(auther);
+    setAuth({ sub, token, claims } as Authorization);
     document.cookie = `fid=${token}; path=/; secure; max-age=3600; SameSite=Lax`;
     navigate('/dashboard', { replace: true });
     } catch (err: any) {

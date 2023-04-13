@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -37,8 +37,9 @@ const TabPanel = (props: TabPanelProps) => {
   );
 }
 
-const ContactContainer = ({ company }: { company: CompanyDto }) => {
+const ContactContainer = ({ company, token }: { company: CompanyDto, token: string }) => {
   const [value, setValue] = useState(0);
+  const [refresh, setRefresh] = useState(false);
   const contact = company.contact;
 
   const handleChanges = (event: React.SyntheticEvent, newValue: number) => {
@@ -56,6 +57,9 @@ const ContactContainer = ({ company }: { company: CompanyDto }) => {
     };
   }
 
+  useEffect(() => {
+  }, [refresh]);
+
   return(
   <Accordion sx={{ display: 'block', overflow: 'auto', maxHeight: '400px' }} disableGutters>
     <AccordionSummary sx={{ borderBottom: 1 }}>
@@ -67,7 +71,7 @@ const ContactContainer = ({ company }: { company: CompanyDto }) => {
     </AccordionSummary>
     <AccordionDetails>
       <TabPanel value={value} index={0}>
-        <AddressTab addresses={contact.addresses} />
+        { contact && contact.addresses ? <AddressTab addresses={contact.addresses} owner={company.id} token={token} refresh={refresh} setRefresh={setRefresh} /> : <p>Loading...</p> }
       </TabPanel>
       <TabPanel value={value} index={1}>
         <StringTab data={contact.phones} name={"Phone"}/>
