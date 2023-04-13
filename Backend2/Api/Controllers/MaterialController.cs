@@ -7,6 +7,9 @@ using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities;
 using System.Net.Mime;
+using System.Security.Claims;
+using Fictichos.Constructora.Utilities.MongoDB;
+using Fictichos.Constructora.Auth;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -17,14 +20,18 @@ public class MaterialController : ControllerBase
     private readonly MongoSettings Container;
     private IMongoCollection<MaterialCategory> CategoryCollection { get; init; }
     private IMongoCollection<Material> MaterialCollection { get; init; }
+    private readonly UserService _userService;
+    private readonly TokenService _tokenService;
 
-    public MaterialController(MongoSettings container)
+    public MaterialController(MongoSettings container, UserService user, TokenService token)
     {
         Container = container;
         MaterialCollection = container.Client.GetDatabase("cbs")
             .GetCollection<Material>("material");
         CategoryCollection = container.Client.GetDatabase("cbs")
             .GetCollection<MaterialCategory>("materialCategory");
+        _userService = user;
+        _tokenService = token;
     }
 
     [HttpPost("cats")]
@@ -36,6 +43,30 @@ public class MaterialController : ControllerBase
         [FromBody] NewMaterialCategoryDto data)
     {
         if (data is null) return BadRequest();
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
         MaterialCategory result = new();
         if (data.Parent is null)
         {
