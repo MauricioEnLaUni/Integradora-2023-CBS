@@ -78,12 +78,26 @@ const AddressPanel = ({address, tab}: {address: AddressDto, tab: number}) => {
     longitude
   ]);
 
+  useEffect(() => {
+    setDisplay([
+      street,
+      number,
+      colony,
+      postalCode,
+      city,
+      state,
+      country,
+      latitude,
+      longitude
+    ]);
+  }, []);
+
   const memoizedValue: any = useMemo(() => display, [display]);
 
   return(
     <Grid container columns={3}>
       {display.map((element, i) => (
-        <Grid xs={1} direction={'row'} container columns={3} key={i}>
+        <Grid xs={1} direction={'row'} container columns={3} key={i} item={true}>
           <Grid xs={1} display='flex' alignItems='center'>
             <Typography align='left' variant='subtitle1'>
               {FIELDS[i]}
@@ -93,6 +107,7 @@ const AddressPanel = ({address, tab}: {address: AddressDto, tab: number}) => {
             <TextField
               id={`${FIELDS[i]}-${tab.toString()}`}
               label={element}
+              value={display[i]}
               onChange={(e) => handleUpdate(e.target.value, i)}
             />
           </Grid>

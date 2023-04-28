@@ -7,6 +7,7 @@ using Fictichos.Constructora.Model;
 using Fictichos.Constructora.Repository;
 using Fictichos.Constructora.Utilities.MongoDB;
 using Fictichos.Constructora.Auth;
+using System.Security.Claims;
 
 namespace Fictichos.Constructora.Controllers;
 
@@ -67,6 +68,31 @@ public class AccountController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
+        
         List<Account> raw = _accountService.GetBy(Filter.Empty<Account>());
         List<AccountDto> result = new();
         raw.ForEach(e => {

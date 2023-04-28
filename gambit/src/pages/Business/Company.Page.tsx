@@ -39,7 +39,7 @@ const Title = styled(Typography)(({ theme }) => ({
   fontSize: '1.75rem',
 }));
 
-const TitleContainer = styled(Paper)(({ theme }) => ({
+const TitleContainer: any = styled(Paper)(({ theme }) => ({
   backgroundColor: '#6D8A96',
   padding: theme.spacing(1),
   textAlign: 'center',
@@ -160,7 +160,7 @@ const CompanyPage = () => {
         </Grid>
         <Grid xs={24} container columns={7}>
           <Grid xs={7}>
-            { loading ? <p>Loading...</p> : (<ContactContainer company={resource} />) }
+            { loading ? <p>Loading...</p> : (<ContactContainer company={resource} token={auth?.token} />) }
           </Grid>
           <Grid xs={5} sx={{ overflow: 'auto' }}>
             { loading ? <p>Loading...</p> : (<ProjectSummary projects={projects}/>)}

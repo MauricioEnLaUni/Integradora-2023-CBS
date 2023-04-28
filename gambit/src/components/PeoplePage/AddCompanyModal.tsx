@@ -1,13 +1,11 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import TextField from '@mui/material/TextField';
 import { Grid } from '@mui/material';
 import { useState } from 'react';
-import { string } from 'yup';
 import axios from '../../api/axios';
 
 const style = {
@@ -37,7 +35,7 @@ const AddCompanyModal = ({ token, refresh, setRefresh }: { token: string, refres
     const dto: NewCompanyDto = new NewCompanyDto(name, activity, relation, email, phone);
     try {
       const url = '/Companies';
-      const data = (await axios.post(url, 
+      (await axios.post(url, 
         JSON.stringify(dto),
         {
           headers: {
@@ -45,7 +43,7 @@ const AddCompanyModal = ({ token, refresh, setRefresh }: { token: string, refres
             'Content-Type': 'application/json',
             'withCredentials': true
           }
-        })).data;
+        }));
         setOpen(false);
         setRefresh(!refresh);
     } catch (err: any)

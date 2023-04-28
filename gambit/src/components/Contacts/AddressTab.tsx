@@ -1,5 +1,5 @@
 // React imports
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 
 // MUI
 import Box from "@mui/material/Box";
@@ -13,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from '@mui/material/Tooltip';
 import Icon from '@mui/material/Icon';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddAddressModal from "../PeoplePage/AddAddressModal";
 
 const a11yProps = (index: number) => {
   return {
@@ -23,12 +24,15 @@ const a11yProps = (index: number) => {
   };
 }
 
-const AddressTab = ({addresses}: {addresses: Array<AddressDto>}) => {
+const AddressTab = ({ addresses, owner, token, refresh, setRefresh }: {addresses: Array<AddressDto>, owner: string, token: string, refresh: boolean, setRefresh: any }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+  }, [refresh]);
 
   return (
     <Box sx={{ width: '100%' }} >
@@ -38,6 +42,7 @@ const AddressTab = ({addresses}: {addresses: Array<AddressDto>}) => {
           {addresses?.map((e, i) => (
             <Tab {...a11yProps(i)} />
           ))}
+          <AddAddressModal token={token} refresh={refresh} setRefresh={setRefresh} owner={owner} />
         </Tabs>
       </Box> : <></> }
       { addresses && addresses.length > 0 ?
@@ -51,7 +56,7 @@ const AddressTab = ({addresses}: {addresses: Array<AddressDto>}) => {
         >
           <AddressPanel address={e} tab={i}/>
         </div>
-      )) : <AddAddressModal token={} refresh={} setRefresh={} owner={}/>}
+      )) : <AddAddressModal token={token} refresh={refresh} setRefresh={setRefresh} owner={owner} />}
     </Box>
   );
 }

@@ -42,14 +42,30 @@ public class ProjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
     {
-        string? token = Request.Cookies["fid"];
-        if (token is null) return Unauthorized();
-        string? sub = _tokenService.CookieAuth(token);
-        if (sub is null) return Forbid();
-        
-        User? auth = _userService
-            .AuthRoles(sub, null, new() { "user" } );
-        if (auth is null) return Forbid();
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
 
         List<Project> raw = await _projectService
             .GetByAsync(Filter.Empty<Project>());
@@ -61,14 +77,30 @@ public class ProjectController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        string? token = Request.Cookies["fid"];
-        if (token is null) return Unauthorized();
-        string? sub = _tokenService.CookieAuth(token);
-        if (sub is null) return Forbid();
-        
-        User? auth = _userService
-            .AuthRoles(sub, null, new() { "user" } );
-        if (auth is null) return Forbid();
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
 
         FilterDefinition<Project> filter = Builders<Project>
             .Filter.Eq(x => x.Id, id);
@@ -93,6 +125,18 @@ public class ProjectController : ControllerBase
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
 
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
         if (!usr.IsAdmin())
         {
             List<string> roles = usr
@@ -139,7 +183,9 @@ public class ProjectController : ControllerBase
                 .Select(x => x.Value)
                 .ToList();
             if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
                 return Forbid();
+            }
         }
 
         List<string> raw = new();
@@ -169,14 +215,30 @@ public class ProjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> NewProject([FromBody] string data)
     {
-        string? token = Request.Cookies["fid"];
-        if (token is null) return Unauthorized();
-        string? sub = _tokenService.CookieAuth(token);
-        if (sub is null) return Forbid();
-        
-        User? auth = _userService
-            .AuthRoles(sub, null, new() { "manager", "admin"} );
-        if (auth is null) return Forbid();
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
 
         if (!await _projectService.NameIsUnique(data)) return Conflict();
 
@@ -194,28 +256,33 @@ public class ProjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Update(
+    public IActionResult Update(
         [FromBody] UpdatedProjectDto data)
     {
-        FilterDefinition<Project> projectFilter = Builders<Project>
-            .Filter
-            .Eq(x => x.Id, data.Id);
-        Project? original = await _projectService
-            .GetOneByAsync(projectFilter);
-        if (original is null) return NotFound();
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
 
-        HTTPResult<UpdatedProjectDto?> projectValidation =
-            await _projectService.ValidateUpdate(data, original);
-            
-        if (projectValidation.Code == 400) return BadRequest();
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
 
-        UpdatedProjectDto validated = projectValidation.Value!;
-        FilterDefinition<Person> respFilter = Builders<Person>
-            .Filter
-            .Eq(x => x.Id, validated.Responsible);
-        Person? responsible = await _personService
-            .GetOneByAsync(respFilter);
-        validated.Responsible = responsible?.Id;
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
         
         return NoContent();
     }

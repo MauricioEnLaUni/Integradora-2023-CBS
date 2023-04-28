@@ -110,6 +110,19 @@ public class AreaController : ControllerBase
         User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
         if (usr is null) return NotFound();
         if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
         
         List<string> member = usr
             .Credentials
@@ -128,6 +141,30 @@ public class AreaController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateArea(NewAreaDto data)
     {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
         bool areaValidation = await _areaService.ValidateNew(data);
         bool ownerValidation = await _peopleService.ValidateAreaHead(data.Head);
 
@@ -158,14 +195,15 @@ public class AreaController : ControllerBase
 
         if (!usr.IsAdmin())
         {
-            List<string> member = usr
+            List<string> roles = usr
                 .Credentials
-                .Where(x => x.Type == "area_owner")
+                .Where(x => x.Type == "role")
                 .Select(x => x.Value)
                 .ToList();
-            FilterDefinition<Area> filter = Builders<Area>
-                .Filter
-                .In(x => x.Id, member);
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
         }
 
         await _areaService.ValidateUpdate(data);
@@ -175,6 +213,30 @@ public class AreaController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> DeleteOne(string id)
     {
+        string header = HttpContext.Request.Headers["Authorization"]!;
+        if (header is null) return Unauthorized();
+        IEnumerable<Claim> claims = _tokenService.GetClaimsFromHeader(header);
+        string? idCredential = claims.Where(x => x.Type == "sub")
+            .Select(x => x.Value)
+            .SingleOrDefault();
+        if (idCredential is null) return BadRequest();
+
+        User? usr = _userService.GetOneBy(Filter.ById<User>(idCredential));
+        if (usr is null) return NotFound();
+        if (!usr.Active) return Forbid();
+
+        if (!usr.IsAdmin())
+        {
+            List<string> roles = usr
+                .Credentials
+                .Where(x => x.Type == "role")
+                .Select(x => x.Value)
+                .ToList();
+            if (!roles.Contains("sales") && !roles.Contains("overseer") && !roles.Contains("manager"))
+            {
+                return Forbid();
+            }
+        }
         await _areaService.CleanDependencies(id);
         await _areaService.DeleteOneAsync(id);
         return NoContent();

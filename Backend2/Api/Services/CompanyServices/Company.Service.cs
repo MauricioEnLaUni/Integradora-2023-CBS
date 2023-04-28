@@ -62,4 +62,12 @@ public class CompanyService
         _mainCollection.UpdateOne(Filter.ById<Company>(data.Id), update);
         return 200;
     }
+
+    internal void AddAddress(NewAddressDto data)
+    {
+        Address toInsert = new Address().Instantiate(data);
+        UpdateDefinition<Company> update = Builders<Company>.Update.Set(x => x.ModifiedAt, DateTime.Now);
+        update = data.Street is not null ? update.Push(x => x.Contacts.Addresses, toInsert) : update;
+        _mainCollection.UpdateOne(Filter.ById<Company>(data.Id), update);
+    }
 }
